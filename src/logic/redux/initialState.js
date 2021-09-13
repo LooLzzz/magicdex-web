@@ -4,7 +4,7 @@ export default {
   apiURL: "https://magicdex-server.herokuapp.com/",
   account: {
     username: undefined,
-    token: undefined,
+    accessToken: undefined,
   },
   currentCollection: {},
   themes: {

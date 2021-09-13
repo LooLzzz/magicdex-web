@@ -10,7 +10,7 @@ export const reducerSlice = createSlice({
 
 export const {
 login,
-register,
+logout,
 } = reducerSlice.actions;
 
 export default reducerSlice.reducer;

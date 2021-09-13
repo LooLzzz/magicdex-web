@@ -1,11 +1,11 @@
 export default {
     login: (state, action) => {
-        let { username, token } = action.payload;
-        state.account.username = username;
-        state.account.token = token
+        let { username, accessToken } = action.payload;
+        console.log(typeof(username), typeof(accessToken))
+        state.account = {...state.account, username, accessToken};
     },
-    register: (state) => {
+    logout: (state) => {
         state.account.username = undefined
-        state.account.token = undefined
+        state.account.accessToken = undefined
     }
 }

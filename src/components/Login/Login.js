@@ -4,23 +4,23 @@ import { connect, useDispatch, useSelector } from "react-redux";
 import "./Login.css";
 
 const loginToServer = async (dispatch, username, password, apiURL) => {
+  const credentials = { username, password };
   const res = await fetch(apiURL + 'auth/users', {
     method: 'POST',
-    body: {
-      'username': username,
-      'password': password,
-    },
+    body: JSON.stringify(credentials),
     headers: {
-      // 'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Credentials': true,
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Credentials": true,
     }
   });
   if (res.status != 200) {
     console.log('HTML Status Error: ', res.status);
   } else {
     const resJson = await res.json();
-    dispatch(login(resJson.username, resJson.password));
+    dispatch(
+      login({ username, accessToken: resJson['access-token'] })
+    );
   }
 }
 
