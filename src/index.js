@@ -5,6 +5,8 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { Provider } from "react-redux";
 import store from "./logic/redux/store";
+import { ThemeProvider } from "@material-ui/styles";
+import { Router } from "@material-ui/icons";
 
 ReactDOM.render(
   <React.StrictMode>

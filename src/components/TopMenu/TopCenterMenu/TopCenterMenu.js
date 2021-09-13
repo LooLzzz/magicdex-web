@@ -7,7 +7,7 @@ import "./TopCenterMenu.css";
 const NavigationMenu = (props) => {
   return (
     <>
-      <Grid item xs={9}>
+      <Grid item xs={9} className="center">
         <Paper component="form" className="search">
           <IconButton aria-label="menu" size="small">
             <SearchIcon />
