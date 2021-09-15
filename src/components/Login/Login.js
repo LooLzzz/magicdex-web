@@ -1,6 +1,7 @@
 import { login, register } from "@/logic/redux/reducerSlice";
 import { Button, Grid, Paper, TextField, Link } from "@material-ui/core";
 import { connect, useDispatch, useSelector } from "react-redux";
+import { useHistory } from "react-router";
 import "./Login.css";
 
 const loginToServer = async (dispatch, username, password, apiURL) => {
@@ -18,6 +19,7 @@ const loginToServer = async (dispatch, username, password, apiURL) => {
     console.log('HTML Status Error: ', res.status);
   } else {
     const resJson = await res.json();
+    localStorage.setItem('access-token', resJson['access-token']);
     dispatch(
       login({ username, accessToken: resJson['access-token'] })
     );
@@ -25,8 +27,13 @@ const loginToServer = async (dispatch, username, password, apiURL) => {
 }
 
 const Login = (props) => {
+  const history = useHistory();
   const myTheme = useSelector((state) => state.actions.themes.currentTheme);
   const apiURL = useSelector((state) => state.actions.apiURL);
+  const stateUsername = useSelector((state) => state.actions.account.username);
+  if (stateUsername !== undefined) {
+    history.push("");
+  }
   const dispatch = useDispatch();
   let username = '';
   let password = '';
