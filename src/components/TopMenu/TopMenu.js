@@ -10,14 +10,14 @@ const TopMenu = (props) => {
   return (
     <>
       <div className="TopMenuComponent" style={myTheme.palette.primaryBlue}>
-        <Grid container justifyContent="center" direction="row" spacing={1}>
-          <Grid item xs={4}>
+        <Grid container justifyContent="flex-start" direction="row">
+          <Grid container xs={4}>
             <TopLeftMenu />
           </Grid>
-          <Grid item xs={4}>
+          <Grid container xs={4} justifyContent="center">
             <TopCenterMenu />
           </Grid>
-          <Grid item xs={4}>
+          <Grid container xs={4} justifyContent="flex-end">
             <TopRightMenu />
           </Grid>
         </Grid>

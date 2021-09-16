@@ -1,11 +1,7 @@
 .TopMenuComponent {
     display: flex;
     align-items: center;
-    min-height: 7vh;
+    min-height: 9vh;
     /* background-color: cyan; */
     border-bottom: 2px lightcyan solid;
-}
-
-.centerMenu {
-    margin: 0 auto;
 }

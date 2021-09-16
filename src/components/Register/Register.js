@@ -3,7 +3,7 @@ import { Button, Grid, Paper, TextField } from "@material-ui/core";
 import { connect, useDispatch, useSelector } from "react-redux";
 import { Redirect } from "react-router";
 import { Link } from "react-router-dom";
-import "./Login.css";
+import "./Register.css";
 
 const loginToServer = async (dispatch, username, password, apiURL) => {
   const credentials = { username, password };
@@ -27,7 +27,7 @@ const loginToServer = async (dispatch, username, password, apiURL) => {
   }
 }
 
-const Login = (props) => {
+const Register = (props) => {
   const myTheme = useSelector((state) => state.actions.themes.currentTheme);
   const apiURL = useSelector((state) => state.actions.apiURL);
   const stateUsername = useSelector((state) => state.actions.account.username);
@@ -40,7 +40,7 @@ const Login = (props) => {
     return <Redirect to="" />;
   }
   return (
-    <div className="LoginForm">
+    <div className="RegisterForm">
       <Paper
         className="Paper"
         variant="elevation"
@@ -48,7 +48,7 @@ const Login = (props) => {
         style={myTheme.palette.primaryGray}
       >
         <div className="title">
-          <h1>Login</h1>
+          <h1>Register</h1>
         </div>
         <div>
           <TextField
@@ -75,7 +75,7 @@ const Login = (props) => {
             }}
           />
         </div>
-        <div className="login">
+        <div className="register">
           <Button
             variant="contained"
             className="Button"
@@ -85,15 +85,15 @@ const Login = (props) => {
               loginToServer(dispatch, username, password, apiURL);
             }}
           >
-            Login
+            Register
           </Button>
         </div>
-        <div className="register">
-          <Link to="/register">Don't have an account? Register</Link>
+        <div className="login">
+          <Link to="/login">Already have an account? Sign in</Link>
         </div>
       </Paper>
     </div>
   );
 };
 
-export default Login;
+export default Register;
