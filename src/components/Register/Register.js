@@ -1,30 +1,39 @@
 import { login, register } from "@/logic/redux/reducerSlice";
 import { Button, Grid, Paper, TextField } from "@material-ui/core";
+import axios from "axios";
 import { connect, useDispatch, useSelector } from "react-redux";
-import { Redirect } from "react-router";
+import { Redirect, useHistory } from "react-router";
 import { Link } from "react-router-dom";
 import "./Register.css";
 
-const loginToServer = async (dispatch, username, password, apiURL) => {
-  const credentials = { username, password };
-  const res = await fetch(apiURL + 'auth/users', {
-    method: 'POST',
-    body: JSON.stringify(credentials),
+const registerToServer = async (history, username, password, apiURL) => {
+  const body = JSON.stringify({ username, password });
+  const config = {
     headers: {
       "Content-Type": "application/json",
       "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Credentials": true,
+      "Access-Control-Allow-Credentials": true
     }
-  });
-  if (res.status != 200) {
-    console.log('HTML Status Error: ', res.status);
-  } else {
-    const resJson = await res.json();
-    localStorage.setItem('access-token', resJson['access-token']);
-    dispatch(
-      login({ username, accessToken: resJson['access-token'] })
-    );
   }
+  axios.put(apiURL + "auth/users", body, config).then(res => {
+    localStorage.setItem('access-token', res['access-token']);
+    history.push("login");
+  })
+  .catch(e => {
+    if (e.response) {
+      console.log(e.response.status);
+      console.log(e.response.data);
+    }
+  })
+  // if (res.status != 200) {
+  //   console.log('HTML Status Error: ', res.status);
+  // } else {
+  //   const resJson = await res.json();
+  //   localStorage.setItem('access-token', resJson['access-token']);
+  //   dispatch(
+  //     login({ username, accessToken: resJson['access-token'] })
+  //   );
+  // }
 }
 
 const Register = (props) => {
@@ -32,11 +41,11 @@ const Register = (props) => {
   const apiURL = useSelector((state) => state.actions.apiURL);
   const stateUsername = useSelector((state) => state.actions.account.username);
   const dispatch = useDispatch();
+  const history = useHistory();
   let username = '';
   let password = '';
   console.log('stateUsername', stateUsername);
   if (stateUsername !== undefined) {
-    console.log(stateUsername);
     return <Redirect to="" />;
   }
   return (
@@ -82,7 +91,7 @@ const Register = (props) => {
             type="submit"
             style={myTheme.palette.secondaryGray}
             onClick={(e) => {
-              loginToServer(dispatch, username, password, apiURL);
+              registerToServer(history, username, password, apiURL);
             }}
           >
             Register

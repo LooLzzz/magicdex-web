@@ -1,30 +1,31 @@
 import { login, register } from "@/logic/redux/reducerSlice";
 import { Button, Grid, Paper, TextField } from "@material-ui/core";
+import axios from "axios";
 import { connect, useDispatch, useSelector } from "react-redux";
 import { Redirect } from "react-router";
 import { Link } from "react-router-dom";
 import "./Login.css";
 
 const loginToServer = async (dispatch, username, password, apiURL) => {
-  const credentials = { username, password };
-  const res = await fetch(apiURL + 'auth/users', {
-    method: 'POST',
-    body: JSON.stringify(credentials),
+  const body = JSON.stringify({ username, password });
+  const config = {
     headers: {
       "Content-Type": "application/json",
       "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Credentials": true,
+      "Access-Control-Allow-Credentials": true
     }
-  });
-  if (res.status != 200) {
-    console.log('HTML Status Error: ', res.status);
-  } else {
-    const resJson = await res.json();
-    localStorage.setItem('access-token', resJson['access-token']);
-    dispatch(
-      login({ username, accessToken: resJson['access-token'] })
-    );
   }
+  axios.post(apiURL + "auth/users", body, config).then(res => {
+    localStorage.setItem('username', res.data['username']);
+    localStorage.setItem('access-token', res.data['access-token']);
+    dispatch(login({ username, accessToken: res.data["access-token"] }));
+  })
+  .catch(e => {
+    if (e.response) {
+      console.log(e.response.status);
+      console.log(e.response.data);
+    }
+  })
 }
 
 const Login = (props) => {
@@ -36,7 +37,6 @@ const Login = (props) => {
   let password = '';
   console.log('stateUsername', stateUsername);
   if (stateUsername !== undefined) {
-    console.log(stateUsername);
     return <Redirect to="" />;
   }
   return (

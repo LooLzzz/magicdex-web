@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Collection from "./components/Collection/Collection";
 import { ThemeProvider } from "@material-ui/styles";
 import { useDispatch, useSelector } from "react-redux";
-import { useHistory } from "react-router";
+import { Redirect, useHistory } from "react-router";
 import Login from "./components/Login/Login";
 import Register from "./components/Register/Register";
 
@@ -12,7 +12,6 @@ function App() {
   const myThemeState = useSelector(
     (state) => state.actions.themes.currentTheme
   );
-  const stateUsername = useSelector((state) => state.actions.account.username);
   let testTheme = {};
   Object.assign(testTheme, myThemeState);
   return (
