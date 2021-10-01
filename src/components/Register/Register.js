@@ -1,4 +1,4 @@
-import { login, register } from "@/logic/redux/reducerSlice";
+import { login, register } from "@/Logic/redux/reducerSlice";
 import { Button, Grid, Paper, TextField } from "@material-ui/core";
 import axios from "axios";
 import { connect, useDispatch, useSelector } from "react-redux";
@@ -37,7 +37,7 @@ const registerToServer = async (history, username, password, apiURL) => {
 }
 
 const Register = (props) => {
-  const myTheme = useSelector((state) => state.actions.themes.currentTheme);
+  const myTheme = useSelector((state) => state.actions.theme.currentTheme);
   const apiURL = useSelector((state) => state.actions.apiURL);
   const stateUsername = useSelector((state) => state.actions.account.username);
   const dispatch = useDispatch();
@@ -54,7 +54,7 @@ const Register = (props) => {
         className="Paper"
         variant="elevation"
         elevation={3}
-        style={myTheme.palette.primaryGray}
+        cololr="primary"
       >
         <div className="title">
           <h1>Register</h1>
@@ -89,7 +89,7 @@ const Register = (props) => {
             variant="contained"
             className="Button"
             type="submit"
-            style={myTheme.palette.secondaryGray}
+            color="secondary"
             onClick={(e) => {
               registerToServer(history, username, password, apiURL);
             }}

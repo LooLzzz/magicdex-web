@@ -1,51 +1,44 @@
-import { login, register } from "@/logic/redux/reducerSlice";
-import { Button, Grid, Paper, TextField } from "@material-ui/core";
+import { login, register } from "@/Logic/redux/reducerSlice";
+import { Button, Grid, Paper, TextField, Link } from "@material-ui/core";
 import axios from "axios";
 import { connect, useDispatch, useSelector } from "react-redux";
-import { Redirect } from "react-router";
-import { Link } from "react-router-dom";
+import { useHistory } from "react-router";
 import "./Login.css";
 
 const loginToServer = async (dispatch, username, password, apiURL) => {
-  const body = JSON.stringify({ username, password });
-  const config = {
-    headers: {
-      "Content-Type": "application/json",
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Credentials": true
-    }
-  }
-  axios.post(apiURL + "auth/users", body, config).then(res => {
-    localStorage.setItem('username', res.data['username']);
-    localStorage.setItem('access-token', res.data['access-token']);
-    dispatch(login({ username, accessToken: res.data["access-token"] }));
+  const credentials = { username, password };
+  axios.post(
+    apiURL + 'auth/users',
+    credentials
+  )
+  .then( data => {
+    console.log(data["data"]);
+    // localStorage.setItem('access-token', data['access-token']);
+    // dispatch(
+    //   login({ username, accessToken: data['access-token'] })
+    // );
   })
-  .catch(e => {
-    if (e.response) {
-      console.log(e.response.status);
-      console.log(e.response.data);
-    }
-  })
-}
+  .catch( err => console.error(err) );
+};
 
 const Login = (props) => {
-  const myTheme = useSelector((state) => state.actions.themes.currentTheme);
+  const history = useHistory();
+  const myTheme = useSelector((state) => state.actions.theme.currentTheme);
   const apiURL = useSelector((state) => state.actions.apiURL);
   const stateUsername = useSelector((state) => state.actions.account.username);
+  if (stateUsername !== undefined) {
+    history.push("");
+  }
   const dispatch = useDispatch();
   let username = '';
   let password = '';
-  console.log('stateUsername', stateUsername);
-  if (stateUsername !== undefined) {
-    return <Redirect to="" />;
-  }
   return (
     <div className="LoginForm">
       <Paper
         className="Paper"
         variant="elevation"
         elevation={3}
-        style={myTheme.palette.primaryGray}
+        color="primary"
       >
         <div className="title">
           <h1>Login</h1>
@@ -80,7 +73,7 @@ const Login = (props) => {
             variant="contained"
             className="Button"
             type="submit"
-            style={myTheme.palette.secondaryGray}
+            color="secondary"
             onClick={(e) => {
               loginToServer(dispatch, username, password, apiURL);
             }}
@@ -89,7 +82,7 @@ const Login = (props) => {
           </Button>
         </div>
         <div className="register">
-          <Link to="/register">Don't have an account? Register</Link>
+          <Link href="/register">Already signed in?</Link>
         </div>
       </Paper>
     </div>

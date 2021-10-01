@@ -1,13 +1,20 @@
-import { getInitialTheme } from "@/themes/themes";
+import { getDarkTheme, getLightTheme } from "@/Themes";
 
-export default {
+const INITIAL_STATE = {
   apiURL: "https://magicdex-server.herokuapp.com/",
+  // apiURL: "localhost:5000/",
   account: {
     username: undefined,
     accessToken: undefined,
   },
   currentCollection: {},
-  themes: {
-    currentTheme: getInitialTheme(),
+  theme: {
+    currentTheme: getDarkTheme(),
+    // currentTheme: getLightTheme(),
   },
+  topMenu: {
+    currentTab: 0,
+  }
 };
+
+export default INITIAL_STATE;

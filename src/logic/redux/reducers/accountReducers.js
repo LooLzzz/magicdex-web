@@ -1,4 +1,4 @@
-export default {
+const accountReducers = {
     login: (state, action) => {
         let { username, accessToken } = action.payload;
         console.log(typeof(username), typeof(accessToken))
@@ -9,3 +9,5 @@ export default {
         state.account.accessToken = undefined
     }
 }
+
+export default accountReducers;

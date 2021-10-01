@@ -1,35 +1,44 @@
-import "./App.css";
-import TopMenu from "./components/TopMenu/TopMenu";
+import { Grid, CssBaseline, ThemeProvider } from "@material-ui/core";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import Collection from "./components/Collection/Collection";
-import { ThemeProvider } from "@material-ui/styles";
-import { useDispatch, useSelector } from "react-redux";
-import { Redirect, useHistory } from "react-router";
-import Login from "./components/Login/Login";
-import Register from "./components/Register/Register";
+import { connect } from "react-redux";
+import {  } from "@material-ui/core";
 
-function App() {
-  const myThemeState = useSelector(
-    (state) => state.actions.themes.currentTheme
-  );
-  let testTheme = {};
-  Object.assign(testTheme, myThemeState);
+import { Collection, TopMenu, Login, Register } from "@/Components"
+
+
+const mapStateToProps = (state) => {
+  return {
+    theme: state.actions.theme.currentTheme,
+  };
+};
+
+const App = (props) => {
+  const {
+    theme,
+  } = props;
+  
+  let currentTheme = {};
+  Object.assign(currentTheme, theme);
+  
   return (
-    <ThemeProvider theme={testTheme}>
+    <ThemeProvider theme={currentTheme}>
+      <CssBaseline />
       <Router>
-        <div className="TopMenu">
-          <TopMenu />
-        </div>
-        <div>
-          <Switch>
-            <Route path="/collection" exact component={Collection} />
-            <Route path="/login" exact component={Login} />
-            <Route path="/register" exact component={Register} />
-          </Switch>
-        </div>
+        <Grid container direction="column" style={{height:'100%'}}>
+          <Grid item xs={0}>
+            <TopMenu />
+          </Grid>
+          <Grid item>
+            <Switch>
+              <Route path="/collection" exact component={Collection} />
+              <Route path="/login" exact component={Login} />
+              <Route path="/register" exact component={Register} />
+            </Switch>
+          </Grid>
+        </Grid>
       </Router>
     </ThemeProvider>
   );
 }
 
-export default App;
+export default connect(mapStateToProps)(App);

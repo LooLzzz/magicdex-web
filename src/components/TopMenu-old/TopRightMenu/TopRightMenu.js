@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { useHistory } from "react-router";
 import "./TopRightMenu.css";
 import { useDispatch, useSelector } from "react-redux";
-import { logout } from "@/logic/redux/reducerSlice";
+import { logout } from "@/Logic/redux/reducerSlice";
 import { useState } from "react";
 
 const TopRightMenu = (props) => {
@@ -26,7 +26,7 @@ const TopRightMenu = (props) => {
     dispatch(logout());
   }
 
-  const myTheme = useSelector((state) => state.actions.themes.currentTheme);
+  const myTheme = useSelector((state) => state.actions.theme.currentTheme);
   const username = useSelector((state) => state.actions.account.username);
 
   const id = open ? 'popover' : undefined;
@@ -36,7 +36,7 @@ const TopRightMenu = (props) => {
       <Grid item>
         {username === undefined ? (
           <Link to="/login" className="Link">
-            <Button style={myTheme.palette.secondaryBlue} variant="contained">
+            <Button color="secondary" variant="contained">
               Login
             </Button>
           </Link>
@@ -45,7 +45,7 @@ const TopRightMenu = (props) => {
             <Chip
               id='usernameChip'
               label={username}
-              style={myTheme.palette.secondaryBlue}
+              color="secondary"
               onClick={(e) => setOpen(true)}
             />
             <Popover
@@ -64,7 +64,7 @@ const TopRightMenu = (props) => {
             >
               <Button
                 variant="contained"
-                style={myTheme.palette.secondaryBlue}
+                color="secondary"
                 onClick={handleLogoutClick}
               >
                 Logout
