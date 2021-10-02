@@ -76,7 +76,7 @@ const getDarkTheme = () =>
       },
       MuiCircularProgress: {
         circle: {
-          color: 'white'
+          color: 'white',
         },
       },
     },
@@ -99,6 +99,11 @@ const getLightTheme = () =>
 
     overrides: {
       ...sharedOverrides,
+      MuiIconButton: {
+        root: {
+          color: 'white',
+        }
+      },
     },
   });
 

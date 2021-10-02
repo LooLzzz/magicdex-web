@@ -1,4 +1,4 @@
-import { AppBar, Tabs, Tab, withStyles, withTheme, Grid, IconButton } from "@material-ui/core";
+import { AppBar, Tabs, Tab, withStyles, Grid, IconButton } from "@material-ui/core";
 import { Menu as MenuIcon } from "@material-ui/icons"
 import { connect } from "react-redux";
 import { useHistory } from "react-router";
@@ -8,13 +8,16 @@ import useStyles from "./styles";
 
 
 const mapStateToProps = (state) => ({
+  theme: state.actions.theme.currentTheme,
   username: state.actions.account.username,
   currentTab: state.actions.topMenu.currentTab,
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  login: (payload) => dispatch(login(payload)),
-  setCurrentTab: (payload) => dispatch(setCurrentTab(payload)),
+  'dispatch': {
+    login: (payload) => dispatch(login(payload)),
+    setCurrentTab: (payload) => dispatch(setCurrentTab(payload)),
+  }
 })
 
 const TopMenu = (props) => {
@@ -24,20 +27,13 @@ const TopMenu = (props) => {
     classes,
     // theme,
     currentTab,
-    setCurrentTab,
+    dispatch,
   } = props;
 
   //HANDLERS
-  const handleTabChange = (event, newValue) => {
-    setCurrentTab(newValue);
-    switch (newValue) {
-      default:
-        history.push("/");
-        break;
-      case 1:
-        history.push("/collection");
-        break;
-    }
+  const handleTabChange = (event, value) => {
+    // dispatch.setCurrentTab(value);
+    history.push( '/' + value )
   }
 
   //RENDER
@@ -47,13 +43,13 @@ const TopMenu = (props) => {
         <Grid container justifyContent='space-between'>
           <Grid item>
             <Tabs value={currentTab} onChange={handleTabChange}>
-              <Tab label="Home" value={0} />
-              <Tab label="Collection" value={1} />
+              <Tab label='Home' value='home' />
+              <Tab label='Collection' value='collection' />
             </Tabs>
           </Grid>
           <Grid item>
             <IconButton>
-              <MenuIcon />
+              <MenuIcon /> {/*TODO*/}
             </IconButton>
           </Grid>
         </Grid>
@@ -66,8 +62,6 @@ const TopMenu = (props) => {
 export default
   connect(mapStateToProps, mapDispatchToProps) (
     withStyles(useStyles) (
-      withTheme(
-        TopMenu
-      )
+      TopMenu
     )
   );
