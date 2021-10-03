@@ -7,7 +7,7 @@ import { useHistory } from 'react-router';
 import { TextValidator } from 'react-material-ui-form-validator';
 
 import { login, setCurrentTab } from '@/Logic/redux/reducerSlice'
-import { BaseForm } from './..'
+import { BaseForm } from '..'
 import useStyles from './styles'
 import { Box, Button, Grid, Typography } from '@material-ui/core';
 
