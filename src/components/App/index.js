@@ -1,11 +1,12 @@
-/* eslint-disable react-hooks/rules-of-hooks */
-import { Grid, CssBaseline, ThemeProvider, withStyles } from "@material-ui/core";
+// import { useEffect } from 'react';
+import { CssBaseline, ThemeProvider } from "@material-ui/core";
 import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-dom";
 import { connect } from "react-redux";
+import { makeStyles } from "@material-ui/styles";
 // import { useHistory } from 'react-router';
 
 import { Collection, TopMenu, Login, Register, Home } from "@/Components"
-import { setCurrentTab } from "@/Logic/redux/reducerSlice";
+// import { setCurrentTab } from "@/Logic/redux/reducerSlice";
 import useStyles from "./styles"
 
 
@@ -13,22 +14,15 @@ const mapStateToProps = (state) => ({
   theme: state.actions.theme.currentTheme,
 })
 
-const mapDispatchToProps = (dispatch) => ({
-  'dispatch': {
-    setCurrentTab: (payload) => dispatch(setCurrentTab(payload)),
-  }
-})
-
 
 const App = (props) => {
+  /** VARS **/
   // const history = useHistory()
   const {
     theme,
-    classes,
   } = props;
-  
-  let currentTheme = {};
-  Object.assign(currentTheme, theme);
+  const _theme = Object.assign({}, theme);
+  const classes = makeStyles(useStyles(_theme))();
 
   const routes = [
     {
@@ -72,15 +66,15 @@ const App = (props) => {
     },
   ];
 
+
+  /** RENDER **/
   return (
-    <ThemeProvider theme={currentTheme}>
+    <ThemeProvider theme={_theme}>
       <CssBaseline />
-      <Router>
-        <Grid container direction="column" className={classes.root}>
-          <Grid item xs={0}>
-            <TopMenu />
-          </Grid>
-          <Grid item className={classes.content}>
+      <div className={classes.root}>
+        <Router>
+          <TopMenu />
+          <div className={classes.content}>
             <Switch>
               {
                 routes.map( (item, i) => (
@@ -91,16 +85,11 @@ const App = (props) => {
                 ))
               }
             </Switch>
-          </Grid>
-        </Grid>
-      </Router>
+          </div>
+        </Router>
+      </div>
     </ThemeProvider>
   );
 }
 
-export default
-  connect(mapStateToProps, mapDispatchToProps) (
-    withStyles(useStyles) (
-      App
-    )
-  );
+export default connect(mapStateToProps)( App );

@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
-import { Typography, withStyles, Grid } from "@material-ui/core";
+import { Typography, Grid } from "@material-ui/core";
+import { withStyles } from "@material-ui/styles";
 import { connect } from "react-redux";
 import { useHistory } from "react-router";
 
@@ -42,13 +43,11 @@ const Home = (props) => {
 
   //RENDER
   return (
-    <Grid container>
-      <Grid item>
-        <Typography variant="h2">
-          Welcome Home
-        </Typography>
-      </Grid>
-    </Grid>
+    <div className={classes.root}>
+      <Typography variant="h2">
+        Welcome Home
+      </Typography>
+    </div>
   );
 };
 

@@ -1,6 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { createTheme } from "@material-ui/core/styles";
-import { colors } from "@material-ui/core";
+import { createTheme, colors } from "@material-ui/core";
 
 // SHARED VALUES
 const sharedOverrides = {
@@ -29,6 +28,13 @@ const sharedOverrides = {
   MuiPaper: {
     rounded: {
       borderRadius: "12.5px",
+    },
+  },
+  MuiListSubheader: {
+    root: {
+      display: 'flex',
+      alignItems: 'center',
+      columnGap: '0.6em',
     },
   },
 };

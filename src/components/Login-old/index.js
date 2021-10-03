@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 // import axios from "axios";
-import { withStyles, Button, TextField, Grid } from "@material-ui/core";
+import { Button, TextField, Grid } from "@material-ui/core";
+import { withStyles } from "@material-ui/styles";
 import { useHistory } from "react-router";
 import { connect } from "react-redux";
 
@@ -17,7 +18,7 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   dispatch: {
     login: (payload) => dispatch(login(payload)),
-    setCurrentTab: (payload) => dispatch(setCurrentTab(payload)),
+    setCurrentTab: (payload) => {dispatch(setCurrentTab(payload))},
   }
 })
 
