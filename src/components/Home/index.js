@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect } from 'react'
 import { Typography, Grid } from "@material-ui/core";
 import { withStyles } from "@material-ui/styles";
@@ -33,7 +34,7 @@ const Home = (props) => {
   useEffect( () => {
     //onMount
     dispatch.setCurrentTab('home')
-  })
+  }, [])
 
   //HANDLERS
   // const handleTabChange = (event, value) => {

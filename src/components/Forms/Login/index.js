@@ -47,10 +47,17 @@ const Login = (props) => {
   
 
   /** HANDLERS **/
+  function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
   const handleSubmit = async (e) => {
     //TODO: handle submit & open modal
-    console.log('login sumbit')
-    let flag = await formRef.current.isFormValid()
+    console.log('started login submit')
+    await sleep(1000)
+    console.log('started login ended')
+    
+    // let flag = await formRef.current.isFormValid()
   }
   
   const handleError = (e) => {
@@ -90,7 +97,7 @@ const Login = (props) => {
               value = {usernameInput}
               onChange = {(e) => setUsernameInput(e.target.value)}
               validators = {['required', `matchRegexp:^([A-Za-z0-9]|[-_.'])*$`]}
-              errorMessages = {['Username is required', `Username can only be alphanumerica and any of - _ . ' `]}
+              errorMessages = {['Field is required', 'Special characters are not allowed']}
             />
             <TextValidator
               id = 'password'
@@ -102,7 +109,7 @@ const Login = (props) => {
               value = {passwordInput}
               onChange = {(e) => setPasswordInput(e.target.value)}
               validators = {['required']}
-              errorMessages = {['Password is required']}
+              errorMessages = {['Field is required']}
             />
             {
               Object.values(errorMessages).map( (value, i) => (
@@ -113,7 +120,7 @@ const Login = (props) => {
             }
           </>
         )}
-        actions  = {() => (
+        actions = {() => (
           <Grid container spacing={1}>
             <Grid item>
               <Button
