@@ -1,11 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect } from 'react'
-import { Typography, Grid } from "@material-ui/core";
+import { Typography } from "@material-ui/core";
 import { withStyles } from "@material-ui/styles";
 import { connect } from "react-redux";
-import { useHistory } from "react-router";
+// import { useHistory } from "react-router";
 
-import { setCurrentTab } from "@/Logic/redux/reducerSlice";
+import { setCurrentTab } from "@/Logic/redux";
 import useStyles from "./styles";
 
 
@@ -23,7 +23,7 @@ const mapDispatchToProps = (dispatch) => ({
 
 const Home = (props) => {
   //VARS
-  const history = useHistory();
+  // const history = useHistory();
   const {
     classes,
     // theme,

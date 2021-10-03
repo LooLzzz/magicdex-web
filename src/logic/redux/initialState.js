@@ -1,16 +1,15 @@
-import { getDarkTheme, getLightTheme } from "@/Themes";
+import { getDarkTheme } from "@/Themes";
+// import { getLightTheme } from "@/Themes";
 
 const INITIAL_STATE = {
-  apiUrl: "https://magicdex-server.herokuapp.com/",
-  // apiUrl: "localhost:5000/",
   account: {
-    username: undefined,
-    accessToken: undefined,
+    username: null,
+    accessToken: null,
+    collection: {},
   },
-  currentCollection: {},
   theme: {
     currentTheme: getDarkTheme(),
-    // currentTheme: getLightTheme(),
+    currentThemeType: 'dark',
   },
   topMenu: {
     currentTab: 'home',

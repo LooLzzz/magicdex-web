@@ -6,7 +6,7 @@ import { makeStyles } from "@material-ui/styles";
 // import { useHistory } from 'react-router';
 
 import { Collection, TopMenu, Login, Register, Home } from "@/Components"
-// import { setCurrentTab } from "@/Logic/redux/reducerSlice";
+// import { setCurrentTab } from "@/Logic/redux";
 import useStyles from "./styles"
 
 

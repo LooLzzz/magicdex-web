@@ -1,5 +1,4 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable no-unused-vars */
 
 import { useEffect, useState, useRef } from 'react';
 import { AccountCircle as AccountCircleIcon } from '@material-ui/icons';
@@ -8,10 +7,10 @@ import { connect } from 'react-redux';
 import { useHistory } from 'react-router';
 import { TextValidator } from 'react-material-ui-form-validator';
 
-import { login, setCurrentTab } from '@/Logic/redux/reducerSlice'
+import { setActiveUser, setCurrentTab } from '@/Logic/redux'
 import { BaseForm } from './..'
 import useStyles from './styles'
-import { Box, Button, Grid, Typography } from '@material-ui/core';
+import { Button, Grid, Typography } from '@material-ui/core';
 
 const mapStateToProps = (state) => ({
   username: state.actions.account.username,
@@ -19,7 +18,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   dispatch: {
-    login: (payload) => dispatch(login(payload)),
+    setActiveUser: (payload) => dispatch(setActiveUser(payload)),
     setCurrentTab: (payload) => dispatch(setCurrentTab(payload)),
   }
 })
@@ -177,8 +176,8 @@ const Register = (props) => {
 };
 
 /** EXPORT **/
-export default withStyles(useStyles)(
-    connect(mapStateToProps, mapDispatchToProps)(
+export default withStyles(useStyles) (
+    connect(mapStateToProps, mapDispatchToProps) (
       Register
     )
 );

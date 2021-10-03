@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { Provider } from "react-redux";
 
-import { store } from "@/Logic";
+import { store } from "@/Logic/redux";
 import { App } from "@/Components";
 import './index.css';
 import 'fontsource-roboto';

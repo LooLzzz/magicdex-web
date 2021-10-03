@@ -6,7 +6,7 @@ import { connect } from "react-redux";
 import { useHistory } from "react-router";
 
 import MenuPopover from './MenuPopover'
-// import { setCurrentTab } from "@/Logic/redux/reducerSlice";
+import { toggleCurrentThemeType } from "@/Logic/redux";
 import useStyles from "./styles";
 
 
@@ -18,7 +18,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   'dispatch': {
-    // setCurrentTab: (payload) => dispatch(setCurrentTab(payload)),
+    toggleCurrentThemeType: (payload) => dispatch(toggleCurrentThemeType(payload)),
   }
 })
 
@@ -28,7 +28,7 @@ const TopMenu = (props) => {
   const {
     classes,
     // theme,
-    // dispatch,
+    dispatch,
     currentTab,
   } = props;
   const menuRef = useRef()
@@ -48,11 +48,24 @@ const TopMenu = (props) => {
   }
   
   const handleMenuItemClick = (e) => {
-    let value = e.currentTarget.attributes.goto?.value
-    if (value)
-      history.push(value)
+    let goto = e.currentTarget.attributes.goto?.value
+    let id = e.currentTarget.attributes.id?.value
     
-    menuRef.current?.closeMenu()
+    switch (id) {
+      default:
+        menuRef.current?.closeMenu()
+        break
+
+      case 'login':
+      case 'register':
+        menuRef.current?.closeMenu()
+        history.push(goto)
+        break
+      
+      case 'mode':
+        dispatch.toggleCurrentThemeType()
+        break
+    }
   }
 
 
@@ -73,10 +86,10 @@ const TopMenu = (props) => {
                   <AccountBoxIcon />
                   Account
               </ListSubheader>
-              <MenuItem onClick={handleMenuItemClick} goto='/login'>
+              <MenuItem onClick={handleMenuItemClick} id='login' goto='/login'>
                 Login
               </MenuItem>
-              <MenuItem onClick={handleMenuItemClick} goto='/register'>
+              <MenuItem onClick={handleMenuItemClick} id='register' goto='/register'>
                 Register
               </MenuItem>
               
@@ -86,8 +99,8 @@ const TopMenu = (props) => {
                 <SettingsIcon />
                 Settings
               </ListSubheader>
-              <MenuItem onClick={handleMenuItemClick}>
-                Darkmode Thingy Here
+              <MenuItem onClick={handleMenuItemClick} id='mode'>
+                Darkmode Thingy
               </MenuItem>
             </MenuPopover>
           </Grid>

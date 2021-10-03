@@ -5,7 +5,7 @@ import { withStyles } from "@material-ui/styles"
 import { connect } from 'react-redux'
 import { ValidatorForm } from 'react-material-ui-form-validator'
 
-// import { setCurrentTab } from "@/Logic/redux/reducerSlice"
+// import { setCurrentTab } from "@/Logic/redux"
 import useStyles from './styles'
 
 // function toTitleCase(str) {
@@ -74,11 +74,11 @@ const BaseForm = (props) => {
 
   /** HANDLERS **/
   const handleSubmit = async (e) => {
-    console.log('BaseForm submit started')
+    // console.log('BaseForm submit started')
     setIsLoading(true)
     await onSubmit(e)
     setIsLoading(false)
-    console.log('BaseForm submit ended')
+    // console.log('BaseForm submit ended')
   }
   
 

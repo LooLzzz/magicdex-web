@@ -1,4 +1,5 @@
-/* eslint-disable no-lone-blocks */
+/* eslint-disable react-hooks/exhaustive-deps */
+
 import { useEffect, useState, useRef } from 'react';
 // import { AccountCircle as AccountCircleIcon } from '@material-ui/icons';
 import { withStyles } from "@material-ui/styles"
@@ -6,7 +7,8 @@ import { connect } from 'react-redux';
 import { useHistory } from 'react-router';
 import { TextValidator } from 'react-material-ui-form-validator';
 
-import { login, setCurrentTab } from '@/Logic/redux/reducerSlice'
+import { MagicdexApi } from '@/Api'
+import { setActiveUser, setCurrentTab } from '@/Logic/redux'
 import { BaseForm } from './..'
 import useStyles from './styles'
 import { Box, Button, Grid, Typography } from '@material-ui/core';
@@ -18,7 +20,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   dispatch: {
-    login: (payload) => dispatch(login(payload)),
+    setActiveUser: (payload) => dispatch(setActiveUser(payload)),
     setCurrentTab: (payload) => dispatch(setCurrentTab(payload)),
   }
 })
@@ -33,31 +35,34 @@ const Login = (props) => {
   const {
     classes,
     dispatch,
+    username,
   } = props
 
 
   /** EFFECTS **/
   useEffect( () => {
     //onMount
-    if (props.username)
+    dispatch.setCurrentTab('login')
+  }, [])
+  
+  useEffect( async () => {
+    if (username)
       history.push('/')
-    else
-      dispatch.setCurrentTab('login')
-  })
+    else {
+      const res = await MagicdexApi.login() //try to login with `localStorage['access-token']`
+      if (res.status === 200) 
+        dispatch.setActiveUser(res.data)
+    }
+  }, [username])
   
 
   /** HANDLERS **/
-  function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
-
   const handleSubmit = async (e) => {
-    //TODO: handle submit & open modal
-    console.log('started login submit')
-    await sleep(1000)
-    console.log('started login ended')
-    
-    // let flag = await formRef.current.isFormValid()
+    const res = await MagicdexApi.login(usernameInput, passwordInput)
+    if (res.status === 200) {
+      const { data } = res
+      dispatch.setActiveUser(data)
+    }
   }
   
   const handleError = (e) => {
