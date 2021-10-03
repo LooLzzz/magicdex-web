@@ -1,17 +1,24 @@
 import { useRef } from "react";
-import { AppBar, Tabs, Tab, Grid, MenuItem, Divider, ListSubheader } from "@material-ui/core";
+import { AppBar, Tabs, Tab, Grid, MenuItem, Divider, ListSubheader, ListItem, ListItemText, ListItemSecondaryAction, Switch } from "@material-ui/core";
 import { withStyles } from "@material-ui/styles"
-import { Menu as MenuIcon, AccountBox as AccountBoxIcon, Settings as SettingsIcon } from "@material-ui/icons"
+import {
+  Menu as MenuIcon,
+  AccountCircle as AccountCircleIcon,
+  Settings as SettingsIcon,
+  // Brightness3 as DarkmodeIcon,
+  // BrightnessHigh as LightmodeIcon,
+} from '@material-ui/icons'
 import { connect } from "react-redux";
 import { useHistory } from "react-router";
 
 import MenuPopover from './MenuPopover'
-import { toggleCurrentThemeType } from "@/Logic/redux";
+import { setActiveUser, toggleCurrentThemeType } from "@/Logic/redux";
 import useStyles from "./styles";
 
 
 const mapStateToProps = (state) => ({
   theme: state.actions.theme.currentTheme,
+  themeType: state.actions.theme.currentThemeType,
   username: state.actions.account.username,
   currentTab: state.actions.topMenu.currentTab,
 })
@@ -19,6 +26,7 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   'dispatch': {
     toggleCurrentThemeType: (payload) => dispatch(toggleCurrentThemeType(payload)),
+    setActiveUser: (payload) => dispatch(setActiveUser(payload)),
   }
 })
 
@@ -30,6 +38,8 @@ const TopMenu = (props) => {
     // theme,
     dispatch,
     currentTab,
+    themeType,
+    username,
   } = props;
   const menuRef = useRef()
 
@@ -62,6 +72,12 @@ const TopMenu = (props) => {
         history.push(goto)
         break
       
+      case 'logout':
+        menuRef.current?.closeMenu()
+        dispatch.setActiveUser({})
+        localStorage.removeItem('access-token')
+        break
+
       case 'mode':
         dispatch.toggleCurrentThemeType()
         break
@@ -78,20 +94,25 @@ const TopMenu = (props) => {
             <Tabs value={currentTab} onChange={handleTabChange}>
               <Tab label='Home'       value='home' />
               <Tab label='Collection' value='collection' />
+              {/* { username ? <Tab label='Collection' value='collection' /> : [] } */}
             </Tabs>
           </Grid>
           <Grid item>
             <MenuPopover ref={menuRef} icon={() => <MenuIcon />}>
               <ListSubheader>
-                  <AccountBoxIcon />
-                  Account
+                <AccountCircleIcon />
+                {username ? username : 'Account'}
               </ListSubheader>
-              <MenuItem onClick={handleMenuItemClick} id='login' goto='/login'>
-                Login
-              </MenuItem>
-              <MenuItem onClick={handleMenuItemClick} id='register' goto='/register'>
-                Register
-              </MenuItem>
+              {
+                username
+                  ? 
+                    <MenuItem onClick={handleMenuItemClick} id='logout'>Logout</MenuItem>
+                  : 
+                  <>
+                    <MenuItem onClick={handleMenuItemClick} id='login' goto='/login'>Login</MenuItem>
+                    <MenuItem onClick={handleMenuItemClick} id='register' goto='/register'>Register</MenuItem>
+                  </>
+              }
               
               <Divider />
               
@@ -99,9 +120,25 @@ const TopMenu = (props) => {
                 <SettingsIcon />
                 Settings
               </ListSubheader>
-              <MenuItem onClick={handleMenuItemClick} id='mode'>
-                Darkmode Thingy
-              </MenuItem>
+              <ListItem style={{paddingTop:0, paddingBottom:0}}>
+                <ListItemText primary='Theme Type' secondary={themeType} />
+                {/* <ListItemIcon style={{justifyContent:'center'}}>
+                {
+                  themeType === 'dark'
+                    ? <DarkmodeIcon />
+                    : <LightmodeIcon />
+                }
+                </ListItemIcon> */}
+                <ListItemSecondaryAction>
+                  <Switch
+                    // color='primary'
+                    edge='end'
+                    checked={themeType === 'dark'}
+                    onChange={handleMenuItemClick}
+                    id='mode'
+                  />
+                </ListItemSecondaryAction>
+              </ListItem>
             </MenuPopover>
           </Grid>
         </Grid>

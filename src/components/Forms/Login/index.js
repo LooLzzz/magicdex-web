@@ -45,14 +45,9 @@ const Login = (props) => {
     dispatch.setCurrentTab('login')
   }, [])
   
-  useEffect( async () => {
+  useEffect( () => {
     if (username)
       history.push('/')
-    else {
-      const res = await MagicdexApi.login() //try to login with `localStorage['access-token']`
-      if (res.status === 200) 
-        dispatch.setActiveUser(res.data)
-    }
   }, [username])
   
 

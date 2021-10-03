@@ -1,4 +1,6 @@
-// import { useEffect } from 'react';
+/* eslint-disable react-hooks/exhaustive-deps */
+
+import { useEffect } from 'react';
 import { CssBaseline, ThemeProvider } from "@material-ui/core";
 import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-dom";
 import { connect } from "react-redux";
@@ -6,12 +8,20 @@ import { makeStyles } from "@material-ui/styles";
 // import { useHistory } from 'react-router';
 
 import { Collection, TopMenu, Login, Register, Home } from "@/Components"
-// import { setCurrentTab } from "@/Logic/redux";
+import { MagicdexApi } from "@/Api"
+import { setActiveUser } from "@/Logic/redux";
 import useStyles from "./styles"
 
 
 const mapStateToProps = (state) => ({
   theme: state.actions.theme.currentTheme,
+  username: state.actions.account.username,
+})
+
+const mapDispatchToProps = (dispatch) => ({
+  dispatch: {
+    setActiveUser: (payload) => dispatch(setActiveUser(payload)),
+  }
 })
 
 
@@ -19,7 +29,9 @@ const App = (props) => {
   /** VARS **/
   // const history = useHistory()
   const {
+    dispatch,
     theme,
+    username,
   } = props;
   const _theme = Object.assign({}, theme);
   const classes = makeStyles(useStyles(_theme))();
@@ -67,6 +79,18 @@ const App = (props) => {
   ];
 
 
+  /** EFFECTS **/
+  useEffect( () => {
+    if (!username) {
+      MagicdexApi.login() //try to login with `localStorage['access-token']`
+        .then(res => {
+          if (res.status === 200) 
+            dispatch.setActiveUser(res.data)
+        })
+    }
+  }, [username])
+
+
   /** RENDER **/
   return (
     <ThemeProvider theme={_theme}>
@@ -92,4 +116,4 @@ const App = (props) => {
   );
 }
 
-export default connect(mapStateToProps)( App );
+export default connect(mapStateToProps, mapDispatchToProps)( App );

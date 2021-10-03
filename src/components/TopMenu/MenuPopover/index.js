@@ -2,11 +2,11 @@
 import { forwardRef, useImperativeHandle, useRef } from 'react'
 import { ClickAwayListener, IconButton, List, Paper, Popover } from '@material-ui/core'
 import { useState, useEffect } from 'react'
-// import { makeStyles, useTheme } from '@material-ui/styles'
+import { makeStyles, useTheme } from '@material-ui/styles'
 // import { connect } from 'react-redux'
 
 // import { setCurrentTab } from '@/Logic/redux'
-// import useStyles from './styles'
+import useStyles from './styles'
 
 
 const MenuPopover = forwardRef( (props, ref) => {
@@ -15,8 +15,8 @@ const MenuPopover = forwardRef( (props, ref) => {
   const [menuAnchor, setMenuAnchor] = useState(null)
   const menuOpen = Boolean(menuAnchor)
   const iconButtonRef = useRef()
-  // const theme = useTheme()
-  // const classes = makeStyles(useStyles(theme))();
+  const theme = useTheme()
+  const classes = makeStyles(useStyles(theme))();
   const {
     // classes,
     // dispatch,
@@ -54,24 +54,25 @@ const MenuPopover = forwardRef( (props, ref) => {
   /** RENDER **/
   return (
     <>
-      <IconButton ref={iconButtonRef} onClick={handleIconClick}>
+      <IconButton className={classes.icon} ref={iconButtonRef} onClick={handleIconClick}>
         {Icon}
       </IconButton>
       
       <Popover
+        className={classes.popover}
         open = {menuOpen}
         anchorEl = {menuAnchor}
         onClose = {handleMenuClose}
-        anchorOrigin={{
+        anchorOrigin = {{
           vertical: 'top',
           horizontal: 'left',
         }}
-        transformOrigin={{
+        transformOrigin = {{
           vertical: 'top',
           horizontal: 'right',
         }}
       >
-        <Paper>
+        <Paper className={classes.paper}>
           <ClickAwayListener onClickAway={handleMenuClose}>
             <List>
               {props.children}
