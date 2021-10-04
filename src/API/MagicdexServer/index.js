@@ -1,12 +1,15 @@
 import { apiURL } from "@/Config";
 import { login } from "@/logic/redux/reducerSlice";
 import axios from "axios";
+import { useDispatch } from "react-redux";
 
 const api = {
   authAPI: apiURL + "/auth",
   collectionAPI: apiURL + "/collections",
   collectionAllAPI: apiURL + "/collections/all",
 };
+
+const dispatch = useDispatch();
 
 //Private methods
 
@@ -21,7 +24,7 @@ const loginSuccessful = (res) => {
   accessToken = res.data["access-token"];
   localStorage.setItem("access-token", accessToken);
   localStorage.setItem("username", username);
-  login({ username, accessToken });
+  dispatch(login({ username, accessToken }));
   return true;
 };
 
@@ -269,4 +272,4 @@ const collections = {
 };
 
 /** EXPORT **/
-export default { auth };
+export default { auth, collections };
