@@ -15,9 +15,9 @@ export const reducerSlice = createSlice({
 });
 
 export const {
-  login,
-  logout,
+  setActiveUser,
   setCurrentTab,
+  toggleCurrentThemeType,
 } = reducerSlice.actions;
 
 export default reducerSlice.reducer;

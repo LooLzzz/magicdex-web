@@ -1,7 +1,8 @@
 /* eslint-disable no-unused-vars */
 import { createTheme, colors } from "@material-ui/core";
+const baseTheme = createTheme()
 
-// SHARED VALUES
+/** SHARED VALUES **/
 const sharedOverrides = {
   MuiCssBaseline: {
     "@global": {
@@ -16,6 +17,9 @@ const sharedOverrides = {
       },
       "a:hover": {
         textDecoration: "underline",
+      },
+      ".hidden": {
+        display: "none",
       },
     },
   },
@@ -37,21 +41,29 @@ const sharedOverrides = {
       columnGap: '0.6em',
     },
   },
+  MuiListItem: {
+    secondaryAction: {
+      paddingRight: baseTheme.spacing(8),
+    },
+  },
 };
 
-// DARK THEME
-const darkTable = { divider: '#424242' }
+
+/** DARK THEME **/
 const darkPrimary = {
   main: '#2D5295',
   // main: '#2D4583',
   // main: '#404664',
 }
 const darkSecondary = {
+  // main: '#BF9EEE',
+  // main: '#8A8FEE',
   main: '#DA7B08',
   // main: '#F3533B',
   // main: '#FA9F42',
   // main: '#F56C40',
   // main: colors.orange['900'],
+  // main: colors.deepPurple['200'],
 }
 
 const getDarkTheme = () =>
@@ -59,7 +71,9 @@ const getDarkTheme = () =>
     palette:
     {
       type: 'dark',
-      table: { ...darkTable },
+      table: {
+        divider: '#424242',
+      },
       primary: { ...darkPrimary },
       secondary: { ...darkSecondary },
     },
@@ -75,11 +89,6 @@ const getDarkTheme = () =>
           },
         },
       },
-      MuiTypography: {
-        root: {
-          color: 'white',
-        },
-      },
       MuiCircularProgress: {
         circle: {
           color: 'white',
@@ -88,7 +97,8 @@ const getDarkTheme = () =>
     },
   });
 
-// LIGHT THEME
+
+/** LIGHT THEME **/
 const lightTable = { divider: 'rgba(150, 150, 150, 0.75)' }
 const lightBackground = {
   default: '#D5D5D5',
@@ -112,5 +122,6 @@ const getLightTheme = () =>
       },
     },
   });
+
 
 export { getDarkTheme, getLightTheme };

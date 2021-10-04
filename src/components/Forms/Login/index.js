@@ -1,4 +1,5 @@
-/* eslint-disable no-lone-blocks */
+/* eslint-disable react-hooks/exhaustive-deps */
+
 import { useEffect, useState, useRef } from 'react';
 // import { AccountCircle as AccountCircleIcon } from '@material-ui/icons';
 import { withStyles } from "@material-ui/styles"
@@ -6,19 +7,20 @@ import { connect } from 'react-redux';
 import { useHistory } from 'react-router';
 import { TextValidator } from 'react-material-ui-form-validator';
 
-import { login, setCurrentTab } from '@/Logic/redux/reducerSlice'
-import { BaseForm } from '..'
+import { MagicdexApi } from '@/Api'
+import { setActiveUser, setCurrentTab } from '@/Logic/redux'
+import { BaseForm } from './..'
 import useStyles from './styles'
 import { Box, Button, Grid, Typography } from '@material-ui/core';
 
 
 const mapStateToProps = (state) => ({
-  username: state.actions.account.username,
+  username: state.actions.activeUser.username,
 })
 
 const mapDispatchToProps = (dispatch) => ({
   dispatch: {
-    login: (payload) => dispatch(login(payload)),
+    setActiveUser: (payload) => dispatch(setActiveUser(payload)),
     setCurrentTab: (payload) => dispatch(setCurrentTab(payload)),
   }
 })
@@ -33,24 +35,29 @@ const Login = (props) => {
   const {
     classes,
     dispatch,
+    username,
   } = props
 
 
   /** EFFECTS **/
   useEffect( () => {
     //onMount
-    if (props.username)
+    dispatch.setCurrentTab('login')
+  }, [])
+  
+  useEffect( () => {
+    if (username)
       history.push('/')
-    else
-      dispatch.setCurrentTab('login')
-  })
+  }, [username])
   
 
   /** HANDLERS **/
   const handleSubmit = async (e) => {
-    //TODO: handle submit & open modal
-    console.log('login sumbit')
-    let flag = await formRef.current.isFormValid()
+    const res = await MagicdexApi.login(usernameInput, passwordInput)
+    if (res.status === 200) {
+      const { data } = res
+      dispatch.setActiveUser(data)
+    }
   }
   
   const handleError = (e) => {
@@ -90,7 +97,7 @@ const Login = (props) => {
               value = {usernameInput}
               onChange = {(e) => setUsernameInput(e.target.value)}
               validators = {['required', `matchRegexp:^([A-Za-z0-9]|[-_.'])*$`]}
-              errorMessages = {['Username is required', `Username can only be alphanumerica and any of - _ . ' `]}
+              errorMessages = {['Field is required', 'Special characters are not allowed']}
             />
             <TextValidator
               id = 'password'
@@ -102,7 +109,7 @@ const Login = (props) => {
               value = {passwordInput}
               onChange = {(e) => setPasswordInput(e.target.value)}
               validators = {['required']}
-              errorMessages = {['Password is required']}
+              errorMessages = {['Field is required']}
             />
             {
               Object.values(errorMessages).map( (value, i) => (
@@ -113,7 +120,7 @@ const Login = (props) => {
             }
           </>
         )}
-        actions  = {() => (
+        actions = {() => (
           <Grid container spacing={1}>
             <Grid item>
               <Button

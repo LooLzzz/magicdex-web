@@ -1,16 +1,22 @@
 import { getDarkTheme, getLightTheme } from "@/Themes";
 
+/** LOCAL STORAGE **/
+let themeType = localStorage.getItem("themeType");
+let accessToken = localStorage.getItem("accessToken");
+
+themeType = themeType ? themeType : "dark";
+
+
+/** STATE **/
 const INITIAL_STATE = {
-  apiUrl: "https://magicdex-server.herokuapp.com/",
-  // apiUrl: "localhost:5000/",
-  account: {
-    username: undefined,
-    accessToken: undefined,
+  activeUser: {
+    username: null,
+    accessToken: accessToken,
+    collection: {},
   },
-  currentCollection: {},
   theme: {
-    currentTheme: getDarkTheme(),
-    // currentTheme: getLightTheme(),
+    currentTheme: themeType === 'dark' ? getDarkTheme() : getLightTheme(),
+    currentThemeType: themeType,
   },
   topMenu: {
     currentTab: 'home',

@@ -1,11 +1,11 @@
 /* eslint-disable no-lone-blocks */
 import { useEffect, useState } from 'react'
-import { Paper, Divider, Typography } from '@material-ui/core'
+import { Paper, Divider, Typography, Dialog, DialogContent, CircularProgress } from '@material-ui/core'
 import { withStyles } from "@material-ui/styles"
 import { connect } from 'react-redux'
 import { ValidatorForm } from 'react-material-ui-form-validator'
 
-// import { setCurrentTab } from "@/Logic/redux/reducerSlice"
+// import { setCurrentTab } from "@/Logic/redux"
 import useStyles from './styles'
 
 // function toTitleCase(str) {
@@ -26,42 +26,68 @@ const BaseForm = (props) => {
   /** VARS **/
   const {
     classes,
+    validationRules,
     // dispatch,
+    header,
+    icon,
+    content,
+    actions,
+    onSubmit,
+    onError,
+    formRef,
+    ...rest
   } = props
-  const [Header,  setHeader]  = useState(() => ([]))
-  const [Icon,    setIcon]    = useState(() => ([]))
-  const [Content, setContent] = useState(() => ([]))
-  const [Actions, setActions] = useState(() => ([]))
+  const [Header,    setHeader]    = useState([])
+  const [Icon,      setIcon]      = useState([])
+  const [Content,   setContent]   = useState([])
+  const [Actions,   setActions]   = useState([])
+  const [isLoading, setIsLoading] = useState(false)
 
   
   /** EFFECTS **/
   useEffect( () => {
-    setHeader(props.header)
-  }, [props.header])
+    const rules = validationRules ? validationRules : {}
+    
+    Object.entries(rules).forEach(item => {
+      const [key, value] = item
+      if (!ValidatorForm.hasValidationRule(key))
+        ValidatorForm.addValidationRule(key, value)
+    })
+  }, [validationRules])
+
+  useEffect( () => {
+    setHeader(header)
+  }, [header])
   
   useEffect( () => {
-    setIcon(props.icon)
-  }, [props.icon])
+    setIcon(icon)
+  }, [icon])
   
   useEffect( () => {
-    setContent(props.content)
-  }, [props.content])
+    setContent(content)
+  }, [content])
   
   useEffect( () => {
-    setActions(props.actions)
-  }, [props.actions])
+    setActions(actions)
+  }, [actions])
 
 
   /** HANDLERS **/
-  { }
-
+  const handleSubmit = async (e) => {
+    // console.log('BaseForm submit started')
+    setIsLoading(true)
+    await onSubmit(e)
+    setIsLoading(false)
+    // console.log('BaseForm submit ended')
+  }
   
+
   /** RENDER **/
   return (
     <>
-      <Paper ref={props.formRef}
-        className={classes.root} elevation={8} style={props?.style}
-        component={ValidatorForm} onSubmit={props.onSubmit}
+      <Paper component={ValidatorForm} ref={formRef}
+        className={classes.root} elevation={8}
+        onSubmit={handleSubmit} onError={onError} {...rest}
       >
         <Typography variant='h4' className={classes.header}>
           <b>{Header}</b>
@@ -81,6 +107,12 @@ const BaseForm = (props) => {
           </div>
         </div>
       </Paper>
+
+      <Dialog open={isLoading}>
+        <DialogContent>
+          <CircularProgress />
+        </DialogContent>
+      </Dialog>
     </>
   )
 }

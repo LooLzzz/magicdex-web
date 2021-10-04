@@ -1,16 +1,17 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect } from 'react'
-import { Typography, Grid } from "@material-ui/core";
+import { Typography } from "@material-ui/core";
 import { withStyles } from "@material-ui/styles";
 import { connect } from "react-redux";
-import { useHistory } from "react-router";
+// import { useHistory } from "react-router";
 
-import { setCurrentTab } from "@/Logic/redux/reducerSlice";
+import { setCurrentTab } from "@/Logic/redux";
 import useStyles from "./styles";
 
 
 const mapStateToProps = (state) => ({
   theme: state.actions.theme.currentTheme,
-  username: state.actions.account.username,
+  username: state.actions.activeUser.username,
   currentTab: state.actions.topMenu.currentTab,
 })
 
@@ -22,7 +23,7 @@ const mapDispatchToProps = (dispatch) => ({
 
 const Home = (props) => {
   //VARS
-  const history = useHistory();
+  // const history = useHistory();
   const {
     classes,
     // theme,
@@ -33,7 +34,7 @@ const Home = (props) => {
   useEffect( () => {
     //onMount
     dispatch.setCurrentTab('home')
-  })
+  }, [])
 
   //HANDLERS
   // const handleTabChange = (event, value) => {

@@ -1,11 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
+
 import { forwardRef, useImperativeHandle, useRef } from 'react'
 import { ClickAwayListener, IconButton, List, Paper, Popover } from '@material-ui/core'
 import { useState, useEffect } from 'react'
 import { makeStyles, useTheme } from '@material-ui/styles'
 // import { connect } from 'react-redux'
 
-// import { setCurrentTab } from '@/Logic/redux/reducerSlice'
+// import { setCurrentTab } from '@/Logic/redux'
 import useStyles from './styles'
 
 
@@ -15,19 +16,16 @@ const MenuPopover = forwardRef( (props, ref) => {
   const [menuAnchor, setMenuAnchor] = useState(null)
   const menuOpen = Boolean(menuAnchor)
   const iconButtonRef = useRef()
-  const theme = useTheme()
-  const classes = makeStyles(useStyles(theme))();
+  const classes = makeStyles(useStyles(useTheme()))();
   const {
-    // classes,
-    // dispatch,
     icon,
   } = props
 
 
   /** EFFECTS **/
   useImperativeHandle(ref, () => ({
-    openMenu:  () => { setMenuAnchor(iconButtonRef) },
-    closeMenu: () => { setMenuAnchor(null) },
+    openMenu:  () => { handleMenuOpen(iconButtonRef) },
+    closeMenu: () => { handleMenuClose(null) },
   }))
 
   // useEffect(() => {
@@ -42,10 +40,14 @@ const MenuPopover = forwardRef( (props, ref) => {
   
   /** HANDLERS **/
   const handleIconClick = (e) => {
-    setMenuAnchor(e.currentTarget)
-    // e.stopPropagation()
+    handleMenuOpen(e.currentTarget)
+    e.stopPropagation()
   }
   
+  const handleMenuOpen = (menuAnnchor) => {
+    setMenuAnchor(menuAnnchor)
+  }
+
   const handleMenuClose = (e) => {
     setMenuAnchor(null)
   }
@@ -54,24 +56,25 @@ const MenuPopover = forwardRef( (props, ref) => {
   /** RENDER **/
   return (
     <>
-      <IconButton ref={iconButtonRef} onClick={handleIconClick}>
+      <IconButton className={classes.icon} ref={iconButtonRef} onClick={handleIconClick}>
         {Icon}
       </IconButton>
       
       <Popover
+        className={classes.popover}
         open = {menuOpen}
         anchorEl = {menuAnchor}
         onClose = {handleMenuClose}
-        anchorOrigin={{
+        anchorOrigin = {{
           vertical: 'top',
           horizontal: 'left',
         }}
-        transformOrigin={{
+        transformOrigin = {{
           vertical: 'top',
           horizontal: 'right',
         }}
       >
-        <Paper>
+        <Paper className={classes.paper}>
           <ClickAwayListener onClickAway={handleMenuClose}>
             <List>
               {props.children}

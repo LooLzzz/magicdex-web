@@ -4,7 +4,12 @@ const useStyles = (theme) => {
     // const mainSidesPadding = theme.spacing(10)
   
     return {
-      root: {
+      icon: {
+      },
+      popover: {
+      },
+      paper: {
+        minWidth: theme.spacing(20),
       },
       // contentShift: {
       //   transition: theme.transitions.create('margin', {

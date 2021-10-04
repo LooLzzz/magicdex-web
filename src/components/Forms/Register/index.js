@@ -1,5 +1,4 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable no-lone-blocks */
+/* eslint-disable react-hooks/exhaustive-deps */
 
 import { useEffect, useState, useRef } from 'react';
 import { AccountCircle as AccountCircleIcon } from '@material-ui/icons';
@@ -8,18 +7,18 @@ import { connect } from 'react-redux';
 import { useHistory } from 'react-router';
 import { TextValidator } from 'react-material-ui-form-validator';
 
-import { login, setCurrentTab } from '@/Logic/redux/reducerSlice'
-import { BaseForm } from '..'
+import { setActiveUser, setCurrentTab } from '@/Logic/redux'
+import { BaseForm } from './..'
 import useStyles from './styles'
-import { Box, Button, Grid, Typography } from '@material-ui/core';
+import { Button, Grid, Typography } from '@material-ui/core';
 
 const mapStateToProps = (state) => ({
-  username: state.actions.account.username,
+  username: state.actions.activeUser.username,
 });
 
 const mapDispatchToProps = (dispatch) => ({
   dispatch: {
-    login: (payload) => dispatch(login(payload)),
+    setActiveUser: (payload) => dispatch(setActiveUser(payload)),
     setCurrentTab: (payload) => dispatch(setCurrentTab(payload)),
   }
 })
@@ -42,17 +41,25 @@ const Register = (props) => {
     useEffect( () => {
       //onMount
       if (props.username)
+      {
         history.push('/')
-      else
-        dispatch.setCurrentTab('login')
-    })
+        return
+      }
+      
+      dispatch.setCurrentTab('login')
+    }, [])
 
 
     /** HANDLERS **/
+    function sleep(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
     const handleSubmit = async (e) => {
-      //TODO: handle submit & open modal
-      console.log('login sumbit')
-      let flag = await formRef.current.isFormValid()
+      //TODO:
+      console.log('started register submit')
+      await sleep(1000)
+      console.log('started register ended')
     }
 
     const handleError = (e) => {
@@ -68,12 +75,19 @@ const Register = (props) => {
       formRef.current.resetValidations()
     }
 
+    
+    /** VALIDATORS **/
+    const isPasswordMatch = (value) => (
+      value === passwordInput
+    )
+
 
     /** RENDER **/
     return (
       <Grid container className={classes.root}>
       <BaseForm
         formRef  = {formRef}
+        validationRules = {{ isPasswordMatch }}
         onSubmit = {handleSubmit}
         onError  = {handleError}
         instantValidate = {false}
@@ -94,7 +108,7 @@ const Register = (props) => {
               value = {usernameInput}
               onChange = {(e) => setUsernameInput(e.target.value)}
               validators = {['required', `matchRegexp:^([A-Za-z0-9]|[-_.'])*$`]}
-              errorMessages = {['Username is required', `Username can only be alphanumeric and any of - _ . ' `]}
+              errorMessages = {['Field is required', 'Special characters are not allowed']}
             />
             <TextValidator
               id = 'password'
@@ -107,11 +121,11 @@ const Register = (props) => {
               value = {passwordInput}
               onChange = {(e) => setPasswordInput(e.target.value)}
               validators = {['required', 'minStringLength:5']}
-              errorMessages = {['Password is required', 'Password is too short']}
+              errorMessages = {['Field is required', 'Password is too short']}
             />
             <TextValidator
-              id = 'password2'
-              name = 'password2'
+              id = 'password_repeat'
+              name = 'password_repeat'
               type = 'password'
               label = 'Repeat Password'
               variant = 'outlined'
@@ -120,7 +134,7 @@ const Register = (props) => {
               value = {passwordRepeatInput}
               onChange = {(e) => setPasswordRepeatInput(e.target.value)}
               validators = {['required', 'minStringLength:5', 'isPasswordMatch']}
-              errorMessages = {['Password is required', 'Password is too short', 'Passwords does not match']}
+              errorMessages = {['Field is required', 'Password is too short', 'Passwords does not match']}
             />
             {
               Object.values(errorMessages).map( (value, i) => (
@@ -131,7 +145,7 @@ const Register = (props) => {
             }
           </>
         )}
-        actions  = {() => (
+        actions = {() => (
           <Grid container spacing={1}>
             <Grid item>
               <Button
@@ -162,8 +176,8 @@ const Register = (props) => {
 };
 
 /** EXPORT **/
-export default withStyles(useStyles)(
-    connect(mapStateToProps, mapDispatchToProps)(
+export default withStyles(useStyles) (
+    connect(mapStateToProps, mapDispatchToProps) (
       Register
     )
 );
