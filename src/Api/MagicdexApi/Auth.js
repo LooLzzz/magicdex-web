@@ -1,10 +1,17 @@
 import axios from "axios";
 
-import { authHeadersDecorator, saveAuth, catchErrors } from './utils';
+import { authHeadersDecorator } from './utils';
 import { API_URL } from "@/Config";
 
 
 const ROUTE_URL = `${API_URL}/auth`;
+
+const saveAuth = (response) => {
+  if (response.data['access-token'])
+    localStorage.setItem("accessToken", response.data['access-token']);
+  
+    return response;
+}
 
 const Auth = {
   /**
@@ -17,12 +24,12 @@ const Auth = {
    */
   login: authHeadersDecorator( ({username, password, headers}) => {
     // const headers = { ...getAuthHeaders() };
-    const payload = { username, password };
+    let payload = { username, password };
     
     return axios
       .post(ROUTE_URL, payload, { headers })
       .then(response => saveAuth(response))
-      .catch(err => catchErrors(err));
+      // .catch(err => catchErrors(err));
   }),
 
   /**
@@ -37,7 +44,7 @@ const Auth = {
     return axios
       .put(ROUTE_URL, payload)
       .then(response => saveAuth(response))
-      .catch(err => catchErrors(err));
+      // .catch(err => catchErrors(err));
   },
 }
 

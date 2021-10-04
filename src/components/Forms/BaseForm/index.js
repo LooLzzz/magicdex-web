@@ -1,4 +1,3 @@
-/* eslint-disable no-lone-blocks */
 import { useEffect, useState } from 'react'
 import { Paper, Divider, Typography, Dialog, DialogContent, CircularProgress } from '@material-ui/core'
 import { withStyles } from "@material-ui/styles"

@@ -28,7 +28,7 @@ const mapDispatchToProps = (dispatch) => ({
 const Login = (props) => {
   /** VARS **/
   const history = useHistory()
-  const [errorMessages, setErrorMessages] = useState({})
+  const [errorMessages, setErrorMessages] = useState([])
   const [usernameInput, setUsernameInput] = useState('')
   const [passwordInput, setPasswordInput] = useState('')
   const formRef = useRef()
@@ -40,33 +40,27 @@ const Login = (props) => {
 
 
   /** EFFECTS **/
-  useEffect( () => {
+  useEffect(() => {
     //onMount
     dispatch.setCurrentTab('login')
   }, [])
-  
-  useEffect( () => {
+
+  useEffect(() => {
     if (username)
       history.push('/')
   }, [username])
-  
+
 
   /** HANDLERS **/
-  const handleSubmit = async (e) => {
-    const res = await MagicdexApi.login(usernameInput, passwordInput)
-    if (res.status === 200) {
-      const { data } = res
-      dispatch.setActiveUser(data)
+  const handleSubmit = (e) => {
+    MagicdexApi
+      .login({ username: usernameInput, password: passwordInput })
+      .then(res => dispatch.setActiveUser(res.data))
+      .catch(err => setErrorMessages('Username not found'))
     }
-  }
-  
-  const handleError = (e) => {
-    //TODO
-    console.log('login error')
-  }
-  
+
   const handleClear = (e) => {
-    setErrorMessages({})
+    setErrorMessages([])
     setUsernameInput('')
     setPasswordInput('')
     formRef.current.resetValidations()
@@ -77,73 +71,76 @@ const Login = (props) => {
   return (
     <Grid container className={classes.root}>
       <BaseForm
-        formRef  = {formRef}
-        onSubmit = {handleSubmit}
-        onError  = {handleError}
-        instantValidate = {false}
-        
-        header   = 'Login'
+        formRef={formRef}
+        onSubmit={handleSubmit}
+        instantValidate={false}
+
+        header='Login'
         // icon     = {() => <AccountCircleIcon fontSize='inherit' />}
-        icon     = {() => <Box style={{marginBottom:17}}>💩</Box>}
-        content  = {() => (
+        icon={() => <Box marginBottom={2}>💩</Box>}
+        content={() => (
           <>
             <TextValidator
-              id = 'username'
-              type = 'text'
-              label = 'Username'
-              variant = 'outlined'
-              size = 'small'
-              color = 'secondary'
-              value = {usernameInput}
-              onChange = {(e) => setUsernameInput(e.target.value)}
-              validators = {['required', `matchRegexp:^([A-Za-z0-9]|[-_.'])*$`]}
-              errorMessages = {['Field is required', 'Special characters are not allowed']}
+              id='username'
+              type='text'
+              label='Username'
+              variant='outlined'
+              size='small'
+              color='secondary'
+              value={usernameInput}
+              onChange={(e) => setUsernameInput(e.target.value)}
+              validators={['required', `matchRegexp:^([A-Za-z0-9]|[-_.'])*$`]}
+              errorMessages={['Field is required', 'Special characters are not allowed']}
             />
             <TextValidator
-              id = 'password'
-              type = 'password'
-              label = 'Password'
-              variant = 'outlined'
-              size = 'small'
-              color = 'secondary'
-              value = {passwordInput}
-              onChange = {(e) => setPasswordInput(e.target.value)}
-              validators = {['required']}
-              errorMessages = {['Field is required']}
+              id='password'
+              type='password'
+              label='Password'
+              variant='outlined'
+              size='small'
+              color='secondary'
+              value={passwordInput}
+              onChange={(e) => setPasswordInput(e.target.value)}
+              validators={['required']}
+              errorMessages={['Field is required']}
             />
             {
-              Object.values(errorMessages).map( (value, i) => (
-                <Typography key={i} variant='subtitle2' color='error'>
-                  {value}
-                </Typography>
-              ))
+              (errorMessages instanceof Array)
+                ? Object.values(errorMessages).map((value, i) => (
+                    <Typography key={i} variant='subtitle2' color='error'>
+                      { value[0].toUpperCase() + value.slice(1) }
+                    </Typography>
+                  ))
+                : <Typography variant='subtitle2' color='error'>
+                    { errorMessages[0].toUpperCase() + errorMessages.slice(1) }
+                  </Typography>
             }
           </>
         )}
-        actions = {() => (
+        actions={() => (
           <Grid container spacing={1}>
             <Grid item>
               <Button
-                size = "medium"
-                variant = "outlined"
-                onClick = {handleClear}
-                // disabled = {this.state.success}
+                size="medium"
+                variant="outlined"
+                onClick={handleClear}
+              // disabled = {this.state.success}
               >
                 Clear
               </Button>
             </Grid>
-            <Grid item style={{paddingRight:0}}>
+            <Grid item style={{ paddingRight: 0 }}>
               <Button
-                type = "submit"
-                size = "medium"
-                variant = "contained"
-                color = "primary"
-                // disabled = {this.state.success}
+                type="submit"
+                size="medium"
+                variant="contained"
+                color="primary"
+              // disabled = {this.state.success}
               >
                 Submit
               </Button>
+            </Grid>
           </Grid>
-        </Grid>
         )}
       />
     </Grid>
@@ -152,8 +149,8 @@ const Login = (props) => {
 
 /** EXPORT **/
 export default
-  withStyles(useStyles) (
-    connect(mapStateToProps, mapDispatchToProps) (
+  withStyles(useStyles)(
+    connect(mapStateToProps, mapDispatchToProps)(
       Login
     )
   )

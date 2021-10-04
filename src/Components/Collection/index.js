@@ -1,16 +1,17 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-lone-blocks */
+
 import { useEffect } from 'react'
 import { withStyles } from '@material-ui/styles'
 import { connect } from 'react-redux'
-// import { useHistory } from 'react-router'
+import { useHistory } from 'react-router'
 
 import useStyles from './styles'
 import { setCurrentTab } from '@/Logic/redux'
 
 
 const mapStateToProps = (state) => ({
-  
+  username: state.actions.activeUser.username,
 })
 
 const mapDispatchToProps = (dispatch) => ({
@@ -21,10 +22,11 @@ const mapDispatchToProps = (dispatch) => ({
 
 const Collection = (props) => {
   /** VARS **/
-  // const history = useHistory()
+  const history = useHistory()
   const {
     classes,
     dispatch,
+    username,
   } = props
 
 
@@ -33,6 +35,11 @@ const Collection = (props) => {
     //onMount
     dispatch.setCurrentTab('collection')
   }, [])
+  
+  useEffect(() => {
+    if (!username)
+      history.push('/')
+  }, [username])
   
 
   /** HANDLERS **/

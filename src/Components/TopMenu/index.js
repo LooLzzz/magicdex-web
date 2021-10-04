@@ -1,12 +1,14 @@
+/* eslint-disable no-unused-vars */
+
 import { createRef } from "react";
-import { AppBar, Tabs, Tab, Grid, MenuItem, Divider, ListSubheader, ListItem, ListItemText, ListItemSecondaryAction, Switch } from "@material-ui/core";
+import { AppBar, Tabs, Tab, Grid, MenuItem, Divider, ListSubheader, ListItem, ListItemText, ListItemSecondaryAction, Switch, ListItemIcon } from "@material-ui/core";
 import { withStyles } from "@material-ui/styles"
 import {
   Menu as MenuIcon,
   AccountCircle as AccountCircleIcon,
   Settings as SettingsIcon,
-  // Brightness3 as DarkmodeIcon,
-  // BrightnessHigh as LightmodeIcon,
+  Brightness3 as DarkmodeIcon,
+  BrightnessHigh as LightmodeIcon,
 } from '@material-ui/icons'
 import { connect } from "react-redux";
 import { useHistory } from "react-router";
@@ -73,7 +75,7 @@ const TopMenu = (props) => {
         break
       
       case 'logout':
-        menuRef.current?.closeMenu()
+        // menuRef.current?.closeMenu()
         dispatch.setActiveUser({})
         localStorage.removeItem('accessToken')
         break
@@ -123,7 +125,7 @@ const TopMenu = (props) => {
                 Settings
               </ListSubheader>
               <ListItem style={{paddingTop:0, paddingBottom:0}}>
-                <ListItemText primary='Theme Type' secondary={themeType} />
+                <ListItemText primary='Toggle Theme' secondary={themeType} />
                 {/* <ListItemIcon style={{justifyContent:'center'}}>
                 {
                   themeType === 'dark'

@@ -84,10 +84,8 @@ const App = (props) => {
   useEffect( () => {
     // onMount
     MagicdexApi.login() //try to login with `localStorage['accessToken']`
-      .then(res => {
-        if (res.status === 200)
-          dispatch.setActiveUser(res.data)
-      })
+      .then( res => dispatch.setActiveUser(res.data) )
+      .catch( err => {/*do nothing*/} )
   }, [])
 
 

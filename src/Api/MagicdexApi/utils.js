@@ -1,3 +1,4 @@
+import scryfall from "scryfall-client"
 
 const getAuthHeaders = () => {
   let token = localStorage.getItem("accessToken")
@@ -18,11 +19,6 @@ const authHeadersDecorator = (func) => (
   }
 )
 
-const saveAuth = (response) => {
-  localStorage.setItem("accessToken", response.data?.['access-token']);
-  return response;
-}
-
 const catchErrors = (error) => {
   if (error.response) 
     console.error('Request made and server responded', error.response);
@@ -34,10 +30,20 @@ const catchErrors = (error) => {
   return error;
 };
 
+const fetchScryfallCardData = async (card_ids) => {
+  const ids = (card_ids instanceof Array)
+    ?   card_ids.map( id => ({ id }) )
+    : [card_ids].map( id => ({ id }) )
+  
+  const data = await scryfall.getCollection(ids)
+  return (card_ids instanceof Array)
+    ? data
+    : data[0]
+}
 
 export {
   getAuthHeaders,
   authHeadersDecorator,
-  saveAuth,
   catchErrors,
+  fetchScryfallCardData,
 };
