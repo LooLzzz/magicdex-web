@@ -37,10 +37,10 @@ const BaseForm = (props) => {
     formRef,
     ...rest
   } = props
-  const [Header,    setHeader]    = useState(() => ([]))
-  const [Icon,      setIcon]      = useState(() => ([]))
-  const [Content,   setContent]   = useState(() => ([]))
-  const [Actions,   setActions]   = useState(() => ([]))
+  const [Header,    setHeader]    = useState([])
+  const [Icon,      setIcon]      = useState([])
+  const [Content,   setContent]   = useState([])
+  const [Actions,   setActions]   = useState([])
   const [isLoading, setIsLoading] = useState(false)
 
   

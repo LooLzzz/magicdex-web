@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { createRef } from "react";
 import { AppBar, Tabs, Tab, Grid, MenuItem, Divider, ListSubheader, ListItem, ListItemText, ListItemSecondaryAction, Switch } from "@material-ui/core";
 import { withStyles } from "@material-ui/styles"
 import {
@@ -19,7 +19,7 @@ import useStyles from "./styles";
 const mapStateToProps = (state) => ({
   theme: state.actions.theme.currentTheme,
   themeType: state.actions.theme.currentThemeType,
-  username: state.actions.account.username,
+  username: state.actions.activeUser.username,
   currentTab: state.actions.topMenu.currentTab,
 })
 
@@ -41,7 +41,7 @@ const TopMenu = (props) => {
     themeType,
     username,
   } = props;
-  const menuRef = useRef()
+  const menuRef = createRef()
 
 
   //EFFECTS
@@ -75,7 +75,7 @@ const TopMenu = (props) => {
       case 'logout':
         menuRef.current?.closeMenu()
         dispatch.setActiveUser({})
-        localStorage.removeItem('access-token')
+        localStorage.removeItem('accessToken')
         break
 
       case 'mode':
@@ -92,9 +92,11 @@ const TopMenu = (props) => {
         <Grid container justifyContent='space-between'>
           <Grid item>
             <Tabs value={currentTab} onChange={handleTabChange}>
-              <Tab label='Home'       value='home' />
-              <Tab label='Collection' value='collection' />
+              <Tab value='home'       label='Home' />
+              <Tab value='collection' label='Collection' />
               {/* { username ? <Tab label='Collection' value='collection' /> : [] } */}
+              <Tab value='login'      className='hidden' />
+              <Tab value='register'   className='hidden' />
             </Tabs>
           </Grid>
           <Grid item>

@@ -15,7 +15,7 @@ import { Box, Button, Grid, Typography } from '@material-ui/core';
 
 
 const mapStateToProps = (state) => ({
-  username: state.actions.account.username,
+  username: state.actions.activeUser.username,
 })
 
 const mapDispatchToProps = (dispatch) => ({

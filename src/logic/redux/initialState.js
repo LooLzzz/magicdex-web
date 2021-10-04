@@ -1,15 +1,22 @@
-import { getDarkTheme } from "@/Themes";
-// import { getLightTheme } from "@/Themes";
+import { getDarkTheme, getLightTheme } from "@/Themes";
 
+/** LOCAL STORAGE **/
+let themeType = localStorage.getItem("themeType");
+let accessToken = localStorage.getItem("accessToken");
+
+themeType = themeType ? themeType : "dark";
+
+
+/** STATE **/
 const INITIAL_STATE = {
-  account: {
+  activeUser: {
     username: null,
-    accessToken: null,
+    accessToken: accessToken,
     collection: {},
   },
   theme: {
-    currentTheme: getDarkTheme(),
-    currentThemeType: 'dark',
+    currentTheme: themeType === 'dark' ? getDarkTheme() : getLightTheme(),
+    currentThemeType: themeType,
   },
   topMenu: {
     currentTab: 'home',

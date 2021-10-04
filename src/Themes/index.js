@@ -18,6 +18,9 @@ const sharedOverrides = {
       "a:hover": {
         textDecoration: "underline",
       },
+      ".hidden": {
+        display: "none",
+      },
     },
   },
   MuiTextField: {

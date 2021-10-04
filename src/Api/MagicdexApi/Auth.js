@@ -13,7 +13,7 @@ const login = (username, password) => {
   return axios.post(ROUTE_URL, payload, { headers })
     .then(response => {
       if (response.data['access-token'])
-        localStorage.setItem('access-token', response.data['access-token']);
+        localStorage.setItem('accessToken', response.data['access-token']);
       
       return response;
     })

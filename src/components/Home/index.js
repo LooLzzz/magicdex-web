@@ -11,7 +11,7 @@ import useStyles from "./styles";
 
 const mapStateToProps = (state) => ({
   theme: state.actions.theme.currentTheme,
-  username: state.actions.account.username,
+  username: state.actions.activeUser.username,
   currentTab: state.actions.topMenu.currentTab,
 })
 

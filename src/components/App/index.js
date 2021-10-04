@@ -15,7 +15,8 @@ import useStyles from "./styles"
 
 const mapStateToProps = (state) => ({
   theme: state.actions.theme.currentTheme,
-  username: state.actions.account.username,
+  // accessToken: state.actions.activeUser.accessToken,
+  // username: state.actions.activeUser.username,
 })
 
 const mapDispatchToProps = (dispatch) => ({
@@ -31,7 +32,7 @@ const App = (props) => {
   const {
     dispatch,
     theme,
-    username,
+    // accessToken,
   } = props;
   const _theme = Object.assign({}, theme);
   const classes = makeStyles(useStyles(_theme))();
@@ -81,14 +82,13 @@ const App = (props) => {
 
   /** EFFECTS **/
   useEffect( () => {
-    if (!username) {
-      MagicdexApi.login() //try to login with `localStorage['access-token']`
-        .then(res => {
-          if (res.status === 200) 
-            dispatch.setActiveUser(res.data)
-        })
-    }
-  }, [username])
+    // onMount
+    MagicdexApi.login() //try to login with `localStorage['accessToken']`
+      .then(res => {
+        if (res.status === 200)
+          dispatch.setActiveUser(res.data)
+      })
+  }, [])
 
 
   /** RENDER **/

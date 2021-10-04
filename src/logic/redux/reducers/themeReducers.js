@@ -5,7 +5,8 @@ const themeReducers = {
   toggleCurrentThemeType: (state, action) => {
     let type = state.theme.currentThemeType;
     type = (type === "dark") ? "light" : "dark"; // toggle
-    
+    localStorage.setItem("themeType", type);
+
     state.theme = {
       ...state.theme,
       currentThemeType: type,

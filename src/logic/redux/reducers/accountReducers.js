@@ -2,8 +2,8 @@ const accountReducers = {
   setActiveUser: (state, action) => {
     let {username, accessToken} = action.payload;
     
-    state.account = {
-      ...state.account,
+    state.activeUser = {
+      ...state.activeUser,
       accessToken,
       username,
     };
