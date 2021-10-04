@@ -1,5 +1,5 @@
-import * as MagicdexApi from './MagicdexApi'
+import * as MagicdexServer from "./MagicdexApi";
 
 export {
-  MagicdexApi
+  MagicdexServer
 }

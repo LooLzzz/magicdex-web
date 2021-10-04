@@ -1,4 +1,4 @@
-import * as MagicdexServer from "./MagicdexServer";
+import * as MagicdexServer from "./MagicdexApi";
 
 export {
   MagicdexServer

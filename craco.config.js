@@ -12,10 +12,5 @@ module.exports = {
         '^@(.*)$': '<rootDir>/src$1'
       }
     },
-  },
-  // babel: {
-  //   plugins: [
-  //     ["@babel/plugin-proposal-decorators", { legacy: true }]
-  //   ]
-  // }
+  }
 };

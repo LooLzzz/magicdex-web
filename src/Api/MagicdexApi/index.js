@@ -1,7 +1,19 @@
-import { login, register } from './Auth';
-// import {  } as Collections from './Collections';
+import { login, register } from "./auth";
+import {
+  getAllCards, deleteAllCards,
+  getCards, updateCards, deleteCards,
+  getCardById, updateCardById, deleteCardById,
+} from "./collection";
 
 export {
   login,
-  register
+  register,
+  getCards,
+  updateCards,
+  deleteCards,
+  getAllCards,
+  deleteAllCards,
+  getCardById,
+  updateCardById,
+  deleteCardById,
 }
