@@ -1,5 +1,5 @@
-import MagicdexServer from "./MagicdexServer";
+import * as MagicdexServer from "./MagicdexServer";
 
 export {
-    MagicdexServer
+  MagicdexServer
 }

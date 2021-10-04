@@ -1,65 +1,43 @@
-import { apiURL } from "@/Config";
-import { login } from "@/Logic/redux/reducerSlice";
-import { connect } from "react-redux";
 
-const mapStateToProps = (state) => ({
-    
-})
+const getAuthHeaders = () => {
+  let token = localStorage.getItem("accessToken")
 
-const mapDispatchToProps = (dispatch) => ({
-    dispatch: {
-        login: (payload) => dispatch(login(payload))
+  return token ? { Authorization: `Bearer ${token}` } : {}
+}
+
+const authHeadersDecorator = (func) => (
+  function(args) {
+    args = {
+      ...args,
+      headers: {
+        ...args?.headers,
+        ...getAuthHeaders(),
+      },
     }
-})
+    return func(args)
+  }
+)
 
-const api = {
-    authAPI: apiURL + "/auth",
-    collectionAPI: apiURL + "/collections",
-    collectionAllAPI: apiURL + "/collections/all",
-  };
-  
-let dispatch;
-//Login
-
-const getAuthorizationToken = () => {
-  return "Bearer " + localStorage.getItem("access-token");
-};
-
-const loginSuccessful = (res) => {
-  // Any status code that is 2xx
-  let accessToken = res.data["access-token"];
-  let username = res.data["username"];
-  localStorage.setItem("access-token", accessToken);
-  localStorage.setItem("username", username);
-  dispatch(login({ username, accessToken }));
-  return true;
-};
-
-//Collections
-
-const returnRes = (res) => {
-  return res;
-};
-
-//Errors
+const saveAuth = (response) => {
+  localStorage.setItem("accessToken", response.data?.['access-token']);
+  return response;
+}
 
 const catchErrors = (error) => {
-  if (error.response) {
-    // Request made and server responded
-    console.log(error.response.data);
-    console.log(error.response.status);
-    console.log(error.response.headers);
-  } else if (error.request) {
-    // Request was made but no response was recieved
-    console.log(error.request);
-  } else {
-    // Something happened in setting up the request that triggered an Error
-    console.log("Error ", error.message);
-  }
-  return false;
+  if (error.response) 
+    console.error('Request made and server responded', error.response);
+  else if (error.request)
+    console.error('Request was made but no response was recieved', error.request);
+  else
+    console.error("Something happened in setting up the request that triggered an error", error.message);
+  
+  return error;
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)({ api, getAuthorizationToken, loginSuccessful, returnRes, catchErrors });
+
+export {
+  getAuthHeaders,
+  authHeadersDecorator,
+  saveAuth,
+  catchErrors,
+};
