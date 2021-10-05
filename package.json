@@ -13,6 +13,8 @@
     "axios": "^0.21.4",
     "craco": "0.0.3",
     "fontsource-roboto": "^4.0.0",
+    "lodash": "^4.17.21",
+    "notistack": "^1.0.10",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-material-ui-form-validator": "^2.1.4",

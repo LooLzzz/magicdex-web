@@ -38,7 +38,7 @@ const Auth = {
    * @param {String?} password
    * @returns Response Object
    */
-  register: (username, password) => {
+  register: ({username, password}) => {
     const payload = { username, password };
     
     return axios

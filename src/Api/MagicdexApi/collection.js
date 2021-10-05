@@ -12,18 +12,19 @@ const populateCardData = async (cards) => {
     (cards instanceof Array)
       ? cards.map(card => card.scryfall_id)
       : [cards.scryfall_id]
-  const populatedData = await fetchScryfallCardData(ids)
+  const scryfallData = await fetchScryfallCardData(ids)
 
-  const res =
+  const populatedCards =
     cards.map((card, i) => ({
+      ...scryfallData[i],
       ...card,
-      ...populatedData[i],
     }))
 
   return (cards instanceof Array)
-    ? res
-    : res[0]
+    ? populatedCards
+    : populatedCards[0]
 }
+
 
 const Collections = {
   /**

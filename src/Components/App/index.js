@@ -1,10 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
-import { useEffect } from 'react';
-import { CssBaseline, ThemeProvider } from "@material-ui/core";
+import { useLayoutEffect, createRef } from 'react';
+import { Button, CssBaseline, ThemeProvider } from "@material-ui/core";
+import { Close as CloseIcon } from '@material-ui/icons';
 import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-dom";
 import { connect } from "react-redux";
 import { makeStyles } from "@material-ui/styles";
+import { SnackbarProvider } from 'notistack';
 // import { useHistory } from 'react-router';
 
 import { Collection, TopMenu, Login, Register, Home } from "@/Components"
@@ -29,6 +31,7 @@ const mapDispatchToProps = (dispatch) => ({
 const App = (props) => {
   /** VARS **/
   // const history = useHistory()
+  const snackbarRef = createRef()
   const {
     dispatch,
     theme,
@@ -81,11 +84,15 @@ const App = (props) => {
 
 
   /** EFFECTS **/
-  useEffect( () => {
+  useLayoutEffect(() => {
     // onMount
     MagicdexApi.login() //try to login with `localStorage['accessToken']`
-      .then( res => dispatch.setActiveUser(res.data) )
-      .catch( err => {/*do nothing*/} )
+      .then(res => {
+        dispatch.setActiveUser(res.data)
+        // snackbarRef.current.enqueueSnackbar(`Welcome back ${res.data.username}`, { variant: 'info' })
+        snackbarRef.current.enqueueSnackbar('Welcome back', { variant: 'info' })
+      })
+      .catch(err => {/*do nothing*/ })
   }, [])
 
 
@@ -93,25 +100,40 @@ const App = (props) => {
   return (
     <ThemeProvider theme={_theme}>
       <CssBaseline />
-      <div className={classes.root}>
-        <Router>
-          <TopMenu />
-          <div className={classes.content}>
-            <Switch>
-              {
-                routes.map( (item, i) => (
-                  <item.parent
-                    key = {i}
-                    {...item.props}
-                  />
-                ))
-              }
-            </Switch>
-          </div>
-        </Router>
-      </div>
+      <SnackbarProvider
+        ref={snackbarRef}
+        autoHideDuration={3250}
+        maxSnack={3}
+        action={toastId => (
+          <Button
+            endIcon={<CloseIcon />}
+            onClick={e => snackbarRef.current.closeSnackbar(toastId)}
+            color="inherit"
+          >
+            Dismiss
+          </Button>
+        )}
+      >
+        <div className={classes.root}>
+          <Router>
+            <TopMenu />
+            <div className={classes.content}>
+              <Switch>
+                {
+                  routes.map((item, i) => (
+                    <item.parent
+                      key={i}
+                      {...item.props}
+                    />
+                  ))
+                }
+              </Switch>
+            </div>
+          </Router>
+        </div>
+      </SnackbarProvider>
     </ThemeProvider>
   );
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)( App );
+export default connect(mapStateToProps, mapDispatchToProps)(App);

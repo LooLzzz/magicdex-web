@@ -56,7 +56,7 @@ const MenuPopover = forwardRef( (props, ref) => {
   /** RENDER **/
   return (
     <>
-      <IconButton className={classes.icon} ref={iconButtonRef} onClick={handleIconClick}>
+      <IconButton color="inherit" className={classes.icon} ref={iconButtonRef} onClick={handleIconClick}>
         {Icon}
       </IconButton>
       
