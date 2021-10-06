@@ -2,7 +2,7 @@
 /* eslint-disable no-lone-blocks */
 
 import { useEffect, useLayoutEffect, useState } from 'react'
-import { Paper, Table, TableContainer, TableRow, TableHead, TableBody, TableCell, TableSortLabel, Box } from '@material-ui/core'
+import { Paper, Table, TableContainer, TableRow, TableHead, TableBody, TableCell, TableSortLabel, Box, TextField } from '@material-ui/core'
 import { withStyles } from '@material-ui/styles'
 import { connect } from 'react-redux'
 import { useHistory } from 'react-router'
@@ -29,6 +29,7 @@ const mapDispatchToProps = (dispatch) => ({
 const Collection = (props) => {
   /** VARS **/
   const history = useHistory()
+  const [collection, setCollection] = useState([])
   const [cards, setCards] = useState([])
   const [cardData, setCardData] = useState([])
   const {
@@ -61,7 +62,10 @@ const Collection = (props) => {
     else if (username) {
       MagicdexApi
         .getAllCards()
-        .then(res => setCards(res))
+        .then(res => {
+          setCollection(res);
+          setCards(res);
+        })
     }
   }, [username])
 
@@ -86,46 +90,53 @@ const Collection = (props) => {
 
 
   /** HANDLERS **/
-  { }
+  const searchHandler = (event) => {
+    const filteredCards = collection.filter((card) => {
+      return card.name.toLowerCase().includes(event.target.value.toLowerCase());
+    });
+    filteredCards.length > 0 ? setCards(filteredCards) : setCardData([]);
+  }
 
 
   /** RENDER **/
   return (
     <div className={classes.root}>
+      <TextField
+        id="filled-search"
+        label="Search Card"
+        type="search"
+        variant="filled"
+        className={classes.search}
+        onChange={searchHandler}
+      />
       <TableContainer component={Paper} className={classes.paper}>
-        <Table size='small'>
-
+        <Table size="small">
           <TableHead>
             <TableRow>
               <TableCell className={classes.iconCell} />
-              {
-                Object.values(rowHeaders).map((rowName, i) =>
-                  <TableCell key={i} align='center'>
-                    <TableSortLabel>
-                      {rowName}
-                    </TableSortLabel>
-                  </TableCell>
-                )
-              }
+              {Object.values(rowHeaders).map((rowName, i) => (
+                <TableCell key={i} align="center">
+                  <TableSortLabel>{rowName}</TableSortLabel>
+                </TableCell>
+              ))}
             </TableRow>
           </TableHead>
 
           <TableBody>
-            {
-              cardData.map((card, i) =>
-                <CollapsableRow
-                  key={i}
-                  rowContent={Object.values(_.pick(card, Object.keys(rowHeaders)))}
-                  collapseContent={<CardInfo data={card} />}
-                />
-              )
-            }
+            {cardData.map((card, i) => (
+              <CollapsableRow
+                key={i}
+                rowContent={Object.values(
+                  _.pick(card, Object.keys(rowHeaders))
+                )}
+                collapseContent={<CardInfo data={card} />}
+              />
+            ))}
           </TableBody>
-
         </Table>
       </TableContainer>
-    </div >
-  )
+    </div>
+  );
 }
 
 /** EXPORT **/
