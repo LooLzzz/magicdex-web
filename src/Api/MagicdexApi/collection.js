@@ -1,5 +1,5 @@
 import axios from "axios";
-import Scryfall from "scryfall-client";
+// import scryfall from "scryfall-client";
 
 import { API_URL } from "@/Config"
 import { authHeadersDecorator, catchErrors, fetchScryfallCardData } from "./utils";

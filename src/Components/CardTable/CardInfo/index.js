@@ -1,9 +1,9 @@
 /* eslint-disable no-lone-blocks */
 
-import { Grid } from '@material-ui/core'
+import { Grid, Box } from '@material-ui/core'
 import { withStyles } from '@material-ui/styles'
 import { connect } from 'react-redux'
-import _ from 'lodash'
+// import _ from 'lodash'
 
 import useStyles from './styles'
 
@@ -22,7 +22,7 @@ const CardInfo = (props) => {
   /** VARS **/
   const {
     classes,
-    data
+    collection,
     // dispatch,
   } = props
 
@@ -37,26 +37,20 @@ const CardInfo = (props) => {
 
   /** RENDER **/
   return (
-    <div className={classes.root}>
+    <Box container component={Grid} padding={2} spacing={1} className={classes.root}>
       {
-        Object
-          .entries(data)
-          .map(([key, value]) =>
-            <Grid container key={key}>
-              <Grid item align='center' xs={2}>
-                {key}
-              </Grid>
-              <Grid item align='center' xs={10}>
-                {
-                  (value instanceof Array)
-                    ? '[' + _.join(value, ',') + ']'
-                    : String(value)
-                }
-              </Grid>
+        Object.entries(collection).map(([key, value]) => (
+          <Grid item container xs={12} key={key}>
+            <Grid item xs={2}>
+              {key}
             </Grid>
-          )
+            <Grid item xs={10}>
+              {value.toString()}
+            </Grid>
+          </Grid>
+        ))
       }
-    </div>
+    </Box>
   )
 }
 

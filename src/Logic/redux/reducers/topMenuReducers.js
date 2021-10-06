@@ -1,6 +1,7 @@
 const topMenuReducers = {
   setCurrentTab: (state, action) => {
-    let tab = action.payload;
+    const { tab } = action.payload;
+    
     state.topMenu = {
       ...state.topMenu,
       currentTab: tab,

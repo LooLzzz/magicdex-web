@@ -2,18 +2,19 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
 import { useEffect, useState, useRef } from 'react';
+import { Box, Button, Grid, Typography } from '@material-ui/core';
 import { AccountCircle as AccountCircleIcon } from '@material-ui/icons';
 import { withStyles } from "@material-ui/styles"
 import { connect } from 'react-redux';
 import { useHistory } from 'react-router';
 import { TextValidator } from 'react-material-ui-form-validator';
 import { useSnackbar } from 'notistack'
+import _ from 'lodash'
 
 import { MagicdexApi } from "@/Api"
 import { setActiveUser, setCurrentTab } from '@/Logic/redux'
 import { BaseForm } from './..'
 import useStyles from './styles'
-import { Box, Button, Grid, Typography } from '@material-ui/core';
 
 
 const mapStateToProps = (state) => ({
@@ -31,6 +32,7 @@ const Register = (props) => {
   /** VARS **/
   const history = useHistory()
   const { enqueueSnackbar } = useSnackbar()
+  const [isLoading, setIsLoading] = useState(false)
   const [errorMessages, setErrorMessages] = useState([])
   const [usernameInput, setUsernameInput] = useState('')
   const [passwordInput, setPasswordInput] = useState('')
@@ -47,7 +49,7 @@ const Register = (props) => {
   /** EFFECTS **/
   useEffect(() => {
     //onMount
-    dispatch.setCurrentTab('register')
+    dispatch.setCurrentTab({tab:'register'})
   }, [])
 
   useEffect(() => {
@@ -58,16 +60,31 @@ const Register = (props) => {
 
   /** HANDLERS **/
   const handleSubmit = (e) => {
+    setErrorMessages([])
+    setPasswordInput('')
+    setPasswordRepeatInput('')
+    setIsLoading(true)
+
     MagicdexApi
-      .register({username:usernameInput, password:passwordInput})
+      .register({ username: usernameInput, password: passwordInput })
       .then(res => {
         dispatch.setActiveUser(res.data)
         enqueueSnackbar('Successfully registered', { variant: 'success' })
       })
       .catch(err => {
-        setErrorMessages(err.response.data.msg)
-        enqueueSnackbar('Error while registering', { variant: 'error' })
+        const { msg } = err.response.data
+        const msgs = (msg instanceof Array) ? msg : [msg]
+
+        setErrorMessages(msgs)
+        enqueueSnackbar('Error registering', { variant: 'error' })
       })
+      .finally(() => {
+        setIsLoading(false)
+      })
+  }
+
+  const handleError = (e) => {
+    setErrorMessages([])
   }
 
   const handleClear = (e) => {
@@ -84,7 +101,7 @@ const Register = (props) => {
     value === passwordInputRef.current.props.value
   )
 
-  // TODO: fix `isPasswordMatch`
+
   /** RENDER **/
   return (
     <Grid container className={classes.root}>
@@ -92,6 +109,7 @@ const Register = (props) => {
         formRef={formRef}
         validationRules={{ isPasswordMatch }}
         onSubmit={handleSubmit}
+        onError={handleError}
         instantValidate={false}
 
         header='Signup'
@@ -100,6 +118,7 @@ const Register = (props) => {
         content={() => (
           <>
             <TextValidator
+              error={_.join(errorMessages, ';').includes('username')}
               id='username'
               name='username'
               type='text'
@@ -109,8 +128,9 @@ const Register = (props) => {
               color='secondary'
               value={usernameInput}
               onChange={(e) => setUsernameInput(e.target.value)}
-              validators={['required', `matchRegexp:^([A-Za-z0-9]|[-_.'])*$`]}
+              validators={['required', `matchRegexp:^[A-Za-z][A-Za-z0-9-_.]*$`]}
               errorMessages={['Field is required', 'Special characters are not allowed']}
+              autoComplete='new-username'
             />
             <TextValidator
               ref={passwordInputRef}
@@ -125,6 +145,7 @@ const Register = (props) => {
               onChange={(e) => setPasswordInput(e.target.value)}
               validators={['required', 'minStringLength:5']}
               errorMessages={['Field is required', 'Password is too short']}
+              autoComplete='new-password'
             />
             <TextValidator
               id='password_repeat'
@@ -138,18 +159,17 @@ const Register = (props) => {
               onChange={(e) => setPasswordRepeatInput(e.target.value)}
               validators={['required', 'minStringLength:5', 'isPasswordMatch']}
               errorMessages={['Field is required', 'Password is too short', 'Passwords does not match']}
+              autoComplete='new-password2'
             />
-            {
-              (errorMessages instanceof Array)
-                ? Object.values(errorMessages).map((value, i) => (
-                  <Typography key={i} variant='subtitle2' color='error'>
-                    {value[0].toUpperCase() + value.slice(1)}
-                  </Typography>
+            <Grid container direction='column'>
+              {
+                Object.values(errorMessages).map((value, i) => (
+                  <Grid item key={i} className={classes.errorMessages}>
+                    {value[0].toUpperCase() + value.slice(1)} {/* capitalize first letter */}
+                  </Grid>
                 ))
-                : <Typography variant='subtitle2' color='error'>
-                  {errorMessages[0].toUpperCase() + errorMessages.slice(1)}
-                </Typography>
-            }
+              }
+            </Grid>
           </>
         )}
         actions={() => (
@@ -159,7 +179,7 @@ const Register = (props) => {
                 size="medium"
                 variant="outlined"
                 onClick={handleClear}
-              // disabled = {this.state.success}
+                disabled={isLoading}
               >
                 Clear
               </Button>
@@ -170,7 +190,7 @@ const Register = (props) => {
                 size="medium"
                 variant="contained"
                 color="primary"
-              // disabled = {this.state.success}
+                disabled={isLoading}
               >
                 Submit
               </Button>

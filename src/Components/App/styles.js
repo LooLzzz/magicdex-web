@@ -36,7 +36,7 @@ const useStyles = (theme) => {
       // background: `linear-gradient(35deg, ${theme.palette.background.paper} 10%, ${theme.palette.background.default} 225%)`,
     },
     content: {
-      // flexGrow: 1,
+      flexGrow: 1,
       // maxWidth: '100wh',
       // maxWidth: '95%',
       // minHeight: '100vh',

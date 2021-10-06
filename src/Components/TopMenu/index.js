@@ -57,7 +57,7 @@ const TopMenu = (props) => {
 
   //HANDLERS
   const handleTabChange = (event, value) => {
-    // dispatch.setCurrentTab(value);
+    // dispatch.setCurrentTab({tab:value});
     history.push( '/' + value )
   }
   

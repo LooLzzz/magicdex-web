@@ -22,7 +22,7 @@ const sharedOverrides = {
       ".hidden": {
         display: "none",
       },
-      ".pointer": {
+      ".cursor-pointer": {
         cursor: "pointer",
       },
     },
@@ -80,6 +80,9 @@ const getDarkTheme = () =>
       },
       primary: { ...darkPrimary },
       secondary: { ...darkSecondary },
+      background: {
+        secondary: colors.grey['700'],
+      }
     },
 
     overrides:
@@ -103,18 +106,18 @@ const getDarkTheme = () =>
 
 
 /** LIGHT THEME **/
-const lightTable = { divider: 'rgba(150, 150, 150, 0.75)' }
-const lightBackground = {
-  default: '#D5D5D5',
-  paper: '#F0F0F0',
-}
-
 const getLightTheme = () =>
   createTheme({
     palette: {
       type: 'light',
-      table: { ...lightTable },
-      background: { ...lightBackground },
+      table: {
+        divider: 'rgba(150, 150, 150, 0.75)'
+      },
+      background: {
+        default: '#D5D5D5',
+        paper: '#F0F0F0',
+        secondary: colors.grey['A100'],
+      },
     },
 
     overrides: {

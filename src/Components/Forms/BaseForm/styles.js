@@ -23,8 +23,14 @@ const useStyles = (theme) => {
       // color: theme.palette.primary.light,
       zIndex: 1,
     },
-    divider: {
+    divider1: {
       bottom: `calc(${iconSize} - 0.55em)`,
+      marginBottom: theme.spacing(3),
+      width: `calc(100% + 2*${theme.spacing(3)}px)`,
+      position: "relative",
+      zIndex: 0,
+    },
+    divider2: {
       marginBottom: theme.spacing(3),
       width: `calc(100% + 2*${theme.spacing(3)}px)`,
       position: "relative",

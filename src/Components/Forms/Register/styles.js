@@ -11,6 +11,10 @@ const useStyles = (theme) => {
       display: 'flex',
       flexGrow: 1,
     },
+    errorMessages: {
+      color: theme.palette.error.main,
+      fontSize: '0.75rem',
+    },
     // paper: {
     //   padding: theme.spacing(3),
     //   display: 'flex',
