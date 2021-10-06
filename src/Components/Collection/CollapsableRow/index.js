@@ -3,6 +3,7 @@ import { TableRow, TableCell, Collapse, IconButton, Box } from '@material-ui/cor
 import { withStyles } from '@material-ui/styles'
 import { connect } from 'react-redux'
 import _ from 'lodash'
+import clsx from 'clsx'
 import {
   KeyboardArrowDown as KeyboardArrowDownIcon,
   KeyboardArrowUp as KeyboardArrowUpIcon
@@ -40,7 +41,7 @@ const CollapsableRow = (props) => {
   /** RENDER **/
   return (
     <>
-      <TableRow className={classes.root + ' pointer'} onClick={e => setIsOpen(!isOpen)}>
+      <TableRow className={clsx(classes.root, 'pointer')} onClick={e => setIsOpen(!isOpen)}>
         <TableCell>
           <IconButton size='small' onClick={e => setIsOpen(!isOpen)}>
             {
@@ -55,11 +56,13 @@ const CollapsableRow = (props) => {
             ? rowContent.map((item, index) => (
               <TableCell align='center' key={index}>
                 {
-                  (item instanceof Array)
-                    ? (item.length === 0)
-                      ? '-'
-                      : _.join(item, '; ')
-                    : String(item)
+                  (item instanceof Function)
+                    ? item()
+                    : (item instanceof Array)
+                      ? (item.length === 0)
+                        ? '-'
+                        : _.join(item, '; ')
+                      : String(item)
                 }
               </TableCell>
             ))

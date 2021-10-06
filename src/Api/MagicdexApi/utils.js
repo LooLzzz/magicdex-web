@@ -1,4 +1,5 @@
 import scryfall from "scryfall-client"
+import _ from "lodash"
 
 
 const Utils = {
@@ -32,15 +33,17 @@ const Utils = {
     return error;
   },
 
-  fetchScryfallCardData: async (card_ids) => {
-    const ids = (card_ids instanceof Array)
-      ? card_ids.map(id => ({ id }))
-      : [card_ids].map(id => ({ id }))
+  fetchScryfallCardData: async (cardInfo) => {
+    const all_sets = (await scryfall.getSets())
+    const setData = _.zipObjectDeep(all_sets.map(set => set.id), all_sets)
 
-    const data = await scryfall.getCollection(ids)
-    return (card_ids instanceof Array)
-      ? data
-      : data[0]
+    const card_ids = cardInfo.map(card => ({id: card.id}))
+    const cardData = await scryfall.getCollection(card_ids)
+    
+    return cardData.map(card => ({
+      ...card,
+      set_data: setData[card.set_id],
+    }))
   },
 }
 

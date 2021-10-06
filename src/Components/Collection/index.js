@@ -2,11 +2,12 @@
 /* eslint-disable no-lone-blocks */
 
 import { useEffect, useLayoutEffect, useState } from 'react'
-import { Paper, Table, TableContainer, TableRow, TableHead, TableBody, TableCell, TableSortLabel } from '@material-ui/core'
+import { Paper, Table, TableContainer, TableRow, TableHead, TableBody, TableCell, TableSortLabel, Box } from '@material-ui/core'
 import { withStyles } from '@material-ui/styles'
 import { connect } from 'react-redux'
 import { useHistory } from 'react-router'
 import _ from 'lodash';
+import clsx from 'clsx'
 
 import { MagicdexApi } from '@/Api'
 import CollapsableRow from './CollapsableRow'
@@ -35,20 +36,9 @@ const Collection = (props) => {
     dispatch,
     username,
   } = props
-  // const rowHeaders = {
-  //   name: 'name',
-  //   set_name: 'set name',
-  //   amount: 'amount',
-  //   signed: 'signed',
-  //   altered: 'altered',
-  //   condition: 'condition',
-  //   tag: 'tags',
-  //   foil: 'foil',
-  //   prices: 'price'
-  // }
   const rowHeaders = {
     name: 'name',
-    set_name: 'set name',
+    set: 'set',
     amount: 'amount',
     signed: 'signed',
     altered: 'altered',
@@ -66,9 +56,9 @@ const Collection = (props) => {
   }, [])
 
   useLayoutEffect(() => {
-    if (!username)
+    if (username === null)
       history.push('/')
-    else {
+    else if (username) {
       MagicdexApi
         .getAllCards()
         .then(res => setCards(res))
@@ -78,12 +68,15 @@ const Collection = (props) => {
   useEffect(() => {
     if (cards.length > 0) {
       const cardsWithPrice = cards.map(card => {
-        const { prices, foil, amount } = card
+        const { prices, foil, amount, set_data, rarity } = card
+        const set = set_data?.parent_set_code ? set_data.parent_set_code : set_data.code
         let price = Number(foil ? prices?.usd_foil : prices?.usd) * Number(amount)
         price = price > 0 ? price + '$' : '-'
+        
 
         return {
           ...card,
+          set: () => <i style={{fontSize:'1.5em'}} className={clsx('ss ss-fw', `ss-${rarity}`, `ss-${set}`)} />,
           price,
         }
       })

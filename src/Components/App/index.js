@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
-import { useLayoutEffect, createRef } from 'react';
+import { useEffect, createRef } from 'react';
 import { Button, CssBaseline, ThemeProvider } from "@material-ui/core";
 import { Close as CloseIcon } from '@material-ui/icons';
 import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-dom";
@@ -84,7 +84,7 @@ const App = (props) => {
 
 
   /** EFFECTS **/
-  useLayoutEffect(() => {
+  useEffect(() => {
     // onMount
     MagicdexApi.login() //try to login with `localStorage['accessToken']`
       .then(res => {
@@ -92,7 +92,7 @@ const App = (props) => {
         // snackbarRef.current.enqueueSnackbar(`Welcome back ${res.data.username}`, { variant: 'info' })
         snackbarRef.current.enqueueSnackbar('Welcome back', { variant: 'info' })
       })
-      .catch(err => {/*do nothing*/ })
+      .catch(err => dispatch.setActiveUser({username:null}))
   }, [])
 
 

@@ -78,7 +78,7 @@ const TopMenu = (props) => {
       
       case 'logout':
         // menuRef.current?.closeMenu()
-        dispatch.setActiveUser({})
+        dispatch.setActiveUser({username:null})
         enqueueSnackbar('Logged out', { variant: "info" })
         localStorage.removeItem('accessToken')
         break
