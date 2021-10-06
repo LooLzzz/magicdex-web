@@ -10,6 +10,7 @@ const useStyles = (theme) => {
       flexDirection: 'column',
       justifyContent: 'center',
       alignItems: 'center',
+      marginBottom: theme.spacing(5),
     }
   }
 }

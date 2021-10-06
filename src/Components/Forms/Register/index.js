@@ -7,6 +7,7 @@ import { withStyles } from "@material-ui/styles"
 import { connect } from 'react-redux';
 import { useHistory } from 'react-router';
 import { TextValidator } from 'react-material-ui-form-validator';
+import { useSnackbar } from 'notistack'
 
 import { MagicdexApi } from "@/Api"
 import { setActiveUser, setCurrentTab } from '@/Logic/redux'
@@ -29,6 +30,7 @@ const mapDispatchToProps = (dispatch) => ({
 const Register = (props) => {
   /** VARS **/
   const history = useHistory()
+  const { enqueueSnackbar } = useSnackbar()
   const [errorMessages, setErrorMessages] = useState([])
   const [usernameInput, setUsernameInput] = useState('')
   const [passwordInput, setPasswordInput] = useState('')
@@ -57,9 +59,15 @@ const Register = (props) => {
   /** HANDLERS **/
   const handleSubmit = (e) => {
     MagicdexApi
-      .register(usernameInput, passwordInput)
-      .then(res => dispatch.setActiveUser(res.data))
-      .catch(err => setErrorMessages(err.response.data.msg))
+      .register({username:usernameInput, password:passwordInput})
+      .then(res => {
+        dispatch.setActiveUser(res.data)
+        enqueueSnackbar('Successfully registered', { variant: 'success' })
+      })
+      .catch(err => {
+        setErrorMessages(err.response.data.msg)
+        enqueueSnackbar('Error while registering', { variant: 'error' })
+      })
   }
 
   const handleClear = (e) => {

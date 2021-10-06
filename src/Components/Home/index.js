@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
 import { useEffect } from 'react'
-import { Typography } from "@material-ui/core";
+import { Typography, Paper } from "@material-ui/core";
 import { withStyles } from "@material-ui/styles";
 import { connect } from "react-redux";
 // import { useHistory } from "react-router";
@@ -51,11 +51,15 @@ const Home = (props) => {
 
   //RENDER
   return (
-    <div className={classes.root}>
+    <Paper className={classes.root}>
+      <img src='/logo.png' width={window.screen.width*0.5} alt="home" />
       <Typography variant="h2">
-        Welcome Home
+        Welcome to Magicdex
+        
+      {/* <i className="ss ss-afr" /> */}
+
       </Typography>
-    </div>
+    </Paper>
   );
 };
 

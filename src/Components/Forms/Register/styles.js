@@ -1,6 +1,9 @@
-const useStyles = (theme) => ({
+const useStyles = (theme) => {
+  const topBottomPadding = theme.spacing(8)
+
+  return {
     root: {
-      minHeight: '80vh',
+      minHeight: `calc(100vh - 2*${topBottomPadding}px)`,
       // width: '40vw',
       // flexDirection: "column",
       justifyContent: "center",
@@ -16,6 +19,7 @@ const useStyles = (theme) => ({
     //   // flexDirection: "column",
     //   // flexGrow: 0.1,
     // },
-  })
-  
-  export default useStyles;
+  }
+}
+
+export default useStyles;

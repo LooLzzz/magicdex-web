@@ -22,6 +22,9 @@ const sharedOverrides = {
       ".hidden": {
         display: "none",
       },
+      ".pointer": {
+        cursor: "pointer",
+      },
     },
   },
   MuiTextField: {
@@ -116,11 +119,11 @@ const getLightTheme = () =>
 
     overrides: {
       ...sharedOverrides,
-      MuiIconButton: {
-        root: {
-          color: 'white',
-        }
-      },
+      // MuiIconButton: {
+      //   root: {
+      //     color: 'white',
+      //   }
+      // },
     },
   });
 

@@ -12,6 +12,7 @@ import {
 } from '@material-ui/icons'
 import { connect } from "react-redux";
 import { useHistory } from "react-router";
+import { useSnackbar } from "notistack";
 
 import MenuPopover from './MenuPopover'
 import { setActiveUser, toggleCurrentThemeType } from "@/Logic/redux";
@@ -35,6 +36,7 @@ const mapDispatchToProps = (dispatch) => ({
 const TopMenu = (props) => {
   //VARS
   const history = useHistory();
+  const { enqueueSnackbar } = useSnackbar();
   const {
     classes,
     // theme,
@@ -76,7 +78,8 @@ const TopMenu = (props) => {
       
       case 'logout':
         // menuRef.current?.closeMenu()
-        dispatch.setActiveUser({})
+        dispatch.setActiveUser({username:null})
+        enqueueSnackbar('Logged out', { variant: "info" })
         localStorage.removeItem('accessToken')
         break
 
@@ -93,7 +96,7 @@ const TopMenu = (props) => {
       <AppBar className={classes.appBar}>
         <Grid container justifyContent='space-between'>
           <Grid item>
-            <Tabs value={currentTab} onChange={handleTabChange}>
+            <Tabs variant='scrollable' value={currentTab} onChange={handleTabChange}>
               <Tab value='home'       label='Home' />
               <Tab value='collection' label='Collection' />
               {/* { username ? <Tab label='Collection' value='collection' /> : [] } */}

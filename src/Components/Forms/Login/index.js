@@ -6,6 +6,7 @@ import { withStyles } from "@material-ui/styles"
 import { connect } from 'react-redux';
 import { useHistory } from 'react-router';
 import { TextValidator } from 'react-material-ui-form-validator';
+import { useSnackbar } from 'notistack';
 
 import { MagicdexApi } from '@/Api'
 import { setActiveUser, setCurrentTab } from '@/Logic/redux'
@@ -28,6 +29,7 @@ const mapDispatchToProps = (dispatch) => ({
 const Login = (props) => {
   /** VARS **/
   const history = useHistory()
+  const { enqueueSnackbar } = useSnackbar();
   const [errorMessages, setErrorMessages] = useState([])
   const [usernameInput, setUsernameInput] = useState('')
   const [passwordInput, setPasswordInput] = useState('')
@@ -55,8 +57,14 @@ const Login = (props) => {
   const handleSubmit = (e) => {
     MagicdexApi
       .login({ username: usernameInput, password: passwordInput })
-      .then(res => dispatch.setActiveUser(res.data))
-      .catch(err => setErrorMessages('Username not found'))
+      .then(res => {
+        dispatch.setActiveUser(res.data)
+        enqueueSnackbar('Login successful', { variant: 'success' })
+      })
+      .catch(err => {
+        setErrorMessages('Username not found')
+        enqueueSnackbar('Login failed', { variant: 'error' })
+      })
     }
 
   const handleClear = (e) => {

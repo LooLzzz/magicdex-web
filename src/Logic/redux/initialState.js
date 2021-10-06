@@ -10,7 +10,7 @@ themeType = themeType ? themeType : "dark";
 /** STATE **/
 const INITIAL_STATE = {
   activeUser: {
-    username: null,
+    username: undefined,
     accessToken: accessToken,
     collection: {},
   },

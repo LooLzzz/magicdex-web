@@ -4,26 +4,51 @@ const useStyles = (theme) => {
   const topBottomPadding = theme.spacing(8)
 
   return {
+    '@global': {
+      '#root': {
+        // display: 'flex',
+        // justifyContent: 'center',
+        // minHeight: '100vh',
+        // maxHeight: '100vh',
+        // height: '100vh',
+        // minWidth: '100wh',
+        maxWidth: '100wh',
+        width: '100wh',
+        // background: theme.palette.background.default,
+        // background: `linear-gradient(35deg, ${theme.palette.background.default} 20%, ${theme.palette.background.paper} 175%)`,
+        // background: `linear-gradient(35deg, ${theme.palette.background.paper} 10%, ${theme.palette.background.default} 225%)`,
+        paddingTop: topBottomPadding,
+        // paddingBottom: topBottomPadding,
+        paddingLeft: leftRightPadding,
+        paddingRight: leftRightPadding,
+      }
+    },
+
     root: {
       display: 'flex',
-      minHeight: '100vh',
-      minWidth: '100wh',
-      maxWidth: '100wh',
+      justifyContent: 'center',
+      // minHeight: '100vh',
+      // maxHeight: '100vh',
+      // minWidth: '100wh',
+      // maxWidth: '100wh',
       // background: theme.palette.background.default,
-      background: `linear-gradient(35deg, ${theme.palette.background.default} 10%, ${theme.palette.background.paper} 225%)`,
+      // background: `linear-gradient(35deg, ${theme.palette.background.default} 20%, ${theme.palette.background.paper} 175%)`,
       // background: `linear-gradient(35deg, ${theme.palette.background.paper} 10%, ${theme.palette.background.default} 225%)`,
-      // background: 'linear-gradient(35deg, #D5D5D5 10%, #F0F0F0 50%)',
     },
     content: {
-      flexGrow: 1,
+      // flexGrow: 1,
+      // maxWidth: '100wh',
+      // maxWidth: '95%',
+      // minHeight: '100vh',
+      // maxHeight: `calc(100vh - ${topBottomPadding})`,
       textAlign: '-webkit-center',
       // display: 'flex',
       // justifyContent: 'center',
       // alignItems: 'center',
-      marginTop: topBottomPadding,
-      // marginBottom: topBottomPadding,
-      marginLeft: leftRightPadding,
-      marginRight: leftRightPadding,
+      // paddingTop: topBottomPadding,
+      // paddingBottom: topBottomPadding,
+      // paddingLeft: leftRightPadding,
+      // paddingRight: leftRightPadding,
       // boxShadow: theme.shadows[4]
     },
   }
