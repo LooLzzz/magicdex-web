@@ -18,10 +18,6 @@ const useStyles = (theme) => {
       // display: 'flex',
       // justifyContent: 'center',
     },
-    search: {
-      margin: "0 auto",
-      marginBottom: theme.spacing(2),
-    },
     paper: {
       // display: 'flex',
       // justifyContent: 'center',

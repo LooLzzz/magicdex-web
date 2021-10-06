@@ -12,6 +12,7 @@ import clsx from 'clsx'
 import { MagicdexApi } from '@/Api'
 import CollapsableRow from './CollapsableRow'
 import CardInfo from './CardInfo'
+import FilterCards from './FilterCards';
 import useStyles from './styles'
 import { setCurrentTab } from '@/Logic/redux'
 
@@ -101,14 +102,7 @@ const Collection = (props) => {
   /** RENDER **/
   return (
     <div className={classes.root}>
-      <TextField
-        id="filled-search"
-        label="Search Card"
-        type="search"
-        variant="filled"
-        className={classes.search}
-        onChange={searchHandler}
-      />
+      <FilterCards searchHandler={searchHandler}/>
       <TableContainer component={Paper} className={classes.paper}>
         <Table size="small">
           <TableHead>
