@@ -1,5 +1,5 @@
 /* eslint-disable no-lone-blocks */
-import { IconButton, InputAdornment, ListSubheader, TextField } from '@material-ui/core'
+import { Grid, IconButton, InputAdornment, ListSubheader, TextField } from '@material-ui/core'
 import FilterListIcon from '@material-ui/icons/FilterList';
 import { withStyles } from '@material-ui/styles'
 import { createRef } from 'react'
@@ -74,11 +74,47 @@ const FilterCards = (props) => {
             endAdornment: (
               <InputAdornment position="end">
                 <FilterPopover>
-                  {/* <ListSubheader>
-                    <AccountCircleIcon />
-                    {username ? username : "Account"}
+                  <ListSubheader>
+                    <Grid container spacing={2}>
+                      <Grid item>Card Name:</Grid>
+                      <Grid item>
+                        <TextField />
+                      </Grid>
+                    </Grid>
                   </ListSubheader>
-                  {username ? (
+                  <ListSubheader>
+                    <Grid container spacing={2}>
+                      <Grid item>Text:</Grid>
+                      <Grid item>
+                        <TextField />
+                      </Grid>
+                    </Grid>
+                  </ListSubheader>
+                  <ListSubheader>
+                    <Grid container spacing={2}>
+                      <Grid item>Type Line:</Grid>
+                      <Grid item>
+                        <TextField />
+                      </Grid>
+                    </Grid>
+                  </ListSubheader>
+                  <ListSubheader>
+                    <Grid container spacing={2}>
+                      <Grid item>Colors:</Grid>
+                      <Grid item>
+                        <TextField />
+                      </Grid>
+                    </Grid>
+                  </ListSubheader>
+                  <ListSubheader>
+                    <Grid container spacing={2}>
+                      <Grid item>Mana Cost:</Grid>
+                      <Grid item>
+                        <TextField />
+                      </Grid>
+                    </Grid>
+                  </ListSubheader>
+                  {/* {username ? (
                     <MenuItem onClick={handleMenuItemClick} id="logout">
                       Logout
                     </MenuItem>
@@ -111,15 +147,15 @@ const FilterCards = (props) => {
                     <ListItemText
                       primary="Toggle Theme"
                       secondary={themeType}
-                    /> */}
-                    {/* <ListItemIcon style={{justifyContent:'center'}}>
+                    />
+                    <ListItemIcon style={{justifyContent:'center'}}>
                 {
                   themeType === 'dark'
                     ? <DarkmodeIcon />
                     : <LightmodeIcon />
                 }
-                </ListItemIcon> */}
-                    {/* <ListItemSecondaryAction>
+                </ListItemIcon>
+                    <ListItemSecondaryAction>
                       <Switch
                         // color='primary'
                         edge="end"
