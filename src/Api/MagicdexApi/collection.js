@@ -20,6 +20,7 @@ const populateCardData = async (cards) => {
     cards.map((card, i) => ({
       ...scryfallData[i],
       ...card,
+      date_created: new Date(card.date_created),
     }))
 
   return (cards instanceof Array)

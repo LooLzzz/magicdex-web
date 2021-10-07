@@ -25,6 +25,12 @@ const sharedOverrides = {
       ".cursor-pointer": {
         cursor: "pointer",
       },
+      '.floating': {
+        // position: 'absolute',
+        // zIndex: '999',
+        maxWidth: baseTheme.spacing(25),
+        padding: `${baseTheme.spacing(0.5)}px ${baseTheme.spacing(1.25)}px ${baseTheme.spacing(0.5)}px ${baseTheme.spacing(1.25)}px`,
+      },
     },
   },
   MuiTextField: {
@@ -94,6 +100,11 @@ const getDarkTheme = () =>
           a: {
             color: darkSecondary.main,
           },
+          '.floating': {
+            ...sharedOverrides.MuiCssBaseline['.floating'],
+            backgroundColor: colors.grey['700'],
+            color: baseTheme.palette.getContrastText(colors.grey['700']),
+          }
         },
       },
       MuiCircularProgress: {
@@ -122,11 +133,16 @@ const getLightTheme = () =>
 
     overrides: {
       ...sharedOverrides,
-      // MuiIconButton: {
-      //   root: {
-      //     color: 'white',
-      //   }
-      // },
+      MuiCssBaseline: {
+        '@global': {
+          ...sharedOverrides.MuiCssBaseline,
+          '.floating': {
+            ...sharedOverrides.MuiCssBaseline['.floating'],
+            backgroundColor: colors.grey['A100'],
+            color: baseTheme.palette.getContrastText(colors.grey['A100']),
+          }
+        },
+      },
     },
   });
 

@@ -5,7 +5,9 @@ import { withStyles } from '@material-ui/styles'
 import { connect } from 'react-redux'
 // import _ from 'lodash'
 
+import { renderCell } from './../renders'
 import useStyles from './styles'
+
 
 
 const mapStateToProps = (state) => ({
@@ -45,7 +47,8 @@ const CardInfo = (props) => {
               {key}
             </Grid>
             <Grid item xs={10}>
-              {value.toString()}
+              {renderCell(collection, key)}
+              {/* {value.toString()} */}
             </Grid>
           </Grid>
         ))

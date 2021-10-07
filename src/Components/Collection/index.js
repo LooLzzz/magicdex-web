@@ -53,13 +53,9 @@ const Collection = (props) => {
     name: 'name',
     mana_cost: 'mana cost',
     type_line: 'type',
-    // rarity: 'rarity',
-    // signed: 'signed',
-    // altered: 'altered',
-    // condition: 'condition',
-    // tag: 'tags',
     foil: 'foil',
-    total_price: 'price (usd)'
+    total_price: 'price (usd)',
+    date_created: 'date added',
   }
 
 
@@ -127,14 +123,13 @@ const Collection = (props) => {
         </Grid>
       </Grid>
 
-
       <Grid container>
         <Hidden mdDown>
           <Grid item className={classes['image-container']}>
             <CardImage
               className={classes['card-image']}
               card={currentHoveringCard}
-              width={250}
+              width={225}
             />
           </Grid>
         </Hidden>

@@ -30,26 +30,35 @@ const CardTable = (props) => {
     onRowHover,
     // dispatch,
   } = props
-  const [sortBy, setSortByCol] = useState('total_price')
+  const [sortBy, setSortByCol] = useState()
   const [sortOrder, setSortOrder] = useState('desc')
   const [sortedData, setSortedData] = useState(collection)
 
 
   /** EFFECTS **/
   useEffect(() => {
-    let _sortBy; //= sortBy === 'mana_cost' ? 'cmc' : sortBy
+    let _sortBy //= sortBy === 'mana_cost' ? 'cmc' : sortBy
     switch (sortBy) {
       case 'mana_cost':
         _sortBy = 'cmc'
         break
+
       case 'total_price':
       case 'price':
         _sortBy = (card) => card.amount * Number(card.foil ? card.prices?.usd_foil : card.prices?.usd)
         break
+
       case 'type':
       case 'type_line':
         _sortBy = (card) => card.type_line.replace('Legendary ', '')
         break
+
+      case null:
+      case undefined:
+      case '':
+        _sortBy = (card) => card.date_created
+        break
+
       default:
         _sortBy = sortBy
         break
@@ -63,11 +72,22 @@ const CardTable = (props) => {
 
   /** HANDLERS **/
   const handleHeaderClick = (event, colName) => {
-    if (colName === sortBy)
-      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')
+    if (colName === sortBy) {
+      switch (sortOrder) {
+        case 'desc': //first click
+          setSortOrder('asc')
+          break
+
+        case 'asc': //second click
+        default:
+          setSortByCol('')
+          setSortOrder('desc')
+          break
+      }
+    }
     else {
       setSortByCol(colName)
-      setSortOrder('asc')
+      setSortOrder('desc')
     }
   }
 
