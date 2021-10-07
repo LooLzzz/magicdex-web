@@ -1,16 +1,17 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
 import { useEffect, useState } from 'react'
-import { TextField, Hidden, Grid } from '@material-ui/core'
+import { Hidden, Grid } from '@material-ui/core'
 import { withStyles } from '@material-ui/styles'
 import { connect } from 'react-redux'
 import { useHistory } from 'react-router'
 // import useMouse from '@react-hook/mouse-position'
-import _ from 'lodash';
+// import _ from 'lodash';
 // import clsx from 'clsx'
 
 import { setCurrentTab, setCurrentCollection } from '@/Logic/redux'
 import { MagicdexApi } from '@/Api'
+import FilteredDataProvider from './FilteredDataProvider'
 import CardImage from './CardImage'
 import { CardTable } from '@/Components'
 import useStyles from './styles'
@@ -30,16 +31,7 @@ const mapDispatchToProps = (dispatch) => ({
 
 const Collection = (props) => {
   /** VARS **/
-
-  // const tableContainerRef = useRef()
-  // const mouse = useMouse(tableContainerRef, {
-  //   enterDelay: 100,
-  //   leaveDelay: 100,
-  //   // fps: 10,
-  // })
   const history = useHistory()
-  const [cardsData, setCardsData] = useState([])
-  const [searchInput, setSearchInput] = useState('')
   const [currentHoveringCard, setCurrentHoveringCard] = useState()
   const {
     classes,
@@ -75,17 +67,6 @@ const Collection = (props) => {
     }
   }, [username])
 
-  useEffect(() => {
-    const filteredCards = _.filter(collection,
-      card => card.name.toLowerCase().includes(searchInput.toLowerCase())
-    )
-    filteredCards.length > 0 ? setCardsData(filteredCards) : setCardsData([]);
-  }, [searchInput])
-
-  useEffect(() => {
-    setCardsData(collection)
-  }, [collection])
-
 
   /** HANDLERS **/
   const handleRowHover = (card, i) => {
@@ -96,33 +77,6 @@ const Collection = (props) => {
   /** RENDER **/
   return (
     <div className={classes.root}>
-      <Grid container
-        className={classes.filtersContainer}
-        spacing={1}
-        alignItems="center"
-        justifyContent="center"
-      >
-        <Grid item xs={12}>
-          top thing 💁‍♂️
-        </Grid>
-        <Grid item xs={9}>
-          <TextField
-            id="filled-search"
-            size='small'
-            label="Search Card"
-            color="secondary"
-            type="search"
-            variant="filled"
-            value={searchInput}
-            className={classes.search}
-            onChange={e => setSearchInput(e.target.value)}
-          />
-        </Grid>
-        <Grid item xs={3}>
-          another thing idk 🤷‍♂️
-        </Grid>
-      </Grid>
-
       <Grid container>
         <Hidden mdDown>
           <Grid item className={classes['image-container']}>
@@ -135,11 +89,16 @@ const Collection = (props) => {
         </Hidden>
         <Grid item style={{ flexGrow: 1 }}>
           <div align='center' style={{ maxWidth: 'fit-content' }}>
-            <CardTable
-              onRowHover={handleRowHover}
-              columns={columns}
-              collection={cardsData}
-            />
+            <FilteredDataProvider
+              data={collection}
+              // filters={filters} //idk, get it from somewhere
+            >
+              <CardTable
+                onRowHover={handleRowHover}
+                columns={columns}
+                data={collection}
+              />
+            </FilteredDataProvider>
           </div>
         </Grid>
       </Grid>

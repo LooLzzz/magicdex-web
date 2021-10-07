@@ -25,14 +25,14 @@ const CardTable = (props) => {
   const {
     ref,
     classes,
-    collection,
+    data,
     columns,
     onRowHover,
     // dispatch,
   } = props
   const [sortBy, setSortByCol] = useState()
   const [sortOrder, setSortOrder] = useState('desc')
-  const [sortedData, setSortedData] = useState(collection)
+  const [sortedData, setSortedData] = useState(data)
 
 
   /** EFFECTS **/
@@ -65,9 +65,9 @@ const CardTable = (props) => {
     }
 
     setSortedData(
-      _.orderBy(collection, [_sortBy, 'name', 'collector_number'], [sortOrder])
+      _.orderBy(data, [_sortBy, 'name', 'collector_number'], [sortOrder])
     )
-  }, [collection, sortOrder, sortBy])
+  }, [data, sortOrder, sortBy])
 
 
   /** HANDLERS **/
@@ -122,9 +122,7 @@ const CardTable = (props) => {
           </TableRow>
         </TableHead>
 
-        <TableBody
-        // onMouseLeave={e => onRowHover(null)}
-        >
+        <TableBody /* onMouseLeave={e => onRowHover(null)} */ >
           {sortedData.map(card => (
             <CardRow
               onMouseEnter={e => onRowHover(card)}
