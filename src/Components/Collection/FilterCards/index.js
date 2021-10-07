@@ -5,6 +5,7 @@ import { createRef, useState } from 'react'
 import { connect } from 'react-redux'
 
 import FilterPopover from './FilterPopover';
+import { getRadioOptions, getTextOption } from './utils';
 import useStyles from './styles'
 
 
@@ -27,6 +28,8 @@ const FilterCards = (props) => {
   } = props;
   const filterRef = createRef();
   const [foil, setFoil] = useState('Both');
+  const [signed, setSigned] = useState('Both');
+  const [altered, setAltered] = useState('Both');
 
   /** EFFECTS **/
   {
@@ -79,48 +82,24 @@ const FilterCards = (props) => {
           endAdornment: (
             <InputAdornment position="end">
               <FilterPopover>
-                <ListSubheader>
-                  <Grid container spacing={2}>
-                    <Grid item>Text:</Grid>
-                    <Grid item>
-                      <TextField />
-                    </Grid>
-                  </Grid>
-                </ListSubheader>
-                <ListSubheader>
-                  <Grid container spacing={2}>
-                    <Grid item>Type Line:</Grid>
-                    <Grid item>
-                      <TextField />
-                    </Grid>
-                  </Grid>
-                </ListSubheader>
-                <ListSubheader>
-                  <Grid container spacing={2}>
-                    <Grid item>Colors:</Grid>
-                    <Grid item>
-                      <TextField />
-                    </Grid>
-                  </Grid>
-                </ListSubheader>
-                <ListSubheader>
-                  <Grid container spacing={2}>
-                    <Grid item>Mana Cost:</Grid>
-                    <Grid item>
-                      <TextField />
-                    </Grid>
-                  </Grid>
-                </ListSubheader>
-                <ListSubheader>
-                  <Grid container spacing={2}>
-                    <Grid item>Foil: </Grid>
-                    <Grid item>
-                      <ToggleButtonGroup>
+                {getTextOption("Text")}
+                {getTextOption("Type Line")}
+                {getTextOption("Colors")}
+                {getTextOption("Mana Cost")}
+                {getRadioOptions("Foil", handleRadioChange, foil, setFoil)}
+                {getRadioOptions(
+                  "Signed",
+                  handleRadioChange,
+                  signed,
+                  setSigned
+                )}
+                {getRadioOptions(
+                  "Altered",
+                  handleRadioChange,
+                  altered,
+                  setAltered
+                )}
 
-                      </ToggleButtonGroup>
-                    </Grid>
-                  </Grid>
-                </ListSubheader>
                 {/* {username ? (
                     <MenuItem onClick={handleMenuItemClick} id="logout">
                       Logout
