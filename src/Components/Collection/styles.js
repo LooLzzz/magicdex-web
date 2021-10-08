@@ -40,7 +40,7 @@ const useStyles = (theme) => {
     },
     'card-image': {
       position: 'sticky',
-      top: theme.spacing(10),
+      top: theme.spacing(8),
     },
     floating: {
       position: 'fixed',

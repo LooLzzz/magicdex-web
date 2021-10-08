@@ -16,8 +16,18 @@ const FilteredDataProvider = (props) => {
 
   /** EFFECTS **/
   useEffect(() => {
+    console.log('setFilteredData envoked with', { data, filters })
+
     setFilteredData(
-      _.filter(data, filters)
+      _.filter(data ?? [],
+        row => (
+          _.every(Object.entries(filters ?? {}),
+            ([key, value]) => (
+              (value instanceof Function)
+                ? value(row[key], row)
+                : row[key] === value
+            ))
+        ))
     )
   }, [filters, data])
 

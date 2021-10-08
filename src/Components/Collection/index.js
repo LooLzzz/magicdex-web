@@ -31,14 +31,15 @@ const mapDispatchToProps = (dispatch) => ({
 
 const Collection = (props) => {
   /** VARS **/
-  const history = useHistory()
-  const [currentHoveringCard, setCurrentHoveringCard] = useState()
   const {
     classes,
     dispatch,
     username,
     collection,
   } = props
+  const history = useHistory()
+  const [currentHoveringCard, setCurrentHoveringCard] = useState()
+  const [filters, setFilters] = useState()
   const columns = {
     amount: 'amount',
     set: 'set',
@@ -55,16 +56,24 @@ const Collection = (props) => {
   useEffect(() => {
     //onMount
     dispatch.setCurrentTab({ tab: 'collection' })
+
+    //DEBUG
+    // setFilters({
+    //   // foil: v => v === true,
+    //   // foil: true,
+    //   // name: v => v.toLowerCase().includes('fire'),
+    //   // name: 'Fireball',
+    //   price: (v, item) => item.amount * item.prices.usd < 10,
+    // })
   }, [])
 
   useEffect(() => {
     if (username === null)
-      history.push('/')
-    else if (username) {
-      MagicdexApi
-        .getAllCards()
-        .then(res => dispatch.setCurrentCollection({ collection: res }))
-    }
+      return history.push('/')
+
+    MagicdexApi
+      .getAllCards()
+      .then(res => dispatch.setCurrentCollection({ collection: res }))
   }, [username])
 
 
@@ -91,7 +100,7 @@ const Collection = (props) => {
           <div align='center' style={{ maxWidth: 'fit-content' }}>
             <FilteredDataProvider
               data={collection}
-              // filters={filters} //idk, get it from somewhere
+              filters={filters}
             >
               <CardTable
                 onRowHover={handleRowHover}
