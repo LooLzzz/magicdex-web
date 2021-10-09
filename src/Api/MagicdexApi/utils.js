@@ -33,17 +33,37 @@ const Utils = {
     return error;
   },
 
+  // fetchScryfallSetData: async () => {
+  //   const all_sets = await scryfall.getSets()
+  //   // console.log(all_sets);
+
+  //   return all_sets.map(set => ({
+  //     code: set.parent_set_code || set.code, name: set.name,
+  //     setType: set.set_type
+  //   }))
+  // },
+
+  // fetchScryfallSymbolData: async () => {
+  //   const symbols = await scryfall.get("symbology");
+  //   const manaSymbols = symbols.filter((s) => s.represents_mana);
+  //   return manaSymbols.map((s) => ({
+  //     code: s.symbol,
+  //     name: s.english,
+  //     setType: "Symbols",
+  //   }));
+  // },
+
   fetchScryfallCardData: async (cardInfo) => {
-    const all_sets = (await scryfall.getSets())
+    const all_sets = await scryfall.getSets()
     const setData = _.zipObjectDeep(all_sets.map(set => set.id), all_sets)
 
-    const card_ids = cardInfo.map(card => ({id: card.id}))
-    const cardData = await scryfall.getCollection(card_ids)
-    
-    return cardData.map(card => ({
+    const card_ids = cardInfo.map(card => ({ id: card.id }))
+    const cardData = await scryfall.getCollection(card_ids);
+
+    return cardData.map((card) => ({
       ...card,
       set_data: setData[card.set_id],
-    }))
+    }));
   },
 }
 
@@ -53,5 +73,7 @@ export const {
   getAuthHeaders,
   authHeadersDecorator,
   catchErrors,
+  // fetchScryfallSetData,
+  // fetchScryfallSymbolData,
   fetchScryfallCardData,
 } = Utils;

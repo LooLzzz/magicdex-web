@@ -1,8 +1,15 @@
 import { login, register } from "./auth";
 import {
-  getAllCards, deleteAllCards,
-  getCards, updateCards, deleteCards,
-  getCardById, updateCardById, deleteCardById,
+  getAllCards,
+  deleteAllCards,
+  getCards,
+  updateCards,
+  deleteCards,
+  getCardById,
+  updateCardById,
+  deleteCardById,
+  // getAllSets,
+  // getAllSymbols,
 } from "./collection";
 
 export {
@@ -16,4 +23,6 @@ export {
   getCardById,
   updateCardById,
   deleteCardById,
+  // getAllSets,
+  // getAllSymbols,
 }

@@ -10,10 +10,11 @@ import { useHistory } from 'react-router'
 // import clsx from 'clsx'
 
 import { setCurrentTab, setCurrentCollection } from '@/Logic/redux'
+import { CardTable } from '@/Components'
 import { MagicdexApi } from '@/Api'
+import FilterFields from './FilterFields'
 import FilteredDataProvider from './FilteredDataProvider'
 import CardImage from './CardImage'
-import { CardTable } from '@/Components'
 import useStyles from './styles'
 
 
@@ -87,8 +88,14 @@ const Collection = (props) => {
   return (
     <div className={classes.root}>
       <Grid container>
+        <Grid item container xs={12}>
+          <Grid item xs={2} />
+          <Grid item xs={10}>
+            <FilterFields setFilters={setFilters} />
+          </Grid>
+        </Grid>
         <Hidden mdDown>
-          <Grid item className={classes['image-container']}>
+          <Grid item xs={2}>
             <CardImage
               className={classes['card-image']}
               card={currentHoveringCard}
@@ -96,7 +103,7 @@ const Collection = (props) => {
             />
           </Grid>
         </Hidden>
-        <Grid item style={{ flexGrow: 1 }}>
+        <Grid item xs={10}>
           <div align='center' style={{ maxWidth: 'fit-content' }}>
             <FilteredDataProvider
               data={collection}
