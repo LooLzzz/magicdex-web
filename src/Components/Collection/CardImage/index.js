@@ -19,7 +19,7 @@ const CardImage = (props) => {
 
   /** EFFECTS **/
   useEffect(() => {
-    const { image_uris, card_faces } = (card || { image_uris: { normal: '/cardback.png' } })
+    const { image_uris, card_faces } = (card ?? { image_uris: { normal: '/cardback.png' } })
 
     if (card_faces)
       setSrc(card_faces[0].image_uris.png)

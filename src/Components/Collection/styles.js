@@ -35,12 +35,10 @@ const useStyles = (theme) => {
     iconCell: {
       width: 0,
     },
-    'image-container': {
-      marginRight: theme.spacing(2),
-    },
     'card-image': {
       position: 'sticky',
       top: theme.spacing(8),
+      marginRight: theme.spacing(2),
     },
     floating: {
       position: 'fixed',

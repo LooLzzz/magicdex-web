@@ -32,7 +32,7 @@ const CardRow = (props) => {
     columns,
     data,
     onMouseEnter,
-    dispatch,
+    // dispatch,
   } = props
   const setRef = useRef()
   const scrollPosition = useScrollPosition()

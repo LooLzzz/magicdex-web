@@ -1,4 +1,4 @@
-import { login, register } from "./auth";
+import { login, register } from "./auth"
 import {
   getAllCards,
   deleteAllCards,
@@ -8,9 +8,7 @@ import {
   getCardById,
   updateCardById,
   deleteCardById,
-  // getAllSets,
-  // getAllSymbols,
-} from "./collection";
+} from "./collection"
 
 export {
   login,
@@ -23,6 +21,4 @@ export {
   getCardById,
   updateCardById,
   deleteCardById,
-  // getAllSets,
-  // getAllSymbols,
 }

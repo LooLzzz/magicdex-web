@@ -1,30 +1,23 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-lone-blocks */
 
-import { useEffect, useState } from "react";
-import { InputAdornment, TextField } from "@material-ui/core";
-import { withStyles } from "@material-ui/styles";
-import { connect } from "react-redux";
-// import _ from "lodash";
+import { useEffect, useState, createRef } from "react"
+import { InputAdornment, TextField, ListItem, ListSubheader, Divider } from "@material-ui/core"
+import { withStyles } from "@material-ui/styles"
+import { connect } from "react-redux"
+import Scryfall from "scryfall-client"
+import _ from "lodash"
 
-import useStyles from "./styles";
-import { MagicdexApi } from "@/Api";
-import FilterPopover from "./FilterPopover";
-import {
-  getRadioOptions,
-  getTextOption,
-  getRangeOptions,
-  getAutocompleteOptions,
-  getAllColors,
-  checkFilters,
-} from "./utils";
+import { RadioOptions, TextOption, RangeOptions, AutocompleteOptions } from "./utils"
+import FilterPopover from "./FilterPopover"
+import useStyles from "./styles"
 
 
-const mapStateToProps = (state) => ({});
+const mapStateToProps = (state) => ({})
 
 const mapDispatchToProps = (dispatch) => ({
   dispatch: {},
-});
+})
 
 const FilterProvider = (props) => {
   /** VARS **/
@@ -32,73 +25,77 @@ const FilterProvider = (props) => {
     // dispatch,
     classes,
     setFilters,
-  } = props;
-  const [setsData, setSetsData] = useState();
-  const [symbols, setSymbols] = useState();
+  } = props
+  const filtersMenuRef = createRef()
 
-  const [cardName, setCardName] = useState("");
-  const [text, setText] = useState("");
-  const [type, setType] = useState("");
-  const [selectedColors, setSelectedColors] = useState([]);
-  const [selectedManaCosts, setSelectedManaCosts] = useState([]);
-  const [selectedSets, setSelectedSets] = useState([]);
+  const [setsData, setSetsData] = useState([])
+  const [cardName, setCardName] = useState('')
 
-  const [amountMin, setAmountMin] = useState(0);
-  const [amountMax, setAmountMax] = useState(9999);
-  const [priceMin, setPriceMin] = useState(0);
-  const [priceMax, setPriceMax] = useState(9999);
+  const [oracleText, setOracleText] = useState('')
+  const [typeLine, setTypeLine] = useState('')
+  const [tags, setTags] = useState('')
 
-  const [foil, setFoil] = useState("Both");
-  const [signed, setSigned] = useState("Both");
-  const [altered, setAltered] = useState("Both");
+  // const [selectedColors, setSelectedColors] = useState([])
+  // const [selectedManaCosts, setSelectedManaCosts] = useState([])
+  const [selectedSets, setSelectedSets] = useState([])
+
+  // const [amountMin, setAmountMin] = useState(0)
+  // const [amountMax, setAmountMax] = useState(9999)
+  // const [priceMin, setPriceMin] = useState(0)
+  // const [priceMax, setPriceMax] = useState(9999)
+
+  // const [foil, setFoil] = useState("Both")
+  // const [signed, setSigned] = useState("Both")
+  // const [altered, setAltered] = useState("Both")
 
 
   /** EFFECTS **/
-  // useEffect(() => {
-  //   MagicdexApi.getAllSets().then((res) => {
-  //     setSetsData(res);
-  //   });
-
-  //   MagicdexApi.getAllSymbols().then((res) => {
-  //     setSymbols(res);
-  //   });
-  // }, []);
+  useEffect(() => {
+    const fetchSets = async () => {
+      const allSets = await Scryfall.getSets()
+      setSetsData(
+        _.chain(allSets)
+          // .filter(set =>
+          //   set.set_type === 'token'
+          // )
+          .map((set) => ({
+            ...set,
+            set_type: _.chain(set.set_type).replace(/[_]+/g, ' ').upperFirst().value(),
+            released_at: new Date(set.released_at),
+          }))
+          .sortBy(['set_type', 'released_at'])
+          .value()
+      )
+    }
+    fetchSets()
+  }, [])
 
   useEffect(() => {
-    // console.log(JSON.stringify(data));
-    // setFilteredData(
-    //   _.filter(data, (data) => {
-    //     return (
-    //       checkFilters.cardName(data.name, cardName) &&
-    //       checkFilters.text(data.flavor_text, data.oracle_text, text) &&
-    //       checkFilters.colors(data.type_line, type) &&
-    //       checkFilters.colors(data.colors, selectedColors) &&
-    //       checkFilters.sets(data.set_name, selectedSets) &&
-    //       checkFilters.manaCosts(data.mana_cost, selectedManaCosts) &&
-    //       checkFilters.price(data.prices.usd, priceMin, priceMax) &&
-    //       checkFilters.amount(data.amount, amountMin, amountMax) &&
-    //       checkFilters.radio(data.foil, foil) &&
-    //       checkFilters.radio(data.signed, signed) &&
-    //       checkFilters.radio(data.altered, altered)
-    //     )
     setFilters({
       name: v => v.toLowerCase().includes(cardName.toLowerCase()),
-      oracle_text: v => v.toLowerCase().includes(text),
-      // type_line: v => v.toLowerCase().includes(type),
+      oracle_text: v => v.toLowerCase().includes(oracleText),
+      type_line: v => v.toLowerCase().includes(typeLine),
+      tag: v => {
+        let tagsArray = _.chain(tags).split(/[;, ]+/g).compact().value()
+        return tagsArray.length > 0
+          ? _.intersection(v, tagsArray).length > 0
+          : true
+      },
+      set: v => (
+        selectedSets.length > 0
+          ? _.includes(selectedSets.map(set => set.code), v)
+          : true
+      ),
       // colors: selectedColors,
       // mana_cost: selectedManaCosts,
-      // set_name: selectedSets,
       // amount: (v) => v >= amountMin && v <= amountMax,
       // price: (v, item) => item.amount * item.prices.usd >= priceMin && item.amount * item.prices.usd <= priceMax,
       // foil: (v) => getRadioAsBoolean(v, foil),
       // signed: (v) => getRadioAsBoolean(v, signed),
       // altered: (v) => getRadioAsBoolean(v, altered),
     })
-  }, [cardName, text, type, selectedColors, selectedManaCosts, selectedSets, amountMin, amountMax, priceMin, priceMax, foil, signed, altered])
-
-  // useEffect(() => {
-  //   console.log("Final: " + filteredData);
-  // }, [filteredData]);
+  }, [cardName, oracleText, typeLine, tags, selectedSets])
+  // }, [cardName, oracleText, type, selectedColors, selectedManaCosts, selectedSets, amountMin, amountMax, priceMin, priceMax, foil, signed, altered])
 
 
   /** HANDLERS **/
@@ -110,8 +107,9 @@ const FilterProvider = (props) => {
     <div className={classes.root}>
       <TextField
         id="filled-search"
-        label="Search Card"
+        label="Search Card Name"
         type="search"
+        color='secondary'
         variant="filled"
         className={classes.search}
         value={cardName}
@@ -119,31 +117,71 @@ const FilterProvider = (props) => {
         InputProps={{
           endAdornment: (
             <InputAdornment position="end">
-              <FilterPopover>
-                {[
-                  getTextOption("Text", text, setText),
-                  getTextOption("Type", type, setType),
-                  getAutocompleteOptions(
+              <FilterPopover ref={filtersMenuRef}>
+                <ListSubheader>
+                  Filters
+                </ListSubheader>
+                <ListItem>
+                  <TextOption
+                    label="Oracle Text"
+                    value={oracleText}
+                    onChange={e => setOracleText(e.target.value)}
+                  />
+                </ListItem>
+                <ListItem>
+                  <TextOption
+                    label="Type"
+                    value={typeLine}
+                    onChange={e => setTypeLine(e.target.value)}
+                  />
+                </ListItem>
+                <ListItem>
+                  <TextOption
+                    label="Tags"
+                    value={tags}
+                    onChange={e => setTags(e.target.value)}
+                    helperText={
+                      <>
+                        Separate tags with
+                        <code style={{
+                          padding: '2px',
+                          marginLeft: '0.25em',
+                          backgroundColor: 'rgba(255,255,255,0.1)',
+                          borderRadius: '12.5%',
+                        }}>
+                          [;, ]+
+                        </code>
+                      </>
+                    }
+                  />
+                </ListItem>
+
+                <Divider />
+
+                <ListItem>
+                  <AutocompleteOptions
+                    label="Sets"
+                    options={setsData}
+                    value={selectedSets}
+                    onChange={(e, v) => setSelectedSets(v)}
+                    className={classes.autocompleteInput}
+                  />
+                </ListItem>
+
+                {/* getAutocompleteOptions(
                     "Colors",
                     getAllColors(),
                     selectedColors,
                     setSelectedColors,
                     classes.autocompleteInput
                   ),
-                  // getAutocompleteOptions(
-                  //   "Sets",
-                  //   setsData,
-                  //   selectedSets,
-                  //   setSelectedSets,
-                  //   classes.autocompleteInput
-                  // ),
-                  // getAutocompleteOptions(
-                  //   "Mana Costs",
-                  //   symbols,
-                  //   selectedManaCosts,
-                  //   setSelectedManaCosts,
-                  //   classes.autocompleteInput
-                  // ),
+                  getAutocompleteOptions(
+                    "Mana Costs",
+                    symbols,
+                    selectedManaCosts,
+                    setSelectedManaCosts,
+                    classes.autocompleteInput
+                  ),
                   getRangeOptions(
                     "Price",
                     priceMin,
@@ -164,20 +202,19 @@ const FilterProvider = (props) => {
                   ),
                   getRadioOptions("Foil", foil, setFoil),
                   getRadioOptions("Signed", signed, setSigned),
-                  getRadioOptions("Altered", altered, setAltered),
-                ]}
+                  getRadioOptions("Altered", altered, setAltered), */}
               </FilterPopover>
             </InputAdornment>
           ),
         }}
       />
     </div>
-  );
-};
+  )
+}
 
 /** EXPORT **/
 export default withStyles(useStyles)(
   connect(mapStateToProps, mapDispatchToProps)(
     FilterProvider
   )
-);
+)

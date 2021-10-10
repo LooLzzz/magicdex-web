@@ -43,8 +43,8 @@ const Collection = (props) => {
   const [filters, setFilters] = useState()
   const columns = {
     amount: 'amount',
-    set: 'set',
     name: 'name',
+    set: 'set',
     mana_cost: 'mana cost',
     type_line: 'type',
     foil: 'foil',
@@ -87,39 +87,38 @@ const Collection = (props) => {
   /** RENDER **/
   return (
     <div className={classes.root}>
-      <Grid container>
-        <Grid item container xs={12}>
-          <Grid item xs={2} />
-          <Grid item xs={10}>
-            <FilterFields setFilters={setFilters} />
-          </Grid>
+      <Grid container justifyContent='center' /*'flex-start'*/>
+        <Grid item xs={12} lg={10}>
+          <FilterFields setFilters={setFilters} />
         </Grid>
-        <Hidden mdDown>
-          <Grid item xs={2}>
-            <CardImage
-              className={classes['card-image']}
-              card={currentHoveringCard}
-              width={225}
-            />
-          </Grid>
-        </Hidden>
-        <Grid item xs={10}>
-          <div align='center' style={{ maxWidth: 'fit-content' }}>
-            <FilteredDataProvider
-              data={collection}
-              filters={filters}
-            >
-              <CardTable
-                onRowHover={handleRowHover}
-                columns={columns}
-                data={collection}
+        <Grid item container wrap='nowrap' justifyContent='center' xs={12}>
+          <Hidden mdDown>
+            <Grid item>
+              <CardImage
+                className={classes['card-image']}
+                card={currentHoveringCard}
+                width={225}
               />
-            </FilteredDataProvider>
-          </div>
+            </Grid>
+          </Hidden>
+          <Grid item>
+            <div align='center' style={{ width: 'fit-content' }}>
+              <FilteredDataProvider
+                data={collection}
+                filters={filters}
+              >
+                <CardTable
+                  onRowHover={handleRowHover}
+                  columns={columns}
+                  data={collection}
+                />
+              </FilteredDataProvider>
+            </div>
+          </Grid>
         </Grid>
       </Grid>
     </div >
-  );
+  )
 }
 
 /** EXPORT **/

@@ -1,4 +1,4 @@
-import { Paper } from '@material-ui/core'
+import { Paper, Chip } from '@material-ui/core'
 import clsx from 'clsx'
 // import _ from 'lodash'
 
@@ -98,7 +98,14 @@ const renders = {
   renderTag: (card, columnName) => {
     let tags = card['tag']
     return (
-      tags.length > 0 ? tags.join('; ') : '-'
+      tags.length > 0
+        ? //tags.join('; ')
+        tags.map((tag, i) =>
+          <Chip size='small' key={i}>
+            tag
+          </Chip>
+        )
+        : '-'
     )
   },
 

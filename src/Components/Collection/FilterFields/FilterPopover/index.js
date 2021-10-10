@@ -1,22 +1,21 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
-import { forwardRef, useImperativeHandle, useRef } from 'react'
+import { useState, forwardRef, useImperativeHandle, useRef } from 'react'
 import { ClickAwayListener, IconButton, List, Paper, Popover } from '@material-ui/core'
-import { useState, useEffect } from 'react'
 import { makeStyles, useTheme } from '@material-ui/styles'
-import FilterListIcon from '@material-ui/icons/FilterList';
+import FilterListIcon from '@material-ui/icons/FilterList'
 // import { connect } from 'react-redux'
 
 // import { setCurrentTab } from '@/Logic/redux'
 import useStyles from './styles'
 
 
-const MenuPopover = forwardRef( (props, ref) => {
+const MenuPopover = forwardRef((props, ref) => {
   /** VARS **/
   const [menuAnchor, setMenuAnchor] = useState(null)
   const menuOpen = Boolean(menuAnchor)
   const filterButtonRef = useRef()
-  const classes = makeStyles(useStyles(useTheme()))();
+  const classes = makeStyles(useStyles(useTheme()))()
   // const {
   //   icon,
   // } = props
@@ -24,7 +23,7 @@ const MenuPopover = forwardRef( (props, ref) => {
 
   /** EFFECTS **/
   useImperativeHandle(ref, () => ({
-    openMenu:  () => { handleMenuOpen(filterButtonRef) },
+    openMenu: () => { handleMenuOpen(filterButtonRef) },
     closeMenu: () => { handleMenuClose(null) },
   }))
 
@@ -32,13 +31,13 @@ const MenuPopover = forwardRef( (props, ref) => {
   //   //onMount
   //   console.log(props.ref)
   // }, [])
-  
+
   /** HANDLERS **/
   const handleIconClick = (e) => {
     handleMenuOpen(e.currentTarget)
     e.stopPropagation()
   }
-  
+
   const handleMenuOpen = (menuAnnchor) => {
     setMenuAnchor(menuAnnchor)
   }
@@ -46,7 +45,7 @@ const MenuPopover = forwardRef( (props, ref) => {
   const handleMenuClose = (e) => {
     setMenuAnchor(null)
   }
-  
+
 
   /** RENDER **/
   return (
@@ -76,12 +75,14 @@ const MenuPopover = forwardRef( (props, ref) => {
       >
         <Paper className={classes.paper}>
           <ClickAwayListener onClickAway={handleMenuClose}>
-            <List>{props.children}</List>
+            <List dense disablePadding>
+              {props.children}
+            </List>
           </ClickAwayListener>
         </Paper>
       </Popover>
     </>
-  );
+  )
 })
 
 /** EXPORT **/

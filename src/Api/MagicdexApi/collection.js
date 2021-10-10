@@ -11,7 +11,7 @@ const ROUTE_URL = `${API_URL}/collections`
 
 const populateCardData = async (cards) => {
   const cardInfo =
-    (cards instanceof Array)
+    cards instanceof Array
       ? cards.map(card => ({id:card.scryfall_id, set_id:card.set}))
       : [cards.scryfall_id, cards.set]
   
@@ -163,7 +163,7 @@ export const {
   getCardById,
   updateCardById,
   deleteCardById,
-  getAllSets,
-  getAllSymbols,
+  // getAllSets,
+  // getAllSymbols,
 } = decoratedCollections
 // } = Collections
