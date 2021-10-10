@@ -22,8 +22,14 @@ const sharedOverrides = {
       ".hidden": {
         display: "none",
       },
-      ".pointer": {
+      ".cursor-pointer": {
         cursor: "pointer",
+      },
+      '.floating': {
+        // position: 'absolute',
+        // zIndex: '999',
+        maxWidth: baseTheme.spacing(25),
+        padding: `${baseTheme.spacing(0.5)}px ${baseTheme.spacing(1.25)}px ${baseTheme.spacing(0.5)}px ${baseTheme.spacing(1.25)}px`,
       },
     },
   },
@@ -80,6 +86,9 @@ const getDarkTheme = () =>
       },
       primary: { ...darkPrimary },
       secondary: { ...darkSecondary },
+      background: {
+        secondary: colors.grey['700'],
+      }
     },
 
     overrides:
@@ -91,6 +100,11 @@ const getDarkTheme = () =>
           a: {
             color: darkSecondary.main,
           },
+          '.floating': {
+            ...sharedOverrides.MuiCssBaseline['.floating'],
+            backgroundColor: colors.grey['700'],
+            color: baseTheme.palette.getContrastText(colors.grey['700']),
+          }
         },
       },
       MuiCircularProgress: {
@@ -103,27 +117,32 @@ const getDarkTheme = () =>
 
 
 /** LIGHT THEME **/
-const lightTable = { divider: 'rgba(150, 150, 150, 0.75)' }
-const lightBackground = {
-  default: '#D5D5D5',
-  paper: '#F0F0F0',
-}
-
 const getLightTheme = () =>
   createTheme({
     palette: {
       type: 'light',
-      table: { ...lightTable },
-      background: { ...lightBackground },
+      table: {
+        divider: 'rgba(150, 150, 150, 0.75)'
+      },
+      background: {
+        default: '#D5D5D5',
+        paper: '#F0F0F0',
+        secondary: colors.grey['A100'],
+      },
     },
 
     overrides: {
       ...sharedOverrides,
-      // MuiIconButton: {
-      //   root: {
-      //     color: 'white',
-      //   }
-      // },
+      MuiCssBaseline: {
+        '@global': {
+          ...sharedOverrides.MuiCssBaseline,
+          '.floating': {
+            ...sharedOverrides.MuiCssBaseline['.floating'],
+            backgroundColor: colors.grey['A100'],
+            color: baseTheme.palette.getContrastText(colors.grey['A100']),
+          }
+        },
+      },
     },
   });
 

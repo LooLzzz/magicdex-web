@@ -18,6 +18,7 @@ export const {
   setActiveUser,
   setCurrentTab,
   toggleCurrentThemeType,
+  setCurrentCollection,
 } = reducerSlice.actions;
 
 export default reducerSlice.reducer;

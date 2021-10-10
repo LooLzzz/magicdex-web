@@ -12,7 +12,7 @@ import useStyles from './styles'
 // }
 
 const mapStateToProps = (state) => ({
-  
+
 })
 
 const mapDispatchToProps = (dispatch) => ({
@@ -36,17 +36,17 @@ const BaseForm = (props) => {
     formRef,
     ...rest
   } = props
-  const [Header,    setHeader]    = useState([])
-  const [Icon,      setIcon]      = useState([])
-  const [Content,   setContent]   = useState([])
-  const [Actions,   setActions]   = useState([])
+  const [Header, setHeader] = useState([])
+  const [Icon, setIcon] = useState([])
+  const [Content, setContent] = useState([])
+  const [Actions, setActions] = useState([])
   const [isLoading, setIsLoading] = useState(false)
 
-  
+
   /** EFFECTS **/
-  useEffect( () => {
+  useEffect(() => {
     const rules = validationRules ? validationRules : {}
-    
+
     Object.entries(rules).forEach(item => {
       const [key, value] = item
       if (!ValidatorForm.hasValidationRule(key))
@@ -54,21 +54,12 @@ const BaseForm = (props) => {
     })
   }, [validationRules])
 
-  useEffect( () => {
+  useEffect(() => {
     setHeader(header)
-  }, [header])
-  
-  useEffect( () => {
     setIcon(icon)
-  }, [icon])
-  
-  useEffect( () => {
     setContent(content)
-  }, [content])
-  
-  useEffect( () => {
     setActions(actions)
-  }, [actions])
+  }, [header, icon, content, actions])
 
 
   /** HANDLERS **/
@@ -76,10 +67,11 @@ const BaseForm = (props) => {
     // console.log('BaseForm submit started')
     setIsLoading(true)
     await onSubmit(e)
+    // await new Promise(resolve => setTimeout(resolve, 1000))
     setIsLoading(false)
     // console.log('BaseForm submit ended')
   }
-  
+
 
   /** RENDER **/
   return (
@@ -91,11 +83,11 @@ const BaseForm = (props) => {
         <Typography variant='h4' className={classes.header}>
           <b>{Header}</b>
         </Typography>
-        
+
         <div className={classes.icon}>
           {Icon}
         </div>
-        <Divider className={classes.divider}/>
+        <Divider className={classes.divider1} />
 
         <div className={classes.bottom}>
           <div className={classes.content}>
@@ -118,8 +110,8 @@ const BaseForm = (props) => {
 
 /** EXPORT **/
 export default
-  withStyles(useStyles) (
-    connect(mapStateToProps, mapDispatchToProps) (
+  withStyles(useStyles)(
+    connect(mapStateToProps, mapDispatchToProps)(
       BaseForm
     )
   )

@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
 import { useEffect, useState, useRef } from 'react';
+import { Box, Button, Grid } from '@material-ui/core';
 // import { AccountCircle as AccountCircleIcon } from '@material-ui/icons';
 import { withStyles } from "@material-ui/styles"
 import { connect } from 'react-redux';
@@ -12,7 +13,6 @@ import { MagicdexApi } from '@/Api'
 import { setActiveUser, setCurrentTab } from '@/Logic/redux'
 import { BaseForm } from './..'
 import useStyles from './styles'
-import { Box, Button, Grid, Typography } from '@material-ui/core';
 
 
 const mapStateToProps = (state) => ({
@@ -30,6 +30,7 @@ const Login = (props) => {
   /** VARS **/
   const history = useHistory()
   const { enqueueSnackbar } = useSnackbar();
+  const [isLoading, setIsLoading] = useState(false)
   const [errorMessages, setErrorMessages] = useState([])
   const [usernameInput, setUsernameInput] = useState('')
   const [passwordInput, setPasswordInput] = useState('')
@@ -44,7 +45,7 @@ const Login = (props) => {
   /** EFFECTS **/
   useEffect(() => {
     //onMount
-    dispatch.setCurrentTab('login')
+    dispatch.setCurrentTab({tab:'login'})
   }, [])
 
   useEffect(() => {
@@ -55,6 +56,10 @@ const Login = (props) => {
 
   /** HANDLERS **/
   const handleSubmit = (e) => {
+    setIsLoading(true)
+    setPasswordInput('')
+    setErrorMessages([])
+
     MagicdexApi
       .login({ username: usernameInput, password: passwordInput })
       .then(res => {
@@ -62,10 +67,27 @@ const Login = (props) => {
         enqueueSnackbar('Login successful', { variant: 'success' })
       })
       .catch(err => {
-        setErrorMessages('Username not found')
+        const msg = err.response.data.msg ?? err.response.data.message
+        let msgs = (msg instanceof Array) ? msg : [msg]
+
+        // console.log(msgs)
+        msgs = msgs.map(msg =>
+          msg.toLowerCase() === 'username and password combination not found'
+            ? 'Bad credentials'
+            : msg
+        )
+
+        setErrorMessages(msgs)
         enqueueSnackbar('Login failed', { variant: 'error' })
       })
-    }
+      .finally(() => {
+        setIsLoading(false)
+      })
+  }
+
+  const handleError = (e) => {
+    setErrorMessages([])
+  }
 
   const handleClear = (e) => {
     setErrorMessages([])
@@ -81,6 +103,7 @@ const Login = (props) => {
       <BaseForm
         formRef={formRef}
         onSubmit={handleSubmit}
+        onError={handleError}
         instantValidate={false}
 
         header='Login'
@@ -99,6 +122,7 @@ const Login = (props) => {
               onChange={(e) => setUsernameInput(e.target.value)}
               validators={['required', `matchRegexp:^([A-Za-z0-9]|[-_.'])*$`]}
               errorMessages={['Field is required', 'Special characters are not allowed']}
+              autoComplete='current-username'
             />
             <TextValidator
               id='password'
@@ -111,18 +135,17 @@ const Login = (props) => {
               onChange={(e) => setPasswordInput(e.target.value)}
               validators={['required']}
               errorMessages={['Field is required']}
+              autoComplete='current-password'
             />
-            {
-              (errorMessages instanceof Array)
-                ? Object.values(errorMessages).map((value, i) => (
-                    <Typography key={i} variant='subtitle2' color='error'>
-                      { value[0].toUpperCase() + value.slice(1) }
-                    </Typography>
-                  ))
-                : <Typography variant='subtitle2' color='error'>
-                    { errorMessages[0].toUpperCase() + errorMessages.slice(1) }
-                  </Typography>
-            }
+            <Grid container direction='column'>
+              {
+                Object.values(errorMessages).map((value, i) => (
+                  <Grid item key={i} className={classes.errorMessages}>
+                    {value[0].toUpperCase() + value.slice(1)} {/* capitalize first letter */}
+                  </Grid>
+                ))
+              }
+            </Grid>
           </>
         )}
         actions={() => (
@@ -132,7 +155,7 @@ const Login = (props) => {
                 size="medium"
                 variant="outlined"
                 onClick={handleClear}
-              // disabled = {this.state.success}
+                disabled={isLoading}
               >
                 Clear
               </Button>
@@ -143,7 +166,7 @@ const Login = (props) => {
                 size="medium"
                 variant="contained"
                 color="primary"
-              // disabled = {this.state.success}
+                disabled={isLoading}
               >
                 Submit
               </Button>

@@ -42,7 +42,7 @@ const App = (props) => {
 
   const routes = [
     {
-      parent: Route,
+      component: Route,
       props: {
         path: '/',
         component: Home,
@@ -50,7 +50,7 @@ const App = (props) => {
       }
     },
     {
-      parent: Route,
+      component: Route,
       props: {
         path: '/collection',
         component: Collection,
@@ -58,7 +58,7 @@ const App = (props) => {
       }
     },
     {
-      parent: Route,
+      component: Route,
       props: {
         path: '/login',
         component: Login,
@@ -66,7 +66,7 @@ const App = (props) => {
       }
     },
     {
-      parent: Route,
+      component: Route,
       props: {
         path: '/register',
         component: Register,
@@ -74,9 +74,9 @@ const App = (props) => {
       }
     },
     {
-      parent: Redirect,
+      component: Redirect,
       props: {
-        to: '/',
+        to: '/login',
         exact: false,
       }
     },
@@ -89,8 +89,8 @@ const App = (props) => {
     MagicdexApi.login() //try to login with `localStorage['accessToken']`
       .then(res => {
         dispatch.setActiveUser(res.data)
-        // snackbarRef.current.enqueueSnackbar(`Welcome back ${res.data.username}`, { variant: 'info' })
-        snackbarRef.current.enqueueSnackbar('Welcome back', { variant: 'info' })
+        snackbarRef.current.enqueueSnackbar(`Welcome back ${res.data.username}`, { variant: 'info' })
+        // snackbarRef.current.enqueueSnackbar('Welcome back', { variant: 'info' })
       })
       .catch(err => dispatch.setActiveUser({username:null}))
   }, [])
@@ -121,7 +121,7 @@ const App = (props) => {
               <Switch>
                 {
                   routes.map((item, i) => (
-                    <item.parent
+                    <item.component
                       key={i}
                       {...item.props}
                     />

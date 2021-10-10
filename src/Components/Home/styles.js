@@ -10,7 +10,8 @@ const useStyles = (theme) => {
       flexDirection: 'column',
       justifyContent: 'center',
       alignItems: 'center',
-      marginBottom: theme.spacing(5),
+      marginBottom: theme.spacing(2),
+      padding: `${theme.spacing(3)}px ${theme.spacing(5)}px ${theme.spacing(3)}px ${theme.spacing(5)}px`,
     }
   }
 }

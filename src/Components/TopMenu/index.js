@@ -57,7 +57,7 @@ const TopMenu = (props) => {
 
   //HANDLERS
   const handleTabChange = (event, value) => {
-    // dispatch.setCurrentTab(value);
+    // dispatch.setCurrentTab({tab:value});
     history.push( '/' + value )
   }
   
@@ -108,7 +108,7 @@ const TopMenu = (props) => {
             <MenuPopover ref={menuRef} icon={() => <MenuIcon />}>
               <ListSubheader>
                 <AccountCircleIcon />
-                {username ? username : 'Account'}
+                {username ?? 'Account'}
               </ListSubheader>
               {
                 username

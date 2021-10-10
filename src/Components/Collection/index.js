@@ -1,142 +1,124 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable no-lone-blocks */
 
-import { useEffect, useLayoutEffect, useState } from 'react'
-import { Paper, Table, TableContainer, TableRow, TableHead, TableBody, TableCell, TableSortLabel, Box, TextField } from '@material-ui/core'
+import { useEffect, useState } from 'react'
+import { Hidden, Grid } from '@material-ui/core'
 import { withStyles } from '@material-ui/styles'
 import { connect } from 'react-redux'
 import { useHistory } from 'react-router'
-import _ from 'lodash';
-import clsx from 'clsx'
+// import useMouse from '@react-hook/mouse-position'
+// import _ from 'lodash';
+// import clsx from 'clsx'
 
+import { setCurrentTab, setCurrentCollection } from '@/Logic/redux'
+import { CardTable } from '@/Components'
 import { MagicdexApi } from '@/Api'
-import CollapsableRow from './CollapsableRow'
-import CardInfo from './CardInfo'
+import FilterFields from './FilterFields'
+import FilteredDataProvider from './FilteredDataProvider'
+import CardImage from './CardImage'
 import useStyles from './styles'
-import { setCurrentTab } from '@/Logic/redux'
 
 
 const mapStateToProps = (state) => ({
   username: state.actions.activeUser.username,
+  collection: state.actions.activeUser.collection,
 })
 
 const mapDispatchToProps = (dispatch) => ({
   dispatch: {
     setCurrentTab: (payload) => dispatch(setCurrentTab(payload)),
+    setCurrentCollection: (payload) => dispatch(setCurrentCollection(payload)),
   }
 })
 
 const Collection = (props) => {
   /** VARS **/
-  const history = useHistory()
-  const [collection, setCollection] = useState([])
-  const [cards, setCards] = useState([])
-  const [cardData, setCardData] = useState([])
   const {
     classes,
     dispatch,
     username,
+    collection,
   } = props
-  const rowHeaders = {
+  const history = useHistory()
+  const [currentHoveringCard, setCurrentHoveringCard] = useState()
+  const [filters, setFilters] = useState()
+  const columns = {
+    amount: 'amount',
     name: 'name',
     set: 'set',
-    amount: 'amount',
-    signed: 'signed',
-    altered: 'altered',
-    condition: 'condition',
-    tag: 'tag',
+    mana_cost: 'mana cost',
+    type_line: 'type',
     foil: 'foil',
-    price: 'price'
+    total_price: 'price (usd)',
+    date_created: 'date added',
   }
 
 
   /** EFFECTS **/
   useEffect(() => {
     //onMount
-    dispatch.setCurrentTab('collection')
+    dispatch.setCurrentTab({ tab: 'collection' })
+
+    //DEBUG
+    // setFilters({
+    //   // foil: v => v === true,
+    //   // foil: true,
+    //   // name: v => v.toLowerCase().includes('fire'),
+    //   // name: 'Fireball',
+    //   price: (v, item) => item.amount * item.prices.usd < 10,
+    // })
   }, [])
 
-  useLayoutEffect(() => {
-    if (username === null)
-      history.push('/')
-    else if (username) {
-      MagicdexApi
-        .getAllCards()
-        .then(res => {
-          setCollection(res);
-          setCards(res);
-        })
-    }
-  }, [username])
-
   useEffect(() => {
-    if (cards.length > 0) {
-      const cardsWithPrice = cards.map(card => {
-        const { prices, foil, amount, set_data, rarity } = card
-        const set = set_data?.parent_set_code ? set_data.parent_set_code : set_data.code
-        let price = Number(foil ? prices?.usd_foil : prices?.usd) * Number(amount)
-        price = price > 0 ? price + '$' : '-'
-        
+    if (username === null)
+      return history.push('/')
 
-        return {
-          ...card,
-          set: () => <i style={{fontSize:'1.5em'}} className={clsx('ss ss-fw', `ss-${rarity}`, `ss-${set}`)} />,
-          price,
-        }
-      })
-      setCardData(cardsWithPrice)
-    }
-  }, [cards])
+    MagicdexApi
+      .getAllCards()
+      .then(res => dispatch.setCurrentCollection({ collection: res }))
+  }, [username])
 
 
   /** HANDLERS **/
-  const searchHandler = (event) => {
-    const filteredCards = collection.filter((card) => {
-      return card.name.toLowerCase().includes(event.target.value.toLowerCase());
-    });
-    filteredCards.length > 0 ? setCards(filteredCards) : setCardData([]);
+  const handleRowHover = (card, i) => {
+    setCurrentHoveringCard(card)
   }
 
 
   /** RENDER **/
   return (
     <div className={classes.root}>
-      <TextField
-        id="filled-search"
-        label="Search Card"
-        type="search"
-        variant="filled"
-        className={classes.search}
-        onChange={searchHandler}
-      />
-      <TableContainer component={Paper} className={classes.paper}>
-        <Table size="small">
-          <TableHead>
-            <TableRow>
-              <TableCell className={classes.iconCell} />
-              {Object.values(rowHeaders).map((rowName, i) => (
-                <TableCell key={i} align="center">
-                  <TableSortLabel>{rowName}</TableSortLabel>
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-
-          <TableBody>
-            {cardData.map((card, i) => (
-              <CollapsableRow
-                key={i}
-                rowContent={Object.values(
-                  _.pick(card, Object.keys(rowHeaders))
-                )}
-                collapseContent={<CardInfo data={card} />}
+      <Grid container justifyContent='center' /*'flex-start'*/>
+        <Grid item xs={12} lg={10}>
+          <FilterFields setFilters={setFilters} />
+        </Grid>
+        <Grid item container wrap='nowrap' justifyContent='center' xs={12}>
+          <Hidden mdDown>
+            <Grid item>
+              <CardImage
+                className={classes['card-image']}
+                card={currentHoveringCard}
+                width={225}
               />
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-    </div>
-  );
+            </Grid>
+          </Hidden>
+          <Grid item>
+            <div align='center' style={{ width: 'fit-content' }}>
+              <FilteredDataProvider
+                data={collection}
+                filters={filters}
+              >
+                <CardTable
+                  onRowHover={handleRowHover}
+                  columns={columns}
+                  data={collection}
+                />
+              </FilteredDataProvider>
+            </div>
+          </Grid>
+        </Grid>
+      </Grid>
+    </div >
+  )
 }
 
 /** EXPORT **/

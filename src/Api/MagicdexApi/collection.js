@@ -1,8 +1,9 @@
 import axios from "axios";
-import Scryfall from "scryfall-client";
+// import scryfall from "scryfall-client";
 
 import { API_URL } from "@/Config"
 import { authHeadersDecorator, catchErrors, fetchScryfallCardData } from "./utils";
+// import { fetchScryfallSymbolData, fetchScryfallSetData } from "./utils";
 
 
 const ROUTE_URL = `${API_URL}/collections`
@@ -10,7 +11,7 @@ const ROUTE_URL = `${API_URL}/collections`
 
 const populateCardData = async (cards) => {
   const cardInfo =
-    (cards instanceof Array)
+    cards instanceof Array
       ? cards.map(card => ({id:card.scryfall_id, set_id:card.set}))
       : [cards.scryfall_id, cards.set]
   
@@ -20,6 +21,7 @@ const populateCardData = async (cards) => {
     cards.map((card, i) => ({
       ...scryfallData[i],
       ...card,
+      date_created: new Date(card.date_created),
     }))
 
   return (cards instanceof Array)
@@ -127,6 +129,17 @@ const Collections = {
       .then(response => response)
       .catch(err => catchErrors(err));
   },
+
+  // /**
+  //  * Get all sets names and codes.
+  //  */
+  // getAllSets: async () => {
+  //   return await fetchScryfallSetData();
+  // },
+
+  // getAllSymbols: async () => {
+  //   return await fetchScryfallSymbolData();
+  // },
 };
 
 
@@ -150,5 +163,7 @@ export const {
   getCardById,
   updateCardById,
   deleteCardById,
+  // getAllSets,
+  // getAllSymbols,
 } = decoratedCollections
 // } = Collections
