@@ -20,6 +20,9 @@ const styles = {
   set: {
     fontSize: '1.25em',
   },
+  flavorText: {
+    fontFamily: 'Georgia, fangsong, Times New Roman',
+  },
 }
 
 
@@ -56,6 +59,11 @@ const renders = {
       case 'date_created':
       case 'date_added':
         return renderDate(card, columnName)
+
+      case 'flavor':
+      case 'flavor_text':
+        return renderFlavorText(card, columnName)
+
 
       default:
         return defaultRender(card, columnName)
@@ -97,13 +105,17 @@ const renders = {
 
   renderTag: (card, columnName) => {
     let tags = card['tag']
+    console.log(tags)
     return (
       tags.length > 0
         ? //tags.join('; ')
         tags.map((tag, i) =>
-          <Chip size='small' key={i}>
-            tag
-          </Chip>
+          <Chip
+            onDelete={() => {/*TODO: add delete functionality to tag chips */}}
+            label={tag}
+            size='small'
+            key={i}
+          />
         )
         : '-'
     )
@@ -112,7 +124,7 @@ const renders = {
   renderManaCost: (card, columnName) => {
     const manaCost = card['mana_cost']
 
-    return (manaCost === '')
+    return !manaCost || manaCost === ''
       ? '-'
       : manaCost
         .replace(/(^{)|(\/)|(}$)/g, '') // remove starting '{', trailing '}' and any '/'
@@ -135,7 +147,16 @@ const renders = {
     const date = card[columnName]
     let [year, month, day] = [date.getFullYear(), date.getMonth(), date.getDate()]
     return (
-      [year, addLeadingZero(month), addLeadingZero(day)].join('/')
+      [addLeadingZero(day), addLeadingZero(month), year].join('/')
+    )
+  },
+
+  renderFlavorText: (card, columnName) => {
+    const flavorText = card[columnName]
+    return (
+      <i style={styles.flavorText}>
+        {flavorText}
+      </i>
     )
   },
 }
@@ -154,4 +175,5 @@ export const {
   renderManaCost,
   renderType,
   renderDate,
+  renderFlavorText,
 } = renders

@@ -11,8 +11,10 @@ const useStyles = (theme) => {
       justifyContent: 'center',
       alignItems: 'center',
       marginBottom: theme.spacing(2),
+    },
+    content: {
       padding: `${theme.spacing(3)}px ${theme.spacing(5)}px ${theme.spacing(3)}px ${theme.spacing(5)}px`,
-    }
+    },
   }
 }
 

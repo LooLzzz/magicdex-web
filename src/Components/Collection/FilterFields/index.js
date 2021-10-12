@@ -73,7 +73,7 @@ const FilterProvider = (props) => {
   useEffect(() => {
     setFilters({
       name: v => v.toLowerCase().includes(cardName.toLowerCase()),
-      oracle_text: v => v.toLowerCase().includes(oracleText),
+      oracle_text: v => v ? v.toLowerCase().includes(oracleText) : true,
       type_line: v => v.toLowerCase().includes(typeLine),
       tag: v => {
         let tagsArray = _.chain(tags).split(/[;, ]+/g).compact().value()

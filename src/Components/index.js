@@ -1,9 +1,11 @@
-import Home from "./Home";
-import App from "./App";
-import Collection from "./Collection";
-import TopMenu from "./TopMenu";
-import CardTable from './CardTable'
-import { BaseForm, Login, Register } from "./Forms";
+import Home from "./Home"
+import App from "./App"
+import Collection from "./Collection"
+import TopMenu from "./TopMenu"
+import CardTableView from './CardTableView'
+import CardImage from './CardImage'
+import ImageOverlay from './ImageOverlay'
+import { BaseForm, Login, Register } from "./Forms"
 
 export {
     Home,
@@ -13,5 +15,7 @@ export {
     BaseForm,
     Login,
     Register,
-    CardTable,
+    CardTableView,
+    CardImage,
+    ImageOverlay,
 }

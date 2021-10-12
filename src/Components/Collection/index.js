@@ -1,7 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
 import { useEffect, useState } from 'react'
-import { Hidden, Grid } from '@material-ui/core'
+import { Grid } from '@material-ui/core'
+import { Skeleton } from '@material-ui/lab'
 import { withStyles } from '@material-ui/styles'
 import { connect } from 'react-redux'
 import { useHistory } from 'react-router'
@@ -10,11 +11,10 @@ import { useHistory } from 'react-router'
 // import clsx from 'clsx'
 
 import { setCurrentTab, setCurrentCollection } from '@/Logic/redux'
-import { CardTable } from '@/Components'
+import { CardTableView } from '@/Components'
 import { MagicdexApi } from '@/Api'
 import FilterFields from './FilterFields'
 import FilteredDataProvider from './FilteredDataProvider'
-import CardImage from './CardImage'
 import useStyles from './styles'
 
 
@@ -39,7 +39,6 @@ const Collection = (props) => {
     collection,
   } = props
   const history = useHistory()
-  const [currentHoveringCard, setCurrentHoveringCard] = useState()
   const [filters, setFilters] = useState()
   const columns = {
     amount: 'amount',
@@ -77,46 +76,65 @@ const Collection = (props) => {
       .then(res => dispatch.setCurrentCollection({ collection: res }))
   }, [username])
 
+  // useEffect(() => {
+  // }, [collection])
+
 
   /** HANDLERS **/
-  const handleRowHover = (card, i) => {
-    setCurrentHoveringCard(card)
-  }
+  // const handleRowHover = (card, i) => {
+  //   setCurrentHoveringCard(card)
+  // }
 
 
   /** RENDER **/
   return (
     <div className={classes.root}>
-      <Grid container justifyContent='center' /*'flex-start'*/>
-        <Grid item xs={12} lg={10}>
-          <FilterFields setFilters={setFilters} />
-        </Grid>
-        <Grid item container wrap='nowrap' justifyContent='center' xs={12}>
-          <Hidden mdDown>
-            <Grid item>
-              <CardImage
-                className={classes['card-image']}
-                card={currentHoveringCard}
-                width={225}
-              />
+      {
+        !collection
+          ?
+          // SHOW SKELETON
+          <Grid container justifyContent='center'>
+            <Grid item container xs={12} sm={11} md={10} spacing={2}>
+              <Grid item xs={2}>
+                <Skeleton variant='rect' height='100%' />
+              </Grid>
+              <Grid item container xs={10}>
+                <Grid item xs={2}>
+                  <Skeleton variant='circle' width={75} height={75} />
+                </Grid>
+                <Grid item xs={10}>
+                  <Skeleton variant='rect' height={32} />
+                  <Skeleton variant='text' />
+                </Grid>
+                <Grid item xs={12}>
+                  {[...Array(10).keys()].map(i => <Skeleton key={i} variant='text' />)}
+                </Grid>
+              </Grid>
             </Grid>
-          </Hidden>
-          <Grid item>
-            <div align='center' style={{ width: 'fit-content' }}>
-              <FilteredDataProvider
-                data={collection}
-                filters={filters}
-              >
-                <CardTable
-                  onRowHover={handleRowHover}
-                  columns={columns}
-                  data={collection}
-                />
-              </FilteredDataProvider>
-            </div>
           </Grid>
-        </Grid>
-      </Grid>
+          :
+          // SHOW ACTUAL DATA VIEW
+          <Grid container justifyContent='flex-end'>
+            <Grid item container xs={12} lg={10} justifyContent='center'>
+              <Grid item xs={12}>
+                <FilterFields setFilters={setFilters} />
+              </Grid>
+            </Grid>
+            <Grid item container wrap='nowrap' justifyContent='center' xs={12}>
+              <Grid item>
+                <FilteredDataProvider
+                  data={collection}
+                  filters={filters}
+                >
+                  <CardTableView
+                    columns={columns}
+                    data={collection}
+                  />
+                </FilteredDataProvider>
+              </Grid>
+            </Grid>
+          </Grid>
+      }
     </div >
   )
 }

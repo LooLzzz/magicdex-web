@@ -23,9 +23,6 @@ const useStyles = (theme) => {
       // width: '100%',
       marginBottom: theme.spacing(2),
     },
-    search: {
-
-    },
     paper: {
       // display: 'flex',
       // justifyContent: 'center',
@@ -34,11 +31,6 @@ const useStyles = (theme) => {
     },
     iconCell: {
       width: 0,
-    },
-    'card-image': {
-      position: 'sticky',
-      top: theme.spacing(8),
-      marginRight: theme.spacing(2),
     },
     floating: {
       position: 'fixed',

@@ -10,8 +10,12 @@ const useStyles = (theme) => {
       },
     },
     collapsableContent: {
-      paddingBottom: 0,
-      paddingTop: 0,
+      padding: 0,
+      // paddingBottom: 0,
+      // paddingTop: 0,
+      // paddingLeft: 0,
+      // paddingRight: 0,
+      // marginBottom: theme.spacing(1),
     },
   }
 }

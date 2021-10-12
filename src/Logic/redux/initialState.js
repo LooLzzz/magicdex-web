@@ -12,7 +12,7 @@ const INITIAL_STATE = {
   activeUser: {
     username: undefined,
     accessToken: accessToken,
-    collection: [],
+    collection: undefined,
   },
   theme: {
     currentTheme: themeType === 'dark' ? getDarkTheme() : getLightTheme(),

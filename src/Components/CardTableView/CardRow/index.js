@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
 import { useEffect, useState, useRef } from 'react'
-import { TableRow, TableCell, Collapse, IconButton, Checkbox, Paper } from '@material-ui/core'
+import { TableRow, TableCell, Collapse, IconButton, Checkbox, Paper, Divider } from '@material-ui/core'
 import { withStyles } from '@material-ui/styles'
 import { connect } from 'react-redux'
 import useScrollPosition from '@react-hook/window-scroll'
@@ -12,8 +12,8 @@ import {
   KeyboardArrowUp as KeyboardArrowUpIcon
 } from '@material-ui/icons'
 
-import { renderCell } from './../renders'
-import CardInfo from './../CardInfo'
+import renderCell from '@/CardRenders'
+import CardInfo from './CardInfo'
 import useStyles from './styles'
 
 
@@ -30,18 +30,19 @@ const CardRow = (props) => {
   const {
     classes,
     columns,
-    data,
+    card,
     onMouseEnter,
+    selectable,
     // dispatch,
   } = props
   const setRef = useRef()
   const scrollPosition = useScrollPosition()
-  const [dataWithPrice, setDataWithPrice] = useState(data)
+  const [cardWithPrice, setCardWithPrice] = useState(card)
   const [isOpen, setIsOpen] = useState(false)
 
   const [isMouseOver, setIsMouseOver] = useState(false)
-  
-  
+
+
   /** UTILS **/
   const floatingCss = (ref, scrollPosition) => {
     const { x, y, width, height } = ref.current?.getBoundingClientRect() ?? { x: 0, y: 0, width: 0, height: 0 }
@@ -57,15 +58,15 @@ const CardRow = (props) => {
 
   /** EFFECTS **/
   useEffect(() => {
-    const { prices, foil, amount } = data
+    const { prices, foil, amount } = card
     const price = Number(foil ? prices?.usd_foil : prices?.usd)
 
-    setDataWithPrice({
-      ...data,
+    setCardWithPrice({
+      ...card,
       price: price,
       total_price: price * amount,
     })
-  }, [data])
+  }, [card])
 
 
   /** RENDER **/
@@ -75,13 +76,8 @@ const CardRow = (props) => {
         className={clsx(classes.root, 'cursor-pointer')}
         onClick={e => setIsOpen(!isOpen)}
         onMouseEnter={onMouseEnter}
+      // onContextMenu={e => {console.log(card.name);e.preventDefault()}} //TODO: add context menu
       >
-        <TableCell onClick={e => e.stopPropagation()}>
-          <Checkbox
-          // TODO
-          />
-        </TableCell>
-
         {
           Object
             .entries(columns)
@@ -90,9 +86,8 @@ const CardRow = (props) => {
                 <TableCell
                   key={columnName}
                   align='center'
-
-                  /** renderSet() setup **/
-                  {...(
+                  {
+                  ...( /* renderSet() setup */
                     columnName === 'set'
                       ? {
                         ref: setRef,
@@ -100,13 +95,14 @@ const CardRow = (props) => {
                         onMouseLeave: e => setIsMouseOver(false),
                       }
                       : {}
-                  )}
+                  ) /* renderSet() setup */
+                  }
                 >
-                  {renderCell(dataWithPrice, columnName)}
+                  {renderCell(cardWithPrice, columnName)}
                   {
                     columnName === 'set' && isMouseOver && (
                       <Paper className='floating' style={floatingCss(setRef, scrollPosition)}>
-                        {[data.set_name, _.upperFirst(data.rarity), '#' + data.collector_number].join(' - ')}
+                        {[card.set_name, _.upperFirst(card.rarity), '#' + card.collector_number].join(' - ')}
                       </Paper>
                     )
                   }
@@ -115,6 +111,7 @@ const CardRow = (props) => {
             )
         }
 
+        {/* DROPDOWN ARROW */}
         <TableCell>
           <IconButton size='small' onClick={e => setIsOpen(!isOpen)}>
             {
@@ -124,14 +121,26 @@ const CardRow = (props) => {
             }
           </IconButton>
         </TableCell>
+
+        {/* CHECKBOX */}
+        {
+          selectable &&
+          <>
+            <TableCell onClick={e => e.stopPropagation()} style={{borderLeft:'1px solid #515151', paddingRight:'6px'}}>
+              <Checkbox
+              // TODO: checkbox needs to report back to parent it has been selected
+              />
+            </TableCell>
+          </>
+        }
       </TableRow>
 
 
-      <TableRow>
-        <TableCell colSpan={999} className={classes.collapsableContent}>
-          <Collapse in={isOpen} timeout="auto" unmountOnExit>
+      <TableRow onMouseEnter={onMouseEnter}>
+        <TableCell colSpan={999} className={classes.collapsableContent} style={{ paddingLeft: 0, paddingRight: 0 }}>
+          <Collapse unmountOnExit in={isOpen} timeout="auto">
             <CardInfo
-              collection={dataWithPrice}
+              card={cardWithPrice}
             />
           </Collapse>
         </TableCell>
