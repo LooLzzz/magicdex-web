@@ -109,7 +109,7 @@ const renders = {
 
   renderTag: (card, columnName) => {
     let tags = card['tag']
-    console.log(tags)
+    // console.log(tags) //DEBUG
     return (
       tags.length > 0
         ? //tags.join('; ')

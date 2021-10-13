@@ -37,6 +37,7 @@ const CardRow = (props) => {
   const setRef = useRef()
   const scrollPosition = useScrollPosition()
   const [isOpen, setIsOpen] = useState(false)
+  const [showContent, setShowContent] = useState(false)
 
   const [isMouseOver, setIsMouseOver] = useState(false)
 
@@ -56,6 +57,16 @@ const CardRow = (props) => {
 
   /** EFFECTS **/
   { }
+
+
+  /** HANDLERS **/
+  const onCollapseExited = (isAppearing) => {
+    setShowContent(false)
+  }
+  
+  const onCollapseEnter = (isAppearing) => {
+    setShowContent(true)
+  }
 
 
   /** RENDER **/
@@ -124,10 +135,9 @@ const CardRow = (props) => {
         }
       </TableRow>
 
-
-      <TableRow onMouseEnter={onMouseEnter}>
-        <TableCell colSpan={999} className={classes.collapsableContent} style={{ paddingLeft: 0, paddingRight: 0 }}>
-          <Collapse unmountOnExit in={isOpen} timeout="auto">
+      <TableRow onMouseEnter={onMouseEnter} style={{ display: showContent ? 'table-row' : 'none' }}>
+        <TableCell colSpan={10} className={classes.collapsableContent} style={{ paddingLeft: 0, paddingRight: 0 }}>
+          <Collapse unmountOnExit in={isOpen} timeout="auto" onEnter={onCollapseEnter} onExited={onCollapseExited}>
             <CardInfo
               card={card}
             />

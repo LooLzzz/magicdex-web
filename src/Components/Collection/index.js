@@ -2,11 +2,15 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
 import { useEffect, useState } from 'react'
-import { Grid } from '@material-ui/core'
+import { Grid, Button, ButtonGroup } from '@material-ui/core'
 import { Skeleton } from '@material-ui/lab'
 import { withStyles } from '@material-ui/styles'
 import { connect } from 'react-redux'
 import { useHistory } from 'react-router'
+// import {
+//   Apps as AppsIcon,
+//   Toc as TocIcon,
+// } from '@material-ui/icons'
 // import useMouse from '@react-hook/mouse-position'
 // import _ from 'lodash';
 // import clsx from 'clsx'
@@ -14,6 +18,7 @@ import { useHistory } from 'react-router'
 import { setCurrentTab, setCurrentCollection } from '@/Logic/redux'
 import { CardTableView, CardGridView } from '@/Components'
 import { MagicdexApi } from '@/Api'
+// import ViewSwitch from './ViewSwitch'
 import FilterFields from './FilterFields'
 import CardPriceDataProvider from './CardPriceDataProvider'
 import FilteredDataProvider from './FilteredDataProvider'
@@ -52,7 +57,7 @@ const Collection = (props) => {
     mana_cost: 'mana cost',
     type_line: 'type',
     foil: 'foil',
-    total_price: 'price (usd)',
+    total_price: `price (${currency})`,
     date_created: 'date added',
   }
 
@@ -105,36 +110,54 @@ const Collection = (props) => {
           </Grid>
           :
           // SHOW ACTUAL DATA VIEW
-          <Grid container justifyContent='flex-end'>
-            <Grid item container xs={12} lg={10} justifyContent='center'>
-              <Grid item xs={12}>
-                <FilterFields setFilters={setFilters} />
+          <Grid container spacing={2} justifyContent='flex-end'>
+            <Grid item container xs={12} lg={10} justifyContent='center' alignItems='center'>
+              <Grid item container xs={10}>
+                <FilterFields
+                  setFilters={setFilters}
+                />
+              </Grid>
+              <Grid item xs={2}>
+                <ButtonGroup variant='contained' color='primary' >
+                  <Button color='primary' onClick={e => setView('table')}>
+                    Table
+                  </Button>
+                  <Button color='primary' onClick={e => setView('grid')}>
+                    Grid
+                  </Button>
+                  {/* <IconButton color='inherit'>
+                    <AppsIcon color='inherit' />
+                  </IconButton>
+                  <IconButton color='inherit'>
+                    <TocIcon color='inherit' />
+                  </IconButton> */}
+                </ButtonGroup>
               </Grid>
             </Grid>
             <Grid item container wrap='nowrap' justifyContent='center' xs={12}>
-              <Grid item>
-                <CardPriceDataProvider
-                  data={collection}
-                  currency={currency} //TODO: add currency selection component
+              <CardPriceDataProvider
+                data={collection}
+                currency={currency} //TODO: add currency selection component
+              >
+                <FilteredDataProvider
+                  filters={filters}
+                // data = passed from parent
                 >
-                  <FilteredDataProvider
-                    filters={filters}
-                  // data = passed from parent
-                  >
-                    {/* TODO: add view switcher component (table/grid) */}
-                    {
-                      view === 'table'
-                        ? <CardTableView
-                          columns={columns}
-                        // data = passed from parent
-                        />
-                        : <CardGridView
-                        // data = passed from parent
-                        />
-                    }
-                  </FilteredDataProvider>
-                </CardPriceDataProvider>
-              </Grid>
+                  {/* TODO: add view switcher component (table/grid) */}
+                  {
+                    view === 'table'
+                      ? <CardTableView
+                        columns={columns}
+                        setCurrency={setCurrency}
+                        currency={currency}
+                      // data = passed from parent
+                      />
+                      : <CardGridView
+                      // data = passed from parent
+                      />
+                  }
+                </FilteredDataProvider>
+              </CardPriceDataProvider>
             </Grid>
           </Grid>
       }

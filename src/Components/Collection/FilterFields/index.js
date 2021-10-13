@@ -1,8 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-lone-blocks */
 
-import { useEffect, useState, createRef } from "react"
-import { InputAdornment, TextField, ListItem, ListSubheader, Divider } from "@material-ui/core"
+import React, { useEffect, useState, createRef } from "react"
+import { Grid, InputAdornment, TextField, ListItem, ListSubheader, Divider } from "@material-ui/core"
 import { withStyles } from "@material-ui/styles"
 import { connect } from "react-redux"
 import Scryfall from "scryfall-client"
@@ -104,10 +104,11 @@ const FilterProvider = (props) => {
 
   /** RENDER **/
   return (
-    <div className={classes.root}>
+    <Grid item container className={classes.root}>
       <TextField
         id="filled-search"
         label="Search Card Name"
+        size='small'
         type="search"
         color='secondary'
         variant="filled"
@@ -208,7 +209,7 @@ const FilterProvider = (props) => {
           ),
         }}
       />
-    </div>
+    </Grid>
   )
 }
 

@@ -17,7 +17,9 @@ const CardImage = (props) => {
     card,
     imageProps,
     buttonProps,
+    tiltProps,
     tiltEnabled,
+    packTransformButton,
   } = props
 
 
@@ -41,13 +43,19 @@ const CardImage = (props) => {
           glareEnable={tiltEnabled ?? false}
           tiltMaxAngleX={10}
           tiltMaxAngleY={10}
+          // tiltReverse
           glareBorderRadius={'4.75% / 3.5%'}
           glarePosition='all'
           // glareColor='#E1D6AA'
           // glareColor='#F4F3A8'
-          glareMaxOpacity={0.35}
+          // glareMaxOpacity={0.35}
+          glareMaxOpacity={0.13}
+          onEnter={packTransformButton ? () => setFlipped(true) : null}
+          onLeave={packTransformButton ? () => setFlipped(false) : null}
+          {...tiltProps}
         >
           <ImageOverlay
+            onClick={packTransformButton && handleTransform}
             overlayEnabled={card?.foil}
             baseSrc={
               card
@@ -65,7 +73,7 @@ const CardImage = (props) => {
         </Tilt>
       </Grid>
       {
-        card?.card_faces && card?.card_faces.length > 1 &&
+        !packTransformButton && card?.card_faces && card?.card_faces.length > 1 &&
         <Grid item align='center' style={{ marginTop: 8 }}>
           <Button
             classes={{ root: 'buttonThridly-root' }}

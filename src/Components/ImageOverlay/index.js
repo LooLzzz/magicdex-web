@@ -18,6 +18,7 @@ const ImageOverlay = (props) => {
     overlayProps,
     width,
     height,
+    ...rest
   } = props
   const [_baseSrc, setBase] = useState()
   const [_overlaySrc, setOverlay] = useState()
@@ -39,7 +40,11 @@ const ImageOverlay = (props) => {
 
   /** RENDER **/
   return (
-    <div className={classes.root} style={{ width: width, height: height }}>
+    <div
+      className={classes.root}
+      style={{ width: width, height: height }}
+      {...rest}
+    >
       <img
         width={width}
         height={height}

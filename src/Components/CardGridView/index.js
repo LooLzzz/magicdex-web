@@ -1,9 +1,12 @@
 /* eslint-disable no-lone-blocks */
 
-// import { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
+import { Grid } from '@material-ui/core'
 import { withStyles } from '@material-ui/styles'
 import { connect } from 'react-redux'
+import _ from 'lodash'
 
+import { CardImage } from '@/Components'
 import useStyles from './styles'
 
 
@@ -23,10 +26,14 @@ const CardGridView = (props) => {
     data,
     // dispatch,
   } = props
-
+  const [sortedData, setSortedData] = useState([])
 
   /** EFFECTS **/
-  { }
+  useEffect(() => {
+    setSortedData(
+      _.sortBy(data, card => card.type_line.replace('Legendary', ''))
+    )
+  }, [data])
 
 
   /** HANDLERS **/
@@ -34,9 +41,32 @@ const CardGridView = (props) => {
 
   /** RENDER **/
   return (
-    <div className={classes.root}>
-      hello from CardGridView
-    </div>
+    <Grid item container spacing={2} xs={12} justifyContent='center'>
+      {
+        sortedData.map((card, i) => {
+          const width = 209
+          return (
+            <Grid item key={i} xs='auto' >
+              <CardImage
+                packTransformButton
+                tiltEnabled
+                tiltProps={{
+                  glareEnable: false,
+                  tiltMaxAngleX: 12.5,
+                  tiltMaxAngleY: 12.5,
+                }}
+                imageProps={{
+                  width,
+                  height: width * 1.4,
+                }}
+                card={card}
+              />
+            </Grid>
+          )
+        })
+      }
+    </Grid>
+
   )
 }
 

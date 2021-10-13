@@ -1,7 +1,7 @@
 /* eslint-disable no-lone-blocks */
 
 import { useState, useEffect } from 'react'
-import { Grid, Paper, Hidden, Table, TableContainer, TableRow, TableHead, TableBody, TableCell, TableSortLabel, Button, IconButton } from '@material-ui/core'
+import { Menu, MenuItem, ListItemText, Grid, Paper, Hidden, Table, TableContainer, TableRow, TableHead, TableBody, TableCell, TableSortLabel, Button, IconButton } from '@material-ui/core'
 import { MoreVert as MoreVertIcon } from '@material-ui/icons'
 import { withStyles } from '@material-ui/styles'
 import { connect } from 'react-redux'
@@ -29,8 +29,11 @@ const CardTableView = (props) => {
     classes,
     data,
     columns,
+    currency,
+    setCurrency,
     // dispatch,
   } = props
+  const [menuAnchor, setMenuAnchor] = useState(null)
   const [currentHoveringCard, setCurrentHoveringCard] = useState()
   const [isSelectable, setIsSelectable] = useState(false)
   const [sortBy, setSortByCol] = useState()
@@ -46,12 +49,12 @@ const CardTableView = (props) => {
         _sortBy = 'cmc'
         break
 
-
       case 'total_price':
       case 'prices':
       case 'price':
         // _sortBy = (card) => card.amount * Number(card.foil ? card.prices?.usd_foil : card.prices?.usd)
-        _sortBy = (card) => Number(card.foil ? card.prices?.usd_foil : card.prices?.usd)
+        // _sortBy = (card) => Number(card.price)
+        _sortBy = 'price'
         break
 
       case 'type':
@@ -77,6 +80,19 @@ const CardTableView = (props) => {
 
 
   /** HANDLERS **/
+  const toggleCurrency = () => {
+    setCurrency(currency === 'usd' ? 'eur' : 'usd')
+  }
+
+  const toggleMenuOpen = (e) => {
+    if (menuAnchor === null)
+      setMenuAnchor(e.currentTarget)
+    else
+      setMenuAnchor(null)
+
+    e.stopPropagation()
+  }
+
   const handleRowHover = (card, i) => {
     setCurrentHoveringCard(card)
   }
@@ -104,13 +120,35 @@ const CardTableView = (props) => {
 
   /** RENDER **/
   return (
-    <Grid container spacing={1}>
+    <Grid item container spacing={1} xs={12}>
       {/** TOP BUTTONS **/}
       <Grid item container spacing={1} direction="row-reverse" xs={12}>
         <Grid item>
-          <IconButton size='small'>
+          <IconButton size='small' onClick={toggleMenuOpen}>
             <MoreVertIcon />
           </IconButton>
+          <Menu dense
+            anchorEl={menuAnchor}
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'left',
+            }}
+            transformOrigin={{
+              vertical: 'top',
+              horizontal: 'right',
+            }}
+            open={menuAnchor !== null}
+            onClose={toggleMenuOpen}
+          >
+            <MenuItem onClick={toggleCurrency}>
+              <ListItemText
+                primary='Toggle Currency'
+                secondary={currency.toUpperCase()}
+              />
+            </MenuItem>
+            <MenuItem>TBD</MenuItem>
+            <MenuItem>Third Thing Here</MenuItem>
+          </Menu>
         </Grid>
         <Grid item>
           <Button
@@ -141,7 +179,7 @@ const CardTableView = (props) => {
           <div align='center' style={{ width: 'fit-content' }}>
             <TableContainer ref={ref} component={Paper} className={classes.paper} elevation={5}>
               <Table size="small" >
-                <TableHead>
+                <TableHead className={classes.tableHead}>
                   <TableRow>
 
                     {Object.entries(columns).map(([columnName, columnDisplayName]) => (
