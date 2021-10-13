@@ -1,6 +1,6 @@
 /* eslint-disable no-lone-blocks */
 
-// import { useState } from 'react'
+// import { useEffect, useState } from 'react'
 import { withStyles } from '@material-ui/styles'
 import { connect } from 'react-redux'
 
@@ -8,22 +8,19 @@ import useStyles from './styles'
 
 
 //TODO: all this
- 
 
-const mapStateToProps = (state) => ({
 
-})
+const mapStateToProps = (state) => ({})
 
 const mapDispatchToProps = (dispatch) => ({
-  dispatch: {
-
-  }
+  // dispatch: {}
 })
 
 const CardGridView = (props) => {
   /** VARS **/
   const {
     classes,
+    data,
     // dispatch,
   } = props
 

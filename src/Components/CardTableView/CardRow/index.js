@@ -1,7 +1,8 @@
+/* eslint-disable no-lone-blocks */
 /* eslint-disable react-hooks/exhaustive-deps */
 
-import { useEffect, useState, useRef } from 'react'
-import { TableRow, TableCell, Collapse, IconButton, Checkbox, Paper, Divider } from '@material-ui/core'
+import { useState, useRef } from 'react'
+import { TableRow, TableCell, Collapse, IconButton, Checkbox, Paper } from '@material-ui/core'
 import { withStyles } from '@material-ui/styles'
 import { connect } from 'react-redux'
 import useScrollPosition from '@react-hook/window-scroll'
@@ -20,9 +21,7 @@ import useStyles from './styles'
 const mapStateToProps = (state) => ({})
 
 const mapDispatchToProps = (dispatch) => ({
-  dispatch: {
-
-  }
+  // dispatch: {}
 })
 
 const CardRow = (props) => {
@@ -37,7 +36,6 @@ const CardRow = (props) => {
   } = props
   const setRef = useRef()
   const scrollPosition = useScrollPosition()
-  const [cardWithPrice, setCardWithPrice] = useState(card)
   const [isOpen, setIsOpen] = useState(false)
 
   const [isMouseOver, setIsMouseOver] = useState(false)
@@ -57,16 +55,7 @@ const CardRow = (props) => {
 
 
   /** EFFECTS **/
-  useEffect(() => {
-    const { prices, foil, amount } = card
-    const price = Number(foil ? prices?.usd_foil : prices?.usd)
-
-    setCardWithPrice({
-      ...card,
-      price: price,
-      total_price: price * amount,
-    })
-  }, [card])
+  { }
 
 
   /** RENDER **/
@@ -98,7 +87,7 @@ const CardRow = (props) => {
                   ) /* renderSet() setup */
                   }
                 >
-                  {renderCell(cardWithPrice, columnName)}
+                  {renderCell(card, columnName)}
                   {
                     columnName === 'set' && isMouseOver && (
                       <Paper className='floating' style={floatingCss(setRef, scrollPosition)}>
@@ -126,7 +115,7 @@ const CardRow = (props) => {
         {
           selectable &&
           <>
-            <TableCell onClick={e => e.stopPropagation()} style={{borderLeft:'1px solid #515151', paddingRight:'6px'}}>
+            <TableCell onClick={e => e.stopPropagation()} style={{ borderLeft: '1px solid #515151', paddingRight: '6px' }}>
               <Checkbox
               // TODO: checkbox needs to report back to parent it has been selected
               />
@@ -140,7 +129,7 @@ const CardRow = (props) => {
         <TableCell colSpan={999} className={classes.collapsableContent} style={{ paddingLeft: 0, paddingRight: 0 }}>
           <Collapse unmountOnExit in={isOpen} timeout="auto">
             <CardInfo
-              card={cardWithPrice}
+              card={card}
             />
           </Collapse>
         </TableCell>

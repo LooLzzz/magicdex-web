@@ -97,9 +97,13 @@ const renders = {
   ),
 
   renderPrice: (card, columnName) => {
-    const price = Number(card[columnName])
+    const { [columnName]: price, currency } = card
     return (
-      price > 0 ? '$' + price : '-'
+      price > 0
+        ? currency === 'usd'
+          ? '$' + price
+          : price + '€'
+        : '-'
     )
   },
 
@@ -111,7 +115,7 @@ const renders = {
         ? //tags.join('; ')
         tags.map((tag, i) =>
           <Chip
-            onDelete={() => {/*TODO: add delete functionality to tag chips */}}
+            onDelete={() => {/*TODO: add delete functionality to tag chips */ }}
             label={tag}
             size='small'
             key={i}

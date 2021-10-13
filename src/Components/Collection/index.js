@@ -1,3 +1,4 @@
+/* eslint-disable no-lone-blocks */
 /* eslint-disable react-hooks/exhaustive-deps */
 
 import { useEffect, useState } from 'react'
@@ -11,9 +12,10 @@ import { useHistory } from 'react-router'
 // import clsx from 'clsx'
 
 import { setCurrentTab, setCurrentCollection } from '@/Logic/redux'
-import { CardTableView } from '@/Components'
+import { CardTableView, CardGridView } from '@/Components'
 import { MagicdexApi } from '@/Api'
 import FilterFields from './FilterFields'
+import CardPriceDataProvider from './CardPriceDataProvider'
 import FilteredDataProvider from './FilteredDataProvider'
 import useStyles from './styles'
 
@@ -37,9 +39,12 @@ const Collection = (props) => {
     dispatch,
     username,
     collection,
+    currency: _currency,
   } = props
   const history = useHistory()
+  const [view, setView] = useState('table') // one of ['table', 'grid']
   const [filters, setFilters] = useState()
+  const [currency, setCurrency] = useState(_currency ?? 'usd') // one of ['usd', 'eur']
   const columns = {
     amount: 'amount',
     name: 'name',
@@ -56,15 +61,6 @@ const Collection = (props) => {
   useEffect(() => {
     //onMount
     dispatch.setCurrentTab({ tab: 'collection' })
-
-    //DEBUG
-    // setFilters({
-    //   // foil: v => v === true,
-    //   // foil: true,
-    //   // name: v => v.toLowerCase().includes('fire'),
-    //   // name: 'Fireball',
-    //   price: (v, item) => item.amount * item.prices.usd < 10,
-    // })
   }, [])
 
   useEffect(() => {
@@ -76,14 +72,9 @@ const Collection = (props) => {
       .then(res => dispatch.setCurrentCollection({ collection: res }))
   }, [username])
 
-  // useEffect(() => {
-  // }, [collection])
-
 
   /** HANDLERS **/
-  // const handleRowHover = (card, i) => {
-  //   setCurrentHoveringCard(card)
-  // }
+  { }
 
 
   /** RENDER **/
@@ -122,15 +113,27 @@ const Collection = (props) => {
             </Grid>
             <Grid item container wrap='nowrap' justifyContent='center' xs={12}>
               <Grid item>
-                <FilteredDataProvider
+                <CardPriceDataProvider
                   data={collection}
-                  filters={filters}
+                  currency={currency} //TODO: add currency selection component
                 >
-                  <CardTableView
-                    columns={columns}
-                    data={collection}
-                  />
-                </FilteredDataProvider>
+                  <FilteredDataProvider
+                    filters={filters}
+                  // data = passed from parent
+                  >
+                    {/* TODO: add view switcher component (table/grid) */}
+                    {
+                      view === 'table'
+                        ? <CardTableView
+                          columns={columns}
+                        // data = passed from parent
+                        />
+                        : <CardGridView
+                        // data = passed from parent
+                        />
+                    }
+                  </FilteredDataProvider>
+                </CardPriceDataProvider>
               </Grid>
             </Grid>
           </Grid>

@@ -8,7 +8,6 @@ const FilteredDataProvider = (props) => {
     children,
     data,
     filters,
-    // dispatch,
     ...rest
   } = props
   const [filteredData, setFilteredData] = useState(data)
