@@ -1,24 +1,26 @@
 /* eslint-disable no-lone-blocks */
 /* eslint-disable react-hooks/exhaustive-deps */
 
-import { useEffect, useState } from 'react'
-import { Grid, Button, ButtonGroup } from '@material-ui/core'
+import { useEffect, useState, createRef } from 'react'
+import { Grid, ListItemText, MenuItem, ListItem, ListSubheader, Divider, ButtonGroup, IconButton } from '@material-ui/core'
 import { Skeleton } from '@material-ui/lab'
 import { withStyles } from '@material-ui/styles'
 import { connect } from 'react-redux'
 import { useHistory } from 'react-router'
-// import {
-//   Apps as AppsIcon,
-//   Toc as TocIcon,
-// } from '@material-ui/icons'
+import {
+  MoreVert as MoreVertIcon,
+  ViewList as ViewListIcon,
+  ViewModule as ViewModuleIcon,
+  ViewCompact as ViewCompactIcon,
+  KeyboardArrowRight as KeyboardArrowRightIcon,
+} from '@material-ui/icons'
+import _ from 'lodash'
 // import useMouse from '@react-hook/mouse-position'
-// import _ from 'lodash';
 // import clsx from 'clsx'
 
 import { setCurrentTab, setCurrentCollection } from '@/Logic/redux'
-import { CardTableView, CardGridView } from '@/Components'
+import { MenuPopover, CardTableView, CardGridView } from '@/Components'
 import { MagicdexApi } from '@/Api'
-// import ViewSwitch from './ViewSwitch'
 import FilterFields from './FilterFields'
 import CardPriceDataProvider from './CardPriceDataProvider'
 import FilteredDataProvider from './FilteredDataProvider'
@@ -47,9 +49,11 @@ const Collection = (props) => {
     currency: _currency,
   } = props
   const history = useHistory()
+  const menuRef = createRef()
   const [view, setView] = useState('table') // one of ['table', 'grid']
   const [filters, setFilters] = useState()
   const [currency, setCurrency] = useState(_currency ?? 'usd') // one of ['usd', 'eur']
+  const [tableEditable, setTableEditable] = useState(false)
   const columns = {
     amount: 'amount',
     name: 'name',
@@ -79,7 +83,13 @@ const Collection = (props) => {
 
 
   /** HANDLERS **/
-  { }
+  const toggleTableEditable = () => {
+    setTableEditable(!tableEditable)
+  }
+
+  const toggleCurrency = () => {
+    setCurrency(currency === 'usd' ? 'eur' : 'usd')
+  }
 
 
   /** RENDER **/
@@ -112,49 +122,113 @@ const Collection = (props) => {
           // SHOW ACTUAL DATA VIEW
           <Grid container spacing={2} justifyContent='flex-end'>
             <Grid item container xs={12} lg={10} justifyContent='center' alignItems='center'>
-              <Grid item container xs={10}>
+              <Grid item container xs={11}>
                 <FilterFields
                   setFilters={setFilters}
                 />
               </Grid>
-              <Grid item xs={2}>
-                <ButtonGroup variant='contained' color='primary' >
-                  <Button color='primary' onClick={e => setView('table')}>
-                    Table
-                  </Button>
-                  <Button color='primary' onClick={e => setView('grid')}>
-                    Grid
-                  </Button>
-                  {/* <IconButton color='inherit'>
-                    <AppsIcon color='inherit' />
-                  </IconButton>
-                  <IconButton color='inherit'>
-                    <TocIcon color='inherit' />
-                  </IconButton> */}
-                </ButtonGroup>
+              <Grid item xs='auto'>
+                <MenuPopover
+                  ref={menuRef}
+                  icon={<MoreVertIcon />}
+                  listProps={{ dense: true }}
+                >
+                  <ListItem>
+                    <ButtonGroup variant='text' size='small'>
+                      <IconButton onClick={() => setView('table')} color={view === 'table' && 'secondary'}>
+                        <ViewListIcon />
+                      </IconButton>
+                      <IconButton onClick={() => setView('grid')} color={view === 'grid' && 'secondary'}>
+                        <ViewModuleIcon />
+                      </IconButton>
+                      <IconButton onClick={() => setView('compact')} color={view === 'compact' && 'secondary'}>
+                        <ViewCompactIcon />
+                      </IconButton>
+                    </ButtonGroup>
+                  </ListItem>
+
+                  <Divider />
+
+                  <ListSubheader>
+                    <KeyboardArrowRightIcon />
+                    {`${_.upperFirst(view)} View`}
+                  </ListSubheader>
+                  {(() => {
+                    switch (view) {
+                      default:
+                      case 'table':
+                        return (
+                          <>
+                            <MenuItem onClick={toggleCurrency}>
+                              <ListItemText
+                                primary={'Change Currency'}
+                                secondary={`Viewing ${currency.toUpperCase()}`}
+                              />
+                            </MenuItem>
+                            <MenuItem onClick={toggleTableEditable}>
+                              {
+                                tableEditable
+                                  ? 'Disable Edit'
+                                  : 'Enable Edit'
+                              }
+                            </MenuItem>
+                            <MenuItem>
+                              Reset Changes
+                            </MenuItem>
+                          </>
+                        )
+                      case 'grid':
+                        return (
+                          <>
+                            {/* <ListSubheader>Grid View</ListSubheader> */}
+                            <MenuItem>
+                              Something here
+                            </MenuItem>
+                          </>
+                        )
+                      case 'compact':
+                        return (
+                          <>
+                            {/* <ListSubheader>Compact View</ListSubheader> */}
+                            <MenuItem>
+                              TBD
+                            </MenuItem>
+                          </>
+                        )
+                    }
+                  })()}
+                </MenuPopover>
               </Grid>
             </Grid>
             <Grid item container wrap='nowrap' justifyContent='center' xs={12}>
               <CardPriceDataProvider
                 data={collection}
-                currency={currency} //TODO: add currency selection component
+                currency={currency}
               >
                 <FilteredDataProvider
                   filters={filters}
                 // data = passed from parent
                 >
-                  {/* TODO: add view switcher component (table/grid) */}
                   {
-                    view === 'table'
-                      ? <CardTableView
-                        columns={columns}
-                        setCurrency={setCurrency}
-                        currency={currency}
-                      // data = passed from parent
-                      />
-                      : <CardGridView
-                      // data = passed from parent
-                      />
+                    (() => {
+                      switch (view) {
+                        default:
+                        case 'table':
+                          return <CardTableView
+                            columns={columns}
+                            setCurrency={setCurrency}
+                            currency={currency}
+                            isEditable={tableEditable}
+                          // data = passed from parent
+                          />
+                        case 'grid':
+                          return <CardGridView
+                          // data = passed from parent
+                          />
+                        case 'compact':
+                          return <div>TBD</div>
+                      }
+                    })()
                   }
                 </FilteredDataProvider>
               </CardPriceDataProvider>

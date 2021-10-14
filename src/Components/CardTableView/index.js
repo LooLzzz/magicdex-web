@@ -1,8 +1,7 @@
 /* eslint-disable no-lone-blocks */
 
 import { useState, useEffect } from 'react'
-import { Menu, MenuItem, ListItemText, Grid, Paper, Hidden, Table, TableContainer, TableRow, TableHead, TableBody, TableCell, TableSortLabel, Button, IconButton } from '@material-ui/core'
-import { MoreVert as MoreVertIcon } from '@material-ui/icons'
+import { Grid, Paper, Hidden, Table, TableContainer, TableRow, TableHead, TableBody, TableCell, TableSortLabel } from '@material-ui/core'
 import { withStyles } from '@material-ui/styles'
 import { connect } from 'react-redux'
 import _ from 'lodash'
@@ -29,13 +28,11 @@ const CardTableView = (props) => {
     classes,
     data,
     columns,
-    currency,
-    setCurrency,
+    isEditable,
     // dispatch,
   } = props
-  const [menuAnchor, setMenuAnchor] = useState(null)
   const [currentHoveringCard, setCurrentHoveringCard] = useState()
-  const [isSelectable, setIsSelectable] = useState(false)
+  // const [isSelectable, setIsSelectable] = useState(false)
   const [sortBy, setSortByCol] = useState()
   const [sortOrder, setSortOrder] = useState('desc')
   const [sortedData, setSortedData] = useState(data)
@@ -80,18 +77,18 @@ const CardTableView = (props) => {
 
 
   /** HANDLERS **/
-  const toggleCurrency = () => {
-    setCurrency(currency === 'usd' ? 'eur' : 'usd')
-  }
+  // const toggleCurrency = () => {
+  //   setCurrency(currency === 'usd' ? 'eur' : 'usd')
+  // }
 
-  const toggleMenuOpen = (e) => {
-    if (menuAnchor === null)
-      setMenuAnchor(e.currentTarget)
-    else
-      setMenuAnchor(null)
+  // const toggleMenuOpen = (e) => {
+  //   if (menuAnchor === null)
+  //     setMenuAnchor(e.currentTarget)
+  //   else
+  //     setMenuAnchor(null)
 
-    e.stopPropagation()
-  }
+  //   e.stopPropagation()
+  // }
 
   const handleRowHover = (card, i) => {
     setCurrentHoveringCard(card)
@@ -121,46 +118,6 @@ const CardTableView = (props) => {
   /** RENDER **/
   return (
     <Grid item container spacing={1} xs={12}>
-      {/** TOP BUTTONS **/}
-      <Grid item container spacing={1} direction="row-reverse" xs={12}>
-        <Grid item>
-          <IconButton size='small' onClick={toggleMenuOpen}>
-            <MoreVertIcon />
-          </IconButton>
-          <Menu dense
-            anchorEl={menuAnchor}
-            anchorOrigin={{
-              vertical: 'bottom',
-              horizontal: 'left',
-            }}
-            transformOrigin={{
-              vertical: 'top',
-              horizontal: 'right',
-            }}
-            open={menuAnchor !== null}
-            onClose={toggleMenuOpen}
-          >
-            <MenuItem onClick={toggleCurrency}>
-              <ListItemText
-                primary='Toggle Currency'
-                secondary={currency.toUpperCase()}
-              />
-            </MenuItem>
-            <MenuItem>TBD</MenuItem>
-            <MenuItem>Third Thing Here</MenuItem>
-          </Menu>
-        </Grid>
-        <Grid item>
-          <Button
-            color='primary'
-            variant='contained'
-            size='small'
-            onClick={e => setIsSelectable(!isSelectable)}
-          >
-            {isSelectable ? 'Disable Edit' : 'Enable Edit'}
-          </Button>
-        </Grid>
-      </Grid>
 
       {/** CARD PREVIEW **/}
       <Grid item container wrap='nowrap' justifyContent='center'>
@@ -204,7 +161,7 @@ const CardTableView = (props) => {
 
                     {/** Checkbox **/}
                     {
-                      isSelectable &&
+                      isEditable &&
                       <TableCell className={classes.iconCell} />
                     }
 
@@ -218,7 +175,7 @@ const CardTableView = (props) => {
                       key={card._id}
                       columns={columns}
                       card={card}
-                      selectable={isSelectable}
+                      selectable={isEditable}
                     />
                   ))}
                 </TableBody>
