@@ -154,6 +154,14 @@ const getLightTheme = () =>
   createTheme({
     palette: {
       type: 'light',
+      secondary: {
+        // main: colors.orange[900],
+        // main: colors.purple['A400'],
+        // main: '#9568AD',
+        // main: '#D695F9',
+        main: '#E3468C',
+        contrastText: getContrastText('#E3468C'),
+      },
       table: {
         divider: 'rgba(150, 150, 150, 0.75)'
       },

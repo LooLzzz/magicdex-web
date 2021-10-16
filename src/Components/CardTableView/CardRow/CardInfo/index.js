@@ -4,7 +4,7 @@ import { Grid, Paper, Hidden } from '@material-ui/core'
 import { withStyles } from '@material-ui/styles'
 import { connect } from 'react-redux'
 import clsx from 'clsx'
-import _ from 'lodash'
+// import _ from 'lodash'
 
 import { CardImage } from '@/Components'
 import renderCell from '@/CardRenders'
@@ -50,13 +50,14 @@ const CardInfo = (props) => {
         </Grid>
       </Hidden>
       <Grid item container direction='column' xs={10} align='center'>
-        <Paper elevation={3}>
+        <Paper elevation={3} className={classes.content}>
           {
-            Object.entries(_.pick(card, ['name', 'amount', 'set', 'cmc', 'mana_cost', 'tag', 'price', 'total_price', 'flavor_text'])).map(([key, value]) => (
-              <Grid item>
-                {renderCell(card, key)}
-              </Grid>
-            ))
+            ['name', 'amount', 'set', 'cmc', 'mana_cost', 'tag', 'price', 'total_price', 'flavor_text']
+              .map((columnName) => (
+                <Grid item>
+                  {renderCell(card, columnName)}
+                </Grid>
+              ))
           }
         </Paper>
       </Grid>

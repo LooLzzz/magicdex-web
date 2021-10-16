@@ -1,7 +1,6 @@
-/* eslint-disable no-lone-blocks */
 /* eslint-disable react-hooks/exhaustive-deps */
 
-import { useState, useRef } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { TableRow, TableCell, Collapse, IconButton, Checkbox, Paper } from '@material-ui/core'
 import { withStyles } from '@material-ui/styles'
 import { connect } from 'react-redux'
@@ -32,10 +31,14 @@ const CardRow = (props) => {
     card,
     onMouseEnter,
     selectable,
+    onSelected,
+    closeAllRows,
+    closeSignal,
     // dispatch,
   } = props
   const setRef = useRef()
   const scrollPosition = useScrollPosition()
+  const [selected, setSelected] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
   const [showContent, setShowContent] = useState(false)
 
@@ -56,10 +59,25 @@ const CardRow = (props) => {
 
 
   /** EFFECTS **/
-  { }
+  useEffect(() => {
+    if (closeSignal !== card._id)
+      setIsOpen(false)
+  }, [closeSignal])
 
 
   /** HANDLERS **/
+  const handleSelectChange = (e) => {
+    setSelected(e.target.checked)
+    onSelected(card._id, e.target.checked)
+  }
+
+  const handleIsOpenToggle = () => {
+    if (!isOpen)
+      closeAllRows(card._id)
+
+    setIsOpen(!isOpen)
+  }
+
   const onCollapseExited = (isAppearing) => {
     setShowContent(false)
   }
@@ -74,7 +92,7 @@ const CardRow = (props) => {
     <>
       <TableRow
         className={clsx(classes.root, 'cursor-pointer')}
-        onClick={e => setIsOpen(!isOpen)}
+        onClick={handleIsOpenToggle}
         onMouseEnter={onMouseEnter}
       // onContextMenu={e => {console.log(card.name);e.preventDefault()}} //TODO: add context menu
       >
@@ -113,7 +131,7 @@ const CardRow = (props) => {
 
         {/* DROPDOWN ARROW */}
         <TableCell>
-          <IconButton size='small' onClick={e => setIsOpen(!isOpen)}>
+          <IconButton size='small' onClick={handleIsOpenToggle}>
             {
               isOpen
                 ? <KeyboardArrowUpIcon />
@@ -126,8 +144,10 @@ const CardRow = (props) => {
         {
           selectable &&
           <>
-            <TableCell onClick={e => e.stopPropagation()} style={{ borderLeft: '1px solid #515151', paddingRight: '6px' }}>
+            <TableCell onClick={e => e.stopPropagation()} className={classes.checkbox}>
               <Checkbox
+                checked={selected}
+                onChange={handleSelectChange}
               // TODO: checkbox needs to report back to parent it has been selected
               />
             </TableCell>
@@ -136,7 +156,7 @@ const CardRow = (props) => {
       </TableRow>
 
       <TableRow onMouseEnter={onMouseEnter} className={classes.row} style={{ display: showContent ? 'table-row' : 'none' }}>
-        <TableCell colSpan={10} style={{ padding: 0}}>
+        <TableCell colSpan={10} style={{ padding: 0 }}>
           <Collapse unmountOnExit in={isOpen} timeout="auto" onEnter={onCollapseEnter} onExited={onCollapseExited}>
             <CardInfo
               card={card}

@@ -1,5 +1,3 @@
-/* eslint-disable no-lone-blocks */
-
 import { useState, useEffect } from 'react'
 import { Grid, Paper, Hidden, Table, TableContainer, TableRow, TableHead, TableBody, TableCell, TableSortLabel } from '@material-ui/core'
 import { withStyles } from '@material-ui/styles'
@@ -24,7 +22,6 @@ const mapDispatchToProps = (dispatch) => ({
 const CardTableView = (props) => {
   /** VARS **/
   const {
-    ref,
     classes,
     data,
     columns,
@@ -32,25 +29,24 @@ const CardTableView = (props) => {
     // dispatch,
   } = props
   const [currentHoveringCard, setCurrentHoveringCard] = useState()
-  // const [isSelectable, setIsSelectable] = useState(false)
   const [sortBy, setSortByCol] = useState()
   const [sortOrder, setSortOrder] = useState('desc')
   const [sortedData, setSortedData] = useState(data)
-
+  const [closeSignal, setCloseSignal] = useState(false)
+  const [selectedCardIds, setSelectedCardIds] = useState([]) //will contain mongodb ids (`card._id`) of selected rows
 
   /** EFFECTS **/
   useEffect(() => {
     let _sortBy //= sortBy === 'mana_cost' ? 'cmc' : sortBy
     switch (sortBy) {
       case 'mana_cost':
+      case 'mana_value':
         _sortBy = 'cmc'
         break
 
       case 'total_price':
       case 'prices':
       case 'price':
-        // _sortBy = (card) => card.amount * Number(card.foil ? card.prices?.usd_foil : card.prices?.usd)
-        // _sortBy = (card) => Number(card.price)
         _sortBy = 'price'
         break
 
@@ -75,20 +71,23 @@ const CardTableView = (props) => {
     )
   }, [data, sortOrder, sortBy])
 
+  useEffect(() => {
+    console.log(selectedCardIds)
+  }, [selectedCardIds])
+
 
   /** HANDLERS **/
-  // const toggleCurrency = () => {
-  //   setCurrency(currency === 'usd' ? 'eur' : 'usd')
-  // }
+  const handleRowSelected = (id, checked) => {
+    setSelectedCardIds(
+      checked
+        ? [...selectedCardIds, id]
+        : selectedCardIds.filter(cardId => cardId !== id)
+    )
+  }
 
-  // const toggleMenuOpen = (e) => {
-  //   if (menuAnchor === null)
-  //     setMenuAnchor(e.currentTarget)
-  //   else
-  //     setMenuAnchor(null)
-
-  //   e.stopPropagation()
-  // }
+  const closeAllRows = (origin) => {
+    setCloseSignal(origin)
+  }
 
   const handleRowHover = (card, i) => {
     setCurrentHoveringCard(card)
@@ -134,7 +133,7 @@ const CardTableView = (props) => {
         {/** TABLE VIEW **/}
         <Grid item>
           <div align='center' style={{ width: 'fit-content' }}>
-            <TableContainer ref={ref} component={Paper} className={classes.paper} elevation={5}>
+            <TableContainer component={Paper} className={classes.paper} elevation={5}>
               <Table size="small" >
                 <TableHead className={classes.tableHead}>
                   <TableRow>
@@ -168,7 +167,7 @@ const CardTableView = (props) => {
                   </TableRow>
                 </TableHead>
 
-                <TableBody /* onMouseLeave={e => onRowHover(null)} */ >
+                <TableBody>
                   {sortedData.map(card => (
                     <CardRow
                       onMouseEnter={e => handleRowHover(card)}
@@ -176,6 +175,10 @@ const CardTableView = (props) => {
                       columns={columns}
                       card={card}
                       selectable={isEditable}
+                      onSelected={handleRowSelected}
+
+                      closeAllRows={closeAllRows}
+                      closeSignal={closeSignal}
                     />
                   ))}
                 </TableBody>

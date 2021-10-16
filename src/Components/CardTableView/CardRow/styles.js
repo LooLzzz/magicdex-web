@@ -9,6 +9,10 @@ const useStyles = (theme) => {
         borderBottom: 'unset',
       },
     },
+    checkbox: {
+      borderLeft: `1px solid ${theme.palette.divider}`,
+      paddingRight: '6px'
+    },
   }
 }
 

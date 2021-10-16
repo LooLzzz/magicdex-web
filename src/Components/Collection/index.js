@@ -6,7 +6,7 @@ import { Grid, ListItemText, MenuItem, ListItem, ListSubheader, Divider, ButtonG
 import { Skeleton } from '@material-ui/lab'
 import { withStyles } from '@material-ui/styles'
 import { connect } from 'react-redux'
-import { useHistory } from 'react-router'
+import { useHistory, Prompt } from 'react-router'
 import {
   MoreVert as MoreVertIcon,
   ViewList as ViewListIcon,
@@ -94,145 +94,152 @@ const Collection = (props) => {
 
   /** RENDER **/
   return (
-    <div className={classes.root}>
-      {
-        !collection
-          ?
-          // SHOW SKELETON
-          <Grid container justifyContent='center'>
-            <Grid item container xs={12} sm={11} md={10} spacing={2}>
-              <Grid item xs={2}>
-                <Skeleton variant='rect' height='100%' />
-              </Grid>
-              <Grid item container xs={10}>
+    <>
+      {/* <Prompt
+        when={true}
+        message="Are you sure you want to leave?"
+      /> */}
+
+      <div className={classes.root}>
+        {
+          !collection
+            ?
+            // SHOW SKELETON
+            <Grid container justifyContent='center'>
+              <Grid item container xs={12} sm={11} md={10} spacing={2}>
                 <Grid item xs={2}>
-                  <Skeleton variant='circle' width={75} height={75} />
+                  <Skeleton variant='rect' height='100%' />
                 </Grid>
-                <Grid item xs={10}>
-                  <Skeleton variant='rect' height={32} />
-                  <Skeleton variant='text' />
-                </Grid>
-                <Grid item xs={12}>
-                  {[...Array(10).keys()].map(i => <Skeleton key={i} variant='text' />)}
+                <Grid item container xs={10}>
+                  <Grid item xs={2}>
+                    <Skeleton variant='circle' width={75} height={75} />
+                  </Grid>
+                  <Grid item xs={10}>
+                    <Skeleton variant='rect' height={32} />
+                    <Skeleton variant='text' />
+                  </Grid>
+                  <Grid item xs={12}>
+                    {[...Array(10).keys()].map(i => <Skeleton key={i} variant='text' />)}
+                  </Grid>
                 </Grid>
               </Grid>
             </Grid>
-          </Grid>
-          :
-          // SHOW ACTUAL DATA VIEW
-          <Grid container justifyContent='center'>
-            <Grid item container xs={12} lg={10} wrap='nowrap' justifyContent='center' alignItems='center' className={classes.filtersContainer}>
-              <Grid item container xs={11}>
-                <FilterFields
-                  setFilters={setFilters}
-                />
-              </Grid>
-              <Grid item>
-                <MenuPopover
-                  ref={menuRef}
-                  icon={<MoreVertIcon />}
-                  listProps={{ dense: true }}
-                >
-                  <ListItem>
-                    <ButtonGroup variant='text' size='small'>
-                      <IconButton onClick={() => setView('table')} color={view === 'table' && 'secondary'}>
-                        <ViewListIcon />
-                      </IconButton>
-                      <IconButton onClick={() => setView('grid')} color={view === 'grid' && 'secondary'}>
-                        <ViewModuleIcon />
-                      </IconButton>
-                      <IconButton onClick={() => setView('compact')} color={view === 'compact' && 'secondary'}>
-                        <ViewCompactIcon />
-                      </IconButton>
-                    </ButtonGroup>
-                  </ListItem>
+            :
+            // SHOW ACTUAL DATA VIEW
+            <Grid container justifyContent='center'>
+              <Grid item container xs={12} lg={10} wrap='nowrap' justifyContent='center' alignItems='center' className={classes.filtersContainer}>
+                <Grid item container xs={11}>
+                  <FilterFields
+                    setFilters={setFilters}
+                  />
+                </Grid>
+                <Grid item>
+                  <MenuPopover
+                    ref={menuRef}
+                    icon={<MoreVertIcon />}
+                    listProps={{ dense: true }}
+                  >
+                    <ListItem>
+                      <ButtonGroup variant='text' size='small'>
+                        <IconButton onClick={() => setView('table')} color={view === 'table' && 'secondary'}>
+                          <ViewListIcon />
+                        </IconButton>
+                        <IconButton onClick={() => setView('grid')} color={view === 'grid' && 'secondary'}>
+                          <ViewModuleIcon />
+                        </IconButton>
+                        <IconButton onClick={() => setView('compact')} color={view === 'compact' && 'secondary'}>
+                          <ViewCompactIcon />
+                        </IconButton>
+                      </ButtonGroup>
+                    </ListItem>
 
-                  <Divider />
+                    <Divider />
 
-                  <ListSubheader className={classes.subheader}>
-                    {`${_.upperFirst(view)} View`}
-                  </ListSubheader>
-                  {(() => {
-                    switch (view) {
-                      default:
-                      case 'table':
-                        return (
-                          <>
-                            <MenuItem onClick={toggleCurrency}>
-                              <ListItemText
-                                primary={'Change Currency'}
-                                secondary={`Viewing ${currency.toUpperCase()}`}
-                              />
-                            </MenuItem>
-                            <MenuItem onClick={toggleTableEditable}>
-                              {
-                                tableEditable
-                                  ? 'Disable Edit'
-                                  : 'Enable Edit'
-                              }
-                            </MenuItem>
-                            <MenuItem>
-                              Reset Changes
-                            </MenuItem>
-                          </>
-                        )
-                      case 'grid':
-                        return (
-                          <>
-                            <MenuItem>
-                              Something here
-                            </MenuItem>
-                          </>
-                        )
-                      case 'compact':
-                        return (
-                          <>
-                            <MenuItem>
-                              TBD
-                            </MenuItem>
-                          </>
-                        )
-                    }
-                  })()}
-                </MenuPopover>
-              </Grid>
-            </Grid>
-            <Grid item container wrap='nowrap' justifyContent='center' xs={12}>
-              <CardPriceDataProvider
-                data={collection}
-                currency={currency}
-              >
-                <FilteredDataProvider
-                  filters={filters}
-                // data = passed from parent
-                >
-                  {
-                    (() => {
+                    <ListSubheader className={classes.subheader}>
+                      {`${_.upperFirst(view)} View`}
+                    </ListSubheader>
+                    {(() => {
                       switch (view) {
                         default:
                         case 'table':
-                          return <CardTableView
-                            columns={columns}
-                            setCurrency={setCurrency}
-                            currency={currency}
-                            isEditable={tableEditable}
-                          // data = passed from parent
-                          />
+                          return (
+                            <>
+                              <MenuItem onClick={toggleCurrency}>
+                                <ListItemText
+                                  primary={'Change Currency'}
+                                  secondary={`Viewing ${currency.toUpperCase()}`}
+                                />
+                              </MenuItem>
+                              <MenuItem onClick={toggleTableEditable}>
+                                {
+                                  tableEditable
+                                    ? 'Disable Edit'
+                                    : 'Enable Edit'
+                                }
+                              </MenuItem>
+                              <MenuItem>
+                                Reset Changes
+                              </MenuItem>
+                            </>
+                          )
                         case 'grid':
-                          return <CardGridView
-                          // data = passed from parent
-                          />
+                          return (
+                            <>
+                              <MenuItem>
+                                Something here
+                              </MenuItem>
+                            </>
+                          )
                         case 'compact':
-                          return <div>TBD</div>
+                          return (
+                            <>
+                              <MenuItem>
+                                TBD
+                              </MenuItem>
+                            </>
+                          )
                       }
-                    })()
-                  }
-                </FilteredDataProvider>
-              </CardPriceDataProvider>
+                    })()}
+                  </MenuPopover>
+                </Grid>
+              </Grid>
+              <Grid item container wrap='nowrap' justifyContent='center' xs={12}>
+                <CardPriceDataProvider
+                  data={collection}
+                  currency={currency}
+                >
+                  <FilteredDataProvider
+                    filters={filters}
+                  // data = passed from parent
+                  >
+                    {
+                      (() => {
+                        switch (view) {
+                          default:
+                          case 'table':
+                            return <CardTableView
+                              columns={columns}
+                              setCurrency={setCurrency}
+                              currency={currency}
+                              isEditable={tableEditable}
+                            // data = {passed from parent}
+                            />
+                          case 'grid':
+                            return <CardGridView
+                            // data = {passed from parent}
+                            />
+                          case 'compact':
+                            return <div>TBD</div>
+                        }
+                      })()
+                    }
+                  </FilteredDataProvider>
+                </CardPriceDataProvider>
+              </Grid>
             </Grid>
-          </Grid>
-      }
-    </div >
+        }
+      </div>
+    </>
   )
 }
 

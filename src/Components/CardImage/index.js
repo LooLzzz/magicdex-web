@@ -74,8 +74,9 @@ const CardImage = (props) => {
             {...imageProps}
           />
           <span
+            onClick={packTransformButton && handleTransform}
             style={{
-              display: isDfc ? 'unset' : 'none',
+              display: packTransformButton && isDfc ? 'unset' : 'none',
               fontSize: '1.5em'
             }}
             className={clsx(
@@ -88,20 +89,21 @@ const CardImage = (props) => {
         </Tilt>
       </Grid>
       {
-        !packTransformButton && isDfc &&
-        <Grid item align='center' style={{ marginTop: 8 }}>
-          <Button
-            classes={{ root: 'buttonThridly-root' }}
-            variant='contained'
-            // color='primary'
-            // color='thridly'
-            size='small'
-            onClick={handleTransform}
-            {...buttonProps}
-          >
-            Transform
-          </Button>
-        </Grid>
+        !packTransformButton && isDfc && (
+          <Grid item align='center' style={{ marginTop: 8 }}>
+            <Button
+              classes={{ root: 'buttonThridly-root' }}
+              variant='contained'
+              // color='primary'
+              // color='thridly'
+              size='small'
+              onClick={handleTransform}
+              {...buttonProps}
+            >
+              Transform
+            </Button>
+          </Grid>
+        )
       }
     </Grid >
   )

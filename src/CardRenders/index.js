@@ -1,6 +1,6 @@
-import { Paper, Chip } from '@material-ui/core'
+import { Paper, Chip, Divider } from '@material-ui/core'
 import clsx from 'clsx'
-// import _ from 'lodash'
+import _ from 'lodash'
 
 
 /** UTILS **/
@@ -21,7 +21,10 @@ const styles = {
     fontSize: '1.25em',
   },
   flavorText: {
+    fontStyle: 'italic',
     fontFamily: 'Georgia, fangsong, Times New Roman',
+    whiteSpace: 'pre-wrap',
+    marginTop: '0.75rem',
   },
 }
 
@@ -126,7 +129,7 @@ const renders = {
   },
 
   renderManaCost: (card, columnName) => {
-    const manaCost = card['mana_cost']
+    const { mana_cost: manaCost } = card
 
     return !manaCost || manaCost === ''
       ? '-'
@@ -156,11 +159,30 @@ const renders = {
   },
 
   renderFlavorText: (card, columnName) => {
-    const flavorText = card[columnName]
+    let {
+      [columnName]: flavorText,
+      card_faces: cardFaces,
+    } = card
+
+    flavorText = _.compact(
+      cardFaces?.length > 1 //isDfc
+        ? [cardFaces[0].flavor_text, cardFaces[1].flavor_text]
+        : [flavorText]
+    )
+
     return (
-      <i style={styles.flavorText}>
-        {flavorText}
-      </i>
+      flavorText.length > 0 && (
+        <>
+          <Divider variant='middle' style={styles.flavorText} />
+          {
+            flavorText.map((text, i) => (
+              <div key={i} style={styles.flavorText}>
+                {text}
+              </div>
+            ))
+          }
+        </>
+      )
     )
   },
 }
