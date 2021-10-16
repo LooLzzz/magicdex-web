@@ -34,6 +34,12 @@ const sharedOverrides = {
       },
     },
   },
+  MuiListItemText: {
+    multiline: {
+      marginTop: 0,
+      marginBottom: 0,
+    },
+  },
   MuiTextField: {
     root: {
       width: "100%",

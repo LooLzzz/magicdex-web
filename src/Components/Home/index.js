@@ -13,7 +13,6 @@ import useStyles from "./styles"
 
 
 const mapStateToProps = (state) => ({
-  username: state.actions.activeUser.username,
   currentTab: state.actions.topMenu.currentTab,
 })
 
@@ -29,7 +28,6 @@ const Home = (props) => {
   // const [width,] = useSize(document.body)
   const {
     classes,
-    // username,
     dispatch,
   } = props
 
@@ -39,11 +37,6 @@ const Home = (props) => {
     dispatch.setCurrentTab({ tab: 'home' })
   }, [])
 
-  // useEffect( () => {
-  //   MagicdexApi
-  //     .getAllCards()
-  //     .then(res => console.log(res))
-  // }, [username])
 
   //HANDLERS
   // const handleTabChange = (event, value) => {

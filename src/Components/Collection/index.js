@@ -12,7 +12,6 @@ import {
   ViewList as ViewListIcon,
   ViewModule as ViewModuleIcon,
   ViewCompact as ViewCompactIcon,
-  KeyboardArrowRight as KeyboardArrowRightIcon,
 } from '@material-ui/icons'
 import _ from 'lodash'
 // import useMouse from '@react-hook/mouse-position'
@@ -50,7 +49,7 @@ const Collection = (props) => {
   } = props
   const history = useHistory()
   const menuRef = createRef()
-  const [view, setView] = useState('table') // one of ['table', 'grid']
+  const [view, setView] = useState('table') // one of ['table', 'grid', 'compact']
   const [filters, setFilters] = useState()
   const [currency, setCurrency] = useState(_currency ?? 'usd') // one of ['usd', 'eur']
   const [tableEditable, setTableEditable] = useState(false)
@@ -73,9 +72,10 @@ const Collection = (props) => {
   }, [])
 
   useEffect(() => {
-    if (username === null)
-      return history.push('/')
+    if (!username)
+      return history.push('/login')
 
+    dispatch.setCurrentCollection({ collection: JSON.parse(localStorage.getItem('collection')) })
     MagicdexApi
       .getAllCards()
       .then(res => dispatch.setCurrentCollection({ collection: res }))
@@ -120,14 +120,14 @@ const Collection = (props) => {
           </Grid>
           :
           // SHOW ACTUAL DATA VIEW
-          <Grid container spacing={2} justifyContent='flex-end'>
-            <Grid item container xs={12} lg={10} justifyContent='center' alignItems='center'>
+          <Grid container justifyContent='center'>
+            <Grid item container xs={12} lg={10} wrap='nowrap' justifyContent='center' alignItems='center' className={classes.filtersContainer}>
               <Grid item container xs={11}>
                 <FilterFields
                   setFilters={setFilters}
                 />
               </Grid>
-              <Grid item xs='auto'>
+              <Grid item>
                 <MenuPopover
                   ref={menuRef}
                   icon={<MoreVertIcon />}
@@ -149,8 +149,7 @@ const Collection = (props) => {
 
                   <Divider />
 
-                  <ListSubheader>
-                    <KeyboardArrowRightIcon />
+                  <ListSubheader className={classes.subheader}>
                     {`${_.upperFirst(view)} View`}
                   </ListSubheader>
                   {(() => {
@@ -180,7 +179,6 @@ const Collection = (props) => {
                       case 'grid':
                         return (
                           <>
-                            {/* <ListSubheader>Grid View</ListSubheader> */}
                             <MenuItem>
                               Something here
                             </MenuItem>
@@ -189,7 +187,6 @@ const Collection = (props) => {
                       case 'compact':
                         return (
                           <>
-                            {/* <ListSubheader>Compact View</ListSubheader> */}
                             <MenuItem>
                               TBD
                             </MenuItem>

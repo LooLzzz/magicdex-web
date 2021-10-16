@@ -34,6 +34,7 @@ const FilterProvider = (props) => {
   const [oracleText, setOracleText] = useState('')
   const [typeLine, setTypeLine] = useState('')
   const [tags, setTags] = useState('')
+  const [tagArray, setTagArray] = useState([])
 
   // const [selectedColors, setSelectedColors] = useState([])
   // const [selectedManaCosts, setSelectedManaCosts] = useState([])
@@ -75,12 +76,11 @@ const FilterProvider = (props) => {
       name: v => v.toLowerCase().includes(cardName.toLowerCase()),
       oracle_text: v => v ? v.toLowerCase().includes(oracleText) : true,
       type_line: v => v.toLowerCase().includes(typeLine),
-      tag: v => {
-        let tagsArray = _.chain(tags).split(/[;, ]+/g).compact().value()
-        return tagsArray.length > 0
-          ? _.intersection(v, tagsArray).length > 0
+      tag: v => (
+        tagArray.length > 0
+          ? _.intersection(v, tagArray).length > 0
           : true
-      },
+      ),
       set: v => (
         selectedSets.length > 0
           ? _.includes(selectedSets.map(set => set.code), v)
@@ -136,11 +136,31 @@ const FilterProvider = (props) => {
                     onChange={e => setTypeLine(e.target.value)}
                   />
                 </ListItem>
+
                 <ListItem>
+                  {/* <AutocompleteOptions freesolo
+                    open={false}
+                    popupIcon={null}
+                    options={[]}
+                    label="Tags"
+                    value={tags}
+                    onKeyDown={e => console.log(e.key)}
+                    onChange={(e, v) => console.log('onChange', v)}
+                    onInputChange={(e, v) => console.log('onInputChange', v)}
+                  /> */}
                   <TextOption
                     label="Tags"
                     value={tags}
-                    onChange={e => setTags(e.target.value)}
+                    onChange={e => {
+                      setTags(e.target.value)
+                      setTagArray(
+                        _.chain(e.target.value)
+                          .split(/[ ,;]+/g)
+                          .uniq()
+                          .compact()
+                          .value()
+                      )
+                    }}
                     helperText={
                       <>
                         Separate tags with
@@ -154,7 +174,7 @@ const FilterProvider = (props) => {
                         </code>
                       </>
                     }
-                  />
+                  />  
                 </ListItem>
 
                 <Divider />
@@ -166,6 +186,14 @@ const FilterProvider = (props) => {
                     value={selectedSets}
                     onChange={(e, v) => setSelectedSets(v)}
                     className={classes.autocompleteInput}
+                    groupBy={option => option.set_type}
+                    getOptionLabel={option => option.name}
+                    getOptionSelected={(option, value) => (
+                      option.code === value.code
+                    )}
+                    ChipProps={{
+                      label: option => option.code,
+                    }}
                   />
                 </ListItem>
 

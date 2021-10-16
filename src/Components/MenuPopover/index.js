@@ -75,12 +75,12 @@ const MenuPopover = forwardRef((props, ref) => {
         anchorEl={menuAnchor}
         onClose={handleMenuClose}
         anchorOrigin={{
-          vertical: 'top',
+          vertical: 'bottom',
           horizontal: 'left',
         }}
         transformOrigin={{
           vertical: 'top',
-          horizontal: 'right',
+          horizontal: 'center',
         }}
         {...popoverProps}
       >

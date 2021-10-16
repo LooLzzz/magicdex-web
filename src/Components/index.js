@@ -6,7 +6,6 @@ import TopMenu from "./TopMenu"
 import CardTableView from './CardTableView'
 import CardGridView from './CardGridView'
 import CardImage from './CardImage'
-import ImageOverlay from './ImageOverlay'
 import { BaseForm, Login, Register } from "./Forms"
 
 export {
@@ -21,5 +20,4 @@ export {
     CardTableView,
     CardGridView,
     CardImage,
-    ImageOverlay,
 }

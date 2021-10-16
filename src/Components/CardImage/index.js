@@ -2,18 +2,18 @@
 
 import { useState, useEffect } from 'react'
 import { Button, Grid } from '@material-ui/core'
+import { withStyles } from '@material-ui/styles'
 import Tilt from 'react-parallax-tilt'
-// import { withStyles } from '@material-ui/styles'
+import clsx from 'clsx'
 
-import { ImageOverlay } from '@/Components'
-// import useStyles from './styles'
+import ImageOverlay from './ImageOverlay'
+import useStyles from './styles'
 
 
 const CardImage = (props) => {
   /** VARS **/
-  const [flipped, setFlipped] = useState(false)
   const {
-    // classes,
+    classes,
     card,
     imageProps,
     buttonProps,
@@ -21,11 +21,14 @@ const CardImage = (props) => {
     tiltEnabled,
     packTransformButton,
   } = props
+  const [flipped, setFlipped] = useState(false)
+  const [isDfc, setIsDfc] = useState(false)
 
 
   /** EFFECTS **/
   useEffect(() => {
     setFlipped(false)
+    setIsDfc(card?.card_faces && card?.card_faces.length > 1)
   }, [card])
 
 
@@ -34,16 +37,16 @@ const CardImage = (props) => {
     setFlipped(!flipped)
   }
 
+
   /** RENDER **/
   return (
     <Grid container direction="column">
-      <Grid item>
+      <Grid item className={classes.imageContainer}>
         <Tilt
           tiltEnable={tiltEnabled ?? false}
           glareEnable={tiltEnabled ?? false}
           tiltMaxAngleX={10}
           tiltMaxAngleY={10}
-          // tiltReverse
           glareBorderRadius={'4.75% / 3.5%'}
           glarePosition='all'
           // glareColor='#E1D6AA'
@@ -70,10 +73,22 @@ const CardImage = (props) => {
             height={350}
             {...imageProps}
           />
+          <span
+            style={{
+              display: isDfc ? 'unset' : 'none',
+              fontSize: '1.5em'
+            }}
+            className={clsx(
+              classes.dfcSymbol,
+              'ms', 'ms-fw', 'ms-cost', 'ms-shadow', 'ms-duo', 'ms-duo-color',
+              { 'ms-dfc-modal-face': !flipped },
+              { 'ms-dfc-modal-back': flipped },
+            )}
+          />
         </Tilt>
       </Grid>
       {
-        !packTransformButton && card?.card_faces && card?.card_faces.length > 1 &&
+        !packTransformButton && isDfc &&
         <Grid item align='center' style={{ marginTop: 8 }}>
           <Button
             classes={{ root: 'buttonThridly-root' }}
@@ -88,12 +103,12 @@ const CardImage = (props) => {
           </Button>
         </Grid>
       }
-    </Grid>
+    </Grid >
   )
 }
 
 /** EXPORT **/
 export default
-  // withStyles(useStyles)(
-  CardImage
-  // )
+  withStyles(useStyles)(
+    CardImage
+  )

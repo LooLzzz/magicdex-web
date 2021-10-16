@@ -1,25 +1,15 @@
 import { useEffect, useState } from 'react'
 import { Paper, Divider, Typography, Dialog, DialogContent, CircularProgress } from '@material-ui/core'
 import { withStyles } from "@material-ui/styles"
-import { connect } from 'react-redux'
 import { ValidatorForm } from 'react-material-ui-form-validator'
 
 // import { setCurrentTab } from "@/Logic/redux"
 import useStyles from './styles'
 
+
 // function toTitleCase(str) {
 //   return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
 // }
-
-const mapStateToProps = (state) => ({
-
-})
-
-const mapDispatchToProps = (dispatch) => ({
-  dispatch: {
-    // setCurrentTab: (payload) => dispatch(setCurrentTab(payload)),
-  }
-})
 
 const BaseForm = (props) => {
   /** VARS **/
@@ -63,11 +53,10 @@ const BaseForm = (props) => {
 
 
   /** HANDLERS **/
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     // console.log('BaseForm submit started')
     setIsLoading(true)
-    await onSubmit(e)
-    // await new Promise(resolve => setTimeout(resolve, 1000))
+    onSubmit(e)
     setIsLoading(false)
     // console.log('BaseForm submit ended')
   }
@@ -111,7 +100,5 @@ const BaseForm = (props) => {
 /** EXPORT **/
 export default
   withStyles(useStyles)(
-    connect(mapStateToProps, mapDispatchToProps)(
-      BaseForm
-    )
+    BaseForm
   )

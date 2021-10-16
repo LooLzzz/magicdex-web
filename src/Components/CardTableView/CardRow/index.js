@@ -63,7 +63,7 @@ const CardRow = (props) => {
   const onCollapseExited = (isAppearing) => {
     setShowContent(false)
   }
-  
+
   const onCollapseEnter = (isAppearing) => {
     setShowContent(true)
   }
@@ -135,8 +135,8 @@ const CardRow = (props) => {
         }
       </TableRow>
 
-      <TableRow onMouseEnter={onMouseEnter} style={{ display: showContent ? 'table-row' : 'none' }}>
-        <TableCell colSpan={10} className={classes.collapsableContent} style={{ paddingLeft: 0, paddingRight: 0 }}>
+      <TableRow onMouseEnter={onMouseEnter} className={classes.row} style={{ display: showContent ? 'table-row' : 'none' }}>
+        <TableCell colSpan={10} style={{ padding: 0}}>
           <Collapse unmountOnExit in={isOpen} timeout="auto" onEnter={onCollapseEnter} onExited={onCollapseExited}>
             <CardInfo
               card={card}

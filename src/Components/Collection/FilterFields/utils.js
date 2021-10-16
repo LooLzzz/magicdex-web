@@ -3,6 +3,7 @@ import { Autocomplete } from "@material-ui/lab"
 // import clsx from "clsx"
 // import _ from 'lodash'
 
+
 const formatCode = (code) => {
   code = code.toLowerCase()
   if (code.charAt(0) !== "{") return code
@@ -92,31 +93,31 @@ const Utils = {
     </Grid>
   ),
 
-  AutocompleteOptions: ({ label, options, value, onChange, className, ...rest }) => (
+  AutocompleteOptions: ({ ...props }) => (
     <Autocomplete multiple disableCloseOnSelect filterSelectedOptions
-      {...rest}
-      // id={"tags-" + label}
-      // className={className}
-      style={{ width: '95%' }}
-      // limitTags={4}
+      style={{
+        width: '95%',
+        ...props?.style
+      }}
       color='secondary'
-      value={value}
-      onChange={onChange}
-      options={options}
-      groupBy={option => option.set_type}
-      getOptionLabel={option => option.name}
+      ChipProps={{
+        variant: "outlined",
+        size: "small",
+        ...props?.ChipProps,
+      }}
       renderTags={(value, getTagProps) => (
         value.map((option, index) => (
           <Chip
-            variant="outlined"
-            label={option.code}
-            size="small"
             {...getTagProps({ index })}
+            label={
+              props?.ChipProps?.label
+                ? props.ChipProps.label instanceof Function
+                  ? props.ChipProps.label(option)
+                  : props.ChipProps.label
+                : option
+            }
           />
         ))
-      )}
-      getOptionSelected={(option, value) => (
-        option.code === value.code
       )}
       renderInput={params => (
         <TextField
@@ -125,10 +126,11 @@ const Utils = {
           size='small'
           margin='dense'
           variant="outlined"
-          label={label}
-        // placeholder={label}
+          label={props?.label}
+          {...props?.InputProps}
         />
       )}
+      {...props}
     />
   ),
 }

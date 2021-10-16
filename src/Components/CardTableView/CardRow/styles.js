@@ -9,14 +9,6 @@ const useStyles = (theme) => {
         borderBottom: 'unset',
       },
     },
-    collapsableContent: {
-      padding: 0,
-      // paddingBottom: 0,
-      // paddingTop: 0,
-      // paddingLeft: 0,
-      // paddingRight: 0,
-      // marginBottom: theme.spacing(1),
-    },
   }
 }
 

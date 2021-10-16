@@ -20,7 +20,6 @@ import useStyles from "./styles"
 
 
 const mapStateToProps = (state) => ({
-  theme: state.actions.theme.currentTheme,
   themeType: state.actions.theme.currentThemeType,
   username: state.actions.activeUser.username,
   currentTab: state.actions.topMenu.currentTab,
@@ -39,7 +38,6 @@ const TopMenu = (props) => {
   const { enqueueSnackbar } = useSnackbar()
   const {
     classes,
-    // theme,
     dispatch,
     currentTab,
     themeType,
@@ -80,7 +78,6 @@ const TopMenu = (props) => {
         // menuRef.current?.closeMenu()
         dispatch.setActiveUser({ username: null })
         enqueueSnackbar('Logged out', { variant: "info" })
-        localStorage.removeItem('accessToken')
         break
 
       case 'mode':
@@ -99,7 +96,6 @@ const TopMenu = (props) => {
             <Tabs variant='scrollable' value={currentTab} onChange={handleTabChange}>
               <Tab value='home' label='Home' />
               <Tab value='collection' label='Collection' />
-              {/* { username ? <Tab label='Collection' value='collection' /> : [] } */}
               <Tab value='login' className='hidden' />
               <Tab value='register' className='hidden' />
             </Tabs>

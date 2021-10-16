@@ -1,13 +1,13 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 
-import { useEffect, useState, useRef } from 'react';
-import { Box, Button, Grid, Typography } from '@material-ui/core';
-import { AccountCircle as AccountCircleIcon } from '@material-ui/icons';
+import { useEffect, useState, useRef } from 'react'
+import { Box, Button, Grid, Typography } from '@material-ui/core'
+import { AccountCircle as AccountCircleIcon } from '@material-ui/icons'
 import { withStyles } from "@material-ui/styles"
-import { connect } from 'react-redux';
-import { useHistory } from 'react-router';
-import { TextValidator } from 'react-material-ui-form-validator';
+import { connect } from 'react-redux'
+import { useHistory } from 'react-router'
+import { TextValidator } from 'react-material-ui-form-validator'
 import { useSnackbar } from 'notistack'
 import _ from 'lodash'
 
@@ -19,7 +19,7 @@ import useStyles from './styles'
 
 const mapStateToProps = (state) => ({
   username: state.actions.activeUser.username,
-});
+})
 
 const mapDispatchToProps = (dispatch) => ({
   dispatch: {
@@ -49,7 +49,7 @@ const Register = (props) => {
   /** EFFECTS **/
   useEffect(() => {
     //onMount
-    dispatch.setCurrentTab({tab:'register'})
+    dispatch.setCurrentTab({ tab: 'register' })
   }, [])
 
   useEffect(() => {
@@ -68,7 +68,7 @@ const Register = (props) => {
     MagicdexApi
       .register({ username: usernameInput, password: passwordInput })
       .then(res => {
-        dispatch.setActiveUser(res.data)
+        dispatch.setActiveUser(res)
         enqueueSnackbar('Successfully registered', { variant: 'success' })
       })
       .catch(err => {
@@ -200,11 +200,11 @@ const Register = (props) => {
       />
     </Grid>
   )
-};
+}
 
 /** EXPORT **/
 export default withStyles(useStyles)(
   connect(mapStateToProps, mapDispatchToProps)(
     Register
   )
-);
+)

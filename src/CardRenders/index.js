@@ -148,7 +148,7 @@ const renders = {
   ),
 
   renderDate: (card, columnName) => {
-    const date = card[columnName]
+    const date = new Date(card[columnName])
     let [year, month, day] = [date.getFullYear(), date.getMonth(), date.getDate()]
     return (
       [addLeadingZero(day), addLeadingZero(month), year].join('/')

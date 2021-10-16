@@ -14,30 +14,16 @@ const useStyles = (theme) => {
       },
     },
     root: {
-      marginBottom: theme.spacing(2),
-      // maxWidth: theme.spacing(200),
-      // display: 'flex',
-      // justifyContent: 'center',
+      marginBottom: theme.spacing(3),
     },
     filtersContainer: {
-      // width: '100%',
-      marginBottom: theme.spacing(2),
+      marginBottom: theme.spacing(4.5),
     },
-    paper: {
-      // display: 'flex',
-      // justifyContent: 'center',
-      // flexShrink: 1,
-      marginBottom: theme.spacing(2),
-    },
-    iconCell: {
-      width: 0,
-    },
-    floating: {
-      position: 'fixed',
-      zIndex: '999',
-      padding: `${theme.spacing(1)}px ${theme.spacing(1.5)}px ${theme.spacing(1)}px ${theme.spacing(1.5)}px`,
-      backgroundColor: theme.palette.background.secondary,
-      color: theme.palette.getContrastText(theme.palette.background.secondary),
+    subheader: {
+      justifyContent: 'center',
+      fontWeight: 600,
+      height: '2.5rem',
+      alignItems: 'baseline',
     },
   }
 }

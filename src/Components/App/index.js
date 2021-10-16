@@ -1,24 +1,22 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
-import { useEffect, createRef } from 'react';
-import { Button, CssBaseline, ThemeProvider } from "@material-ui/core";
-import { Close as CloseIcon } from '@material-ui/icons';
-import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-dom";
-import { connect } from "react-redux";
-import { makeStyles } from "@material-ui/styles";
-import { SnackbarProvider } from 'notistack';
+import { useEffect, createRef } from 'react'
+import { Button, CssBaseline, ThemeProvider } from "@material-ui/core"
+import { Close as CloseIcon } from '@material-ui/icons'
+import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-dom"
+import { connect } from "react-redux"
+import { makeStyles } from "@material-ui/styles"
+import { SnackbarProvider } from 'notistack'
 // import { useHistory } from 'react-router';
 
 import { Collection, TopMenu, Login, Register, Home } from "@/Components"
 import { MagicdexApi } from "@/Api"
-import { setActiveUser } from "@/Logic/redux";
+import { setActiveUser } from "@/Logic/redux"
 import useStyles from "./styles"
 
 
 const mapStateToProps = (state) => ({
   theme: state.actions.theme.currentTheme,
-  // accessToken: state.actions.activeUser.accessToken,
-  // username: state.actions.activeUser.username,
 })
 
 const mapDispatchToProps = (dispatch) => ({
@@ -36,9 +34,9 @@ const App = (props) => {
     dispatch,
     theme,
     // accessToken,
-  } = props;
-  const _theme = Object.assign({}, theme);
-  const classes = makeStyles(useStyles(_theme))();
+  } = props
+  const _theme = Object.assign({}, theme)
+  const classes = makeStyles(useStyles(_theme))()
 
   const routes = [
     {
@@ -76,11 +74,11 @@ const App = (props) => {
     {
       component: Redirect,
       props: {
-        to: '/login',
+        to: '/',
         exact: false,
       }
     },
-  ];
+  ]
 
 
   /** EFFECTS **/
@@ -88,11 +86,11 @@ const App = (props) => {
     // onMount
     MagicdexApi.login() //try to login with `localStorage['accessToken']`
       .then(res => {
-        dispatch.setActiveUser(res.data)
-        snackbarRef.current.enqueueSnackbar(`Welcome back ${res.data.username}`, { variant: 'info' })
+        dispatch.setActiveUser(res)
+        snackbarRef.current.enqueueSnackbar(`Welcome back ${res.username}`, { variant: 'info' })
         // snackbarRef.current.enqueueSnackbar('Welcome back', { variant: 'info' })
       })
-      .catch(err => dispatch.setActiveUser({username:null}))
+      .catch(err => dispatch.setActiveUser({ username: null }))
   }, [])
 
 
@@ -133,7 +131,7 @@ const App = (props) => {
         </div>
       </SnackbarProvider>
     </ThemeProvider>
-  );
+  )
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+export default connect(mapStateToProps, mapDispatchToProps)(App)
