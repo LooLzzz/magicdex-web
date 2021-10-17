@@ -9,7 +9,7 @@ const useStyles = (theme) => {
       backgroundColor: theme.palette.background.secondary,
       position: 'relative',
       marginTop: theme.spacing(1),
-      padding: `${theme.spacing(4)}px ${theme.spacing(3)}px ${theme.spacing(4)}px ${theme.spacing(3)}px`,
+      padding: `${theme.spacing(5)}px ${theme.spacing(5)}px ${theme.spacing(5)}px ${theme.spacing(4)}px`,
       // display: 'flex',
       // flexWrap: 'wrap',
       // alignItems: 'baseline',
@@ -32,8 +32,13 @@ const useStyles = (theme) => {
         transition: 'left 0.3s ease',
       },
     },
+    image: {
+      marginRight: -theme.spacing(1),
+      // width: 'fit-content',
+    },
     content: {
-      padding: theme.spacing(1.5),
+      padding: theme.spacing(2),
+      flexGrow: 1,
     },
   }
 }

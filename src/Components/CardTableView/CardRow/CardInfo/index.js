@@ -1,17 +1,17 @@
 /* eslint-disable no-lone-blocks */
 
-import { Grid, Paper, Hidden } from '@material-ui/core'
-import { withStyles } from '@material-ui/styles'
+import { Grid, Paper, Hidden, Divider } from '@material-ui/core'
+import { withStyles, useTheme } from '@material-ui/styles'
 import { connect } from 'react-redux'
 import clsx from 'clsx'
-// import _ from 'lodash'
+import _ from 'lodash'
 
 import { CardImage } from '@/Components'
 import renderCell from '@/CardRenders'
 import useStyles from './styles'
 
 
-
+/** UTILS **/
 const mapStateToProps = (state) => ({
 
 })
@@ -22,6 +22,17 @@ const mapDispatchToProps = (dispatch) => ({
   }
 })
 
+const renderWithFields = ({ fields, gridProps, ...rest }) => {
+  const res = fields.map((columnName, i) =>
+    <Grid item key={i} {...gridProps}>
+      {renderCell({ columnName, ...rest })}
+    </Grid>
+  )
+
+  return _.filter(res, item => Boolean(item.props.children))
+}
+
+
 const CardInfo = (props) => {
   /** VARS **/
   const {
@@ -29,6 +40,12 @@ const CardInfo = (props) => {
     card,
     // dispatch,
   } = props
+  const theme = useTheme()
+  const cardFields = ['name', 'amount', 'set', 'cmc', 'mana_cost', 'type_line', 'oracle_text', 'power_toughness', 'tag', 'price', 'total_price', 'flavor_text']
+  const cardFaceFields = {
+    faces: ['name', 'mana_cost', 'type_line', 'oracle_text', 'power_toughness', 'flavor_text'],
+    both: ['amount', 'set', 'tag', 'price', 'total_price'],
+  }
 
 
   /** EFFECTS **/
@@ -41,25 +58,47 @@ const CardInfo = (props) => {
 
   /** RENDER **/
   return (
-    <Grid container justifyContent='center' alignItems="center" wrap='nowrap' className={clsx(classes.root, classes.topArrow)}>
+    <Grid container justifyContent='center' alignItems='center' wrap='nowrap' className={clsx(classes.root, classes.topArrow)}>
       <Hidden lgUp>
-        <Grid item style={{ marginRight: '16px', width: 'fit-content' }}>
+        <Grid item className={classes.image}>
           <CardImage
             card={card}
           />
         </Grid>
       </Hidden>
-      <Grid item container direction='column' xs={10} align='center'>
-        <Paper elevation={3} className={classes.content}>
-          {
-            ['name', 'amount', 'set', 'cmc', 'mana_cost', 'tag', 'price', 'total_price', 'flavor_text']
-              .map((columnName) => (
-                <Grid item>
-                  {renderCell(card, columnName)}
-                </Grid>
-              ))
-          }
-        </Paper>
+      <Grid item container xs={11} justifyContent='center' align='center' spacing={card.is_dfc ? 2 : 1} component={Paper} elevation={3} className={classes.content}>
+        {
+          card.is_dfc
+            ?
+            <>
+              {/* Front Face */}
+              <Grid item container direction='column' spacing={1} xs={12} lg={6}>
+                {renderWithFields({ card, fields: cardFaceFields['faces'], theme, renderStyle: 'content', cardFace: 0 })}
+              </Grid>
+
+              <Hidden lgUp>
+                <Divider style={{ width: '98%' }} />
+              </Hidden>
+              <Hidden mdDown>
+                <Divider flexItem orientation='vertical' />
+              </Hidden>
+
+              {/* Back Face */}
+              <Grid item container direction='column' spacing={1} xs={12} lg={6}>
+                {renderWithFields({ card, fields: cardFaceFields['faces'], theme, renderStyle: 'content', cardFace: 1 })}
+              </Grid>
+
+              <Divider variant='middle' style={{ width: '98%' }} />
+
+              {/* Fields that are shared between the two faces */}
+              <Grid item container justifyContent='center' alignItems='center' spacing={1} xs={12}>
+                {renderWithFields({ card, fields: cardFaceFields['both'], theme, renderStyle: 'content' })}
+              </Grid>
+            </>
+
+            : /* Single faced card */
+            renderWithFields({ card, fields: cardFields, theme, renderStyle: 'content', gridProps: { xs: 12 } })
+        }
       </Grid>
     </Grid>
   )

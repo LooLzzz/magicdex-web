@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { TableRow, TableCell, Collapse, IconButton, Checkbox, Paper } from '@material-ui/core'
-import { withStyles } from '@material-ui/styles'
+import { withStyles, useTheme } from '@material-ui/styles'
 import { connect } from 'react-redux'
 import useScrollPosition from '@react-hook/window-scroll'
 import _ from 'lodash'
@@ -32,13 +32,14 @@ const CardRow = (props) => {
     onMouseEnter,
     selectable,
     onSelected,
+    selectedCardIds,
     closeAllRows,
     closeSignal,
     // dispatch,
   } = props
+  const theme = useTheme()
   const setRef = useRef()
   const scrollPosition = useScrollPosition()
-  const [selected, setSelected] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
   const [showContent, setShowContent] = useState(false)
 
@@ -67,7 +68,6 @@ const CardRow = (props) => {
 
   /** HANDLERS **/
   const handleSelectChange = (e) => {
-    setSelected(e.target.checked)
     onSelected(card._id, e.target.checked)
   }
 
@@ -116,7 +116,7 @@ const CardRow = (props) => {
                   ) /* renderSet() setup */
                   }
                 >
-                  {renderCell(card, columnName)}
+                  {renderCell({ card, columnName, theme })}
                   {
                     columnName === 'set' && isMouseOver && (
                       <Paper className='floating' style={floatingCss(setRef, scrollPosition)}>
@@ -146,7 +146,7 @@ const CardRow = (props) => {
           <>
             <TableCell onClick={e => e.stopPropagation()} className={classes.checkbox}>
               <Checkbox
-                checked={selected}
+                checked={selectedCardIds.includes(card._id)}
                 onChange={handleSelectChange}
               // TODO: checkbox needs to report back to parent it has been selected
               />

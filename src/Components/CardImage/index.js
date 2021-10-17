@@ -62,9 +62,9 @@ const CardImage = (props) => {
             overlayEnabled={card?.foil}
             baseSrc={
               card
-                ? card?.card_faces && card?.card_faces.length > 1
-                  ? card?.card_faces[flipped ? 1 : 0].image_uris.png
-                  : card?.image_uris.png
+                ? card.card_faces?.length > 1
+                  ? card.card_faces[flipped ? 1 : 0].image_uris.png
+                  : card.image_uris.png
                 : '/cardback.png'
             }
             overlaySrc='/foil-overlay.png'
@@ -100,7 +100,9 @@ const CardImage = (props) => {
               onClick={handleTransform}
               {...buttonProps}
             >
-              Transform
+              {
+                'Transform' + (flipped ? ' ↪' : ' ↩')
+              }
             </Button>
           </Grid>
         )

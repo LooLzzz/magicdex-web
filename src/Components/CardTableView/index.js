@@ -9,6 +9,13 @@ import CardRow from './CardRow'
 import useStyles from './styles'
 
 
+// _.mixin({
+//   sortWith: (arr, key, comparator) => {
+//     const keyComparator = (key) => (a, b) => comparator(a[key], b[key])
+//     return _.map(arr).sort(keyComparator(key))
+//   }
+// })
+
 const mapStateToProps = (state) => ({
 
 })
@@ -35,45 +42,72 @@ const CardTableView = (props) => {
   const [closeSignal, setCloseSignal] = useState(false)
   const [selectedCardIds, setSelectedCardIds] = useState([]) //will contain mongodb ids (`card._id`) of selected rows
 
+
   /** EFFECTS **/
   useEffect(() => {
     let _sortBy //= sortBy === 'mana_cost' ? 'cmc' : sortBy
     switch (sortBy) {
       case 'mana_cost':
       case 'mana_value':
-        _sortBy = 'cmc'
+        _sortBy = ['cmc']
         break
 
       case 'total_price':
       case 'prices':
       case 'price':
-        _sortBy = 'price'
+        _sortBy = ['price']
         break
 
       case 'type':
       case 'type_line':
-        _sortBy = (card) => card.type_line.replace('Legendary ', '')
+        _sortBy = [(card) => card.type_line.replace('Legendary ', '')]
         break
 
-      case null:
-      case undefined:
-      case '':
-        _sortBy = (card) => card.date_created
+      case 'set':
+      case 'rarity':
+        _sortBy = [
+          (card) => {
+            return card.set_data.parent_set_code ?? card.set
+          },
+          (card) => {
+            switch (card.rarity) {
+              default:
+                return 4
+              case 'common':
+                return 3
+              case 'uncommon':
+                return 2
+              case 'rare':
+                return 1
+              case 'mythic':
+                return 0
+            }
+          }
+        ]
         break
 
       default:
-        _sortBy = sortBy
+        _sortBy = [sortBy]
+        break
+
+      /* if `sortBy` is not specified, then sort by `date_created` */
+      case null:
+      case undefined:
+      case '':
+        _sortBy = [(card) => new Date(card.date_created)]
         break
     }
 
     setSortedData(
-      _.orderBy(data, [_sortBy, 'name', 'collector_number'], [sortOrder])
+      _.orderBy(data, [..._sortBy, 'name', 'collector_number'], sortOrder)
     )
   }, [data, sortOrder, sortBy])
 
+
   useEffect(() => {
-    console.log(selectedCardIds)
-  }, [selectedCardIds])
+    if (!isEditable)
+      setSelectedCardIds([])
+  }, [isEditable])
 
 
   /** HANDLERS **/
@@ -96,11 +130,11 @@ const CardTableView = (props) => {
   const handleHeaderClick = (event, colName) => {
     if (colName === sortBy) {
       switch (sortOrder) {
-        case 'desc': //first click
+        case 'desc': //second click
           setSortOrder('asc')
           break
 
-        case 'asc': //second click
+        case 'asc': //third click, reset sorting
         default:
           setSortByCol('')
           setSortOrder('desc')
@@ -108,6 +142,7 @@ const CardTableView = (props) => {
       }
     }
     else {
+      // first click
       setSortByCol(colName)
       setSortOrder('desc')
     }
@@ -176,6 +211,7 @@ const CardTableView = (props) => {
                       card={card}
                       selectable={isEditable}
                       onSelected={handleRowSelected}
+                      selectedCardIds={selectedCardIds}
 
                       closeAllRows={closeAllRows}
                       closeSignal={closeSignal}
