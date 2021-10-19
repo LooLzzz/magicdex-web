@@ -24,12 +24,14 @@ const mapDispatchToProps = (dispatch) => ({
 
 const renderWithFields = ({ fields, gridProps, ...rest }) => {
   const res = fields.map((columnName, i) =>
-    <Grid item key={i} {...gridProps}>
+    <Grid item name={columnName} key={i} {...gridProps}>
       {renderCell({ columnName, ...rest })}
     </Grid>
   )
 
-  return _.filter(res, item => Boolean(item.props.children))
+  return _.filter(res,
+    item => item.props.children && item.props.children !== '-'
+  )
 }
 
 
@@ -58,7 +60,9 @@ const CardInfo = (props) => {
 
   /** RENDER **/
   return (
-    <Grid container justifyContent='center' alignItems='center' wrap='nowrap' className={clsx(classes.root, classes.topArrow)}>
+    <Grid container justifyContent='center' alignItems='flex-start' wrap='nowrap' className={clsx(classes.root, classes.topArrow)}>
+
+      {/* CARD PREVIEW */}
       <Hidden lgUp>
         <Grid item className={classes.image}>
           <CardImage
@@ -66,6 +70,8 @@ const CardInfo = (props) => {
           />
         </Grid>
       </Hidden>
+
+      {/* CARD INFO */}
       <Grid item container xs={11} justifyContent='center' align='center' spacing={card.is_dfc ? 2 : 1} component={Paper} elevation={3} className={classes.content}>
         {
           card.is_dfc

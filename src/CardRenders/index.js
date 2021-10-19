@@ -2,7 +2,7 @@ import { Paper, Chip } from '@material-ui/core'
 import _ from 'lodash'
 
 import styles from './styles'
-import { addLeadingZero, textToManaFont } from './utils'
+import utils from './utils'
 
 
 /** Card render delegation helper function **/
@@ -82,23 +82,39 @@ const renders = {
 
     if (oracleText) {
       oracleText = [oracleText]
-      do {
-        let str = oracleText.slice(-1)[0]
-        let startIdx = str.search(/\{/g) // look for '{'
-        let endIdx = str.search(/\}/g) // look for '}'
 
-        if (startIdx === -1 || endIdx === -1)
-          break
+      /* handle `{X}` symbols */
+      oracleText = utils.transformStringArray(
+        oracleText,
+        /\{/g,
+        /\}/g,
+        match => (
+          utils.textToManaFont(match, {
+            style: {
+              fontSize: '0.68em',
+              transform: 'translateY(-1px)'
+            }
+          })
+        )
+      )
 
-        let symbol = str.substring(startIdx, endIdx + 1) // include '{' and '}'
-        oracleText.splice(-1, 1, str.substring(0, startIdx), ...textToManaFont(symbol, { style: { fontSize: '0.65em' } }), str.substring(endIdx + 1))
-        oracleText = _.compact(oracleText)
-      } while (true)
+      /* handle `(...)` paragraphs */
+      oracleText = utils.transformStringArray(
+        oracleText,
+        /\(/g,
+        /\)/g,
+        match => (
+          <span style={{ fontStyle: 'italic', fontSize: '0.88em' }}>{match}</span>
+        )
+      )
 
-      oracleText = oracleText.map(text =>
-        typeof text === 'string' && text.includes('\n')
-          ? text.split('\n').map(line => <span>{line}<div style={{ height: '0.2rem' }} /></span>)
-          : text)
+      /* handle `\n` characters */
+      oracleText = oracleText
+        .map(text =>
+          typeof text === 'string' && text.includes('\n')
+            ? text.split('\n').map(line => <span>{line}<div style={{ height: '0.2rem' }} /></span>)
+            : text
+        )
     }
 
     return oracleText
@@ -179,7 +195,7 @@ const renders = {
     if (manaCost.length === 0)
       return '-'
 
-    manaCost = manaCost.map(cost => textToManaFont(cost))
+    manaCost = manaCost.map(cost => utils.textToManaFont(cost))
     if (manaCost.length > 1)
       manaCost.splice(1, 0, ' // ') // add a separator between the two mana costs
     return manaCost
@@ -198,9 +214,10 @@ const renders = {
 
   renderDate: ({ card, columnName }) => {
     const date = new Date(card[columnName])
-    let [year, month, day] = [date.getFullYear(), date.getMonth(), date.getDate()]
+    let [year, month, day] = [date.getFullYear(), date.getMonth() + 1, date.getDate()]
+
     return (
-      [addLeadingZero(day), addLeadingZero(month), year].join('/')
+      [utils.addLeadingZero(day), utils.addLeadingZero(month), year].join('/')
     )
   },
 

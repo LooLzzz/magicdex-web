@@ -15,8 +15,6 @@ const CardPriceDataProvider = (props) => {
 
   /** EFFECTS **/
   useEffect(() => {
-    // console.log('setCardPriceData envoked with', { data, currency }) //DEBUG
-
     setCardPriceData(
       data.map(card => {
         const { prices, foil, amount } = card

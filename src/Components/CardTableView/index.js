@@ -152,9 +152,9 @@ const CardTableView = (props) => {
   /** RENDER **/
   return (
     <Grid item container spacing={1} xs={12}>
-
-      {/** CARD PREVIEW **/}
       <Grid item container wrap='nowrap' justifyContent='center'>
+
+        {/** CARD PREVIEW **/}
         <Hidden mdDown>
           <Grid item>
             <div className={classes['card-image']}>
@@ -166,61 +166,59 @@ const CardTableView = (props) => {
         </Hidden>
 
         {/** TABLE VIEW **/}
-        <Grid item>
-          <div align='center' style={{ width: 'fit-content' }}>
-            <TableContainer component={Paper} className={classes.paper} elevation={5}>
-              <Table size="small" >
-                <TableHead className={classes.tableHead}>
-                  <TableRow>
+        <Grid item justifyContent='center' style={{flexGrow:1}}>
+          <TableContainer component={Paper} className={classes.paper} elevation={5}>
+            <Table size="small" >
+              <TableHead className={classes.tableHead}>
+                <TableRow>
 
-                    {Object.entries(columns).map(([columnName, columnDisplayName]) => (
-                      <TableCell
-                        style={{ paddingLeft: '16px' }}
-                        key={columnName}
-                        align="center"
-                        sortDirection={sortBy === columnName ? sortOrder : false}
+                  {Object.entries(columns).map(([columnName, columnDisplayName]) => (
+                    <TableCell
+                      style={{ paddingLeft: '16px' }}
+                      key={columnName}
+                      align="center"
+                      sortDirection={sortBy === columnName ? sortOrder : false}
+                    >
+                      <TableSortLabel
+                        active={sortBy === columnName}
+                        direction={sortBy === columnName ? sortOrder : 'asc'}
+                        onClick={e => handleHeaderClick(e, columnName)}
                       >
-                        <TableSortLabel
-                          active={sortBy === columnName}
-                          direction={sortBy === columnName ? sortOrder : 'asc'}
-                          onClick={e => handleHeaderClick(e, columnName)}
-                        >
-                          {columnDisplayName}
-                        </TableSortLabel>
-                      </TableCell>
-                    ))}
-
-                    {/* Dropdown icon */}
-                    <TableCell className={classes.iconCell} />
-
-                    {/** Checkbox **/}
-                    {
-                      isEditable &&
-                      <TableCell className={classes.iconCell} />
-                    }
-
-                  </TableRow>
-                </TableHead>
-
-                <TableBody>
-                  {sortedData.map(card => (
-                    <CardRow
-                      onMouseEnter={e => handleRowHover(card)}
-                      key={card._id}
-                      columns={columns}
-                      card={card}
-                      selectable={isEditable}
-                      onSelected={handleRowSelected}
-                      selectedCardIds={selectedCardIds}
-
-                      closeAllRows={closeAllRows}
-                      closeSignal={closeSignal}
-                    />
+                        {columnDisplayName}
+                      </TableSortLabel>
+                    </TableCell>
                   ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </div>
+
+                  {/* Dropdown icon */}
+                  <TableCell className={classes.iconCell} />
+
+                  {/** Checkbox **/}
+                  {
+                    isEditable &&
+                    <TableCell className={classes.iconCell} />
+                  }
+
+                </TableRow>
+              </TableHead>
+
+              <TableBody>
+                {sortedData.map(card => (
+                  <CardRow
+                    onMouseEnter={e => handleRowHover(card)}
+                    key={card._id}
+                    columns={columns}
+                    card={card}
+                    selectable={isEditable}
+                    onSelected={handleRowSelected}
+                    selectedCardIds={selectedCardIds}
+
+                    closeAllRows={closeAllRows}
+                    closeSignal={closeSignal}
+                  />
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
         </Grid>
       </Grid>
     </Grid>

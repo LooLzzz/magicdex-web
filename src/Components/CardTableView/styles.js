@@ -10,11 +10,6 @@ const useStyles = (theme) => {
       top: theme.spacing(8),
       marginRight: theme.spacing(2),
     },
-    'tableHead': {
-      // backgroundColor: theme.palette.type === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)',
-      // backgroundColor: theme.palette.primary.light,
-      // borderBottom: `1px solid ${theme.palette.divider}`,
-    },
   }
 }
 

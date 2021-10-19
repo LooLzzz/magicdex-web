@@ -15,6 +15,7 @@ const CardImage = (props) => {
   const {
     classes,
     card,
+    rootProps,
     imageProps,
     buttonProps,
     tiltProps,
@@ -40,7 +41,7 @@ const CardImage = (props) => {
 
   /** RENDER **/
   return (
-    <Grid container direction="column">
+    <Grid container direction="column" {...rootProps}>
       <Grid item className={classes.imageContainer}>
         <Tilt
           tiltEnable={tiltEnabled ?? false}
@@ -89,8 +90,8 @@ const CardImage = (props) => {
         </Tilt>
       </Grid>
       {
-        !packTransformButton && isDfc && (
-          <Grid item align='center' style={{ marginTop: 8 }}>
+        isDfc && !packTransformButton && (
+          <Grid item align='center' className={classes.button}>
             <Button
               classes={{ root: 'buttonThridly-root' }}
               variant='contained'

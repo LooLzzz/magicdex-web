@@ -46,13 +46,6 @@ const TopMenu = (props) => {
   const menuRef = createRef()
 
 
-  //EFFECTS
-  // useEffect(() => {
-  //   //DEBUG
-  //   console.log(menuRef)
-  // }, [menuRef])
-
-
   //HANDLERS
   const handleTabChange = (event, value) => {
     // dispatch.setCurrentTab({tab:value});

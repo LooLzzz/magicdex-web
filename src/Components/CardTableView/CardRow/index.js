@@ -146,9 +146,9 @@ const CardRow = (props) => {
           <>
             <TableCell onClick={e => e.stopPropagation()} className={classes.checkbox}>
               <Checkbox
+                size='small'
                 checked={selectedCardIds.includes(card._id)}
                 onChange={handleSelectChange}
-              // TODO: checkbox needs to report back to parent it has been selected
               />
             </TableCell>
           </>

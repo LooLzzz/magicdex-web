@@ -24,7 +24,7 @@ const populateCardData = async (cards) => {
       ...card,
       date_created: new Date(card.date_created),
       is_dfc: isDfc(scryfallData[i]),
-      mana_cost: isDfc(scryfallData[i]) //TODO: make it work
+      mana_cost: isDfc(scryfallData[i])
         ? [scryfallData[i].card_faces[0].mana_cost, scryfallData[i].card_faces[1].mana_cost]
         : scryfallData[i].mana_cost,
     }))

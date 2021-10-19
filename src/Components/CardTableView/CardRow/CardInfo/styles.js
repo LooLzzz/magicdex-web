@@ -38,7 +38,7 @@ const useStyles = (theme) => {
     },
     content: {
       padding: theme.spacing(2),
-      flexGrow: 1,
+      marginTop: 0,
     },
   }
 }
