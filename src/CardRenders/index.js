@@ -69,16 +69,17 @@ const renders = {
     )
   },
 
-  renderName: ({ card, cardFace, renderStyle }) => {
+  renderName: ({ card, cardFace, renderStyle = 'row' }) => {
     const { name } = cardFace !== undefined ? card.card_faces[cardFace] : card
 
-    return renderStyle === 'content'
-      ? <b>{name}</b>
-      : name
+    return renderStyle === 'row'
+      ? name
+      : <b>{name}</b>
   },
 
-  renderOracleText: ({ card, columnName, cardFace, renderStyle }) => {
+  renderOracleText: ({ card, columnName = 'oracle_text', cardFace }) => {
     let { [columnName]: oracleText } = cardFace !== undefined ? card.card_faces[cardFace] : card
+    let align = _.words(oracleText).length > 2 ? 'left' : 'center'
 
     if (oracleText) {
       oracleText = [oracleText]
@@ -118,9 +119,9 @@ const renders = {
     }
 
     return oracleText
-      ? <span style={{ whiteSpace: 'pre-wrap' }}>
+      ? <div align={align} style={{ whiteSpace: 'pre-wrap' }}>
         {oracleText}
-      </span>
+      </div>
       : ''
   },
 
@@ -128,7 +129,10 @@ const renders = {
     const { power, toughness } = cardFace !== undefined ? card.card_faces[cardFace] : card
 
     return power && toughness
-      ? `${power}/${toughness}`
+      ?
+      <div align='right'>
+        {`${power}/${toughness}`}
+      </div>
       : ''
   },
 
@@ -156,7 +160,7 @@ const renders = {
     </Paper>
   ),
 
-  renderPrice: ({ card, columnName }) => {
+  renderPrice: ({ card, columnName = 'price' }) => {
     const { [columnName]: price, currency } = card
     return (
       price > 0
@@ -167,7 +171,7 @@ const renders = {
     )
   },
 
-  renderTag: ({ card, columnName }) => {
+  renderTag: ({ card, columnName = 'tags' }) => {
     let { [columnName]: tags } = card
 
     return (
@@ -185,7 +189,7 @@ const renders = {
     )
   },
 
-  renderManaCost: ({ card, columnName, cardFace }) => {
+  renderManaCost: ({ card, columnName = 'mana_cost', cardFace, renderStyle = 'row' }) => {
     let { [columnName]: manaCost } = cardFace !== undefined ? card.card_faces[cardFace] : card
 
     if (!(manaCost instanceof Array))
@@ -193,7 +197,7 @@ const renders = {
     manaCost = _.compact(manaCost)
 
     if (manaCost.length === 0)
-      return '-'
+      return renderStyle === 'row' ? '-' : ''
 
     manaCost = manaCost.map(cost => utils.textToManaFont(cost))
     if (manaCost.length > 1)
@@ -201,7 +205,7 @@ const renders = {
     return manaCost
   },
 
-  renderType: ({ card, columnName, cardFace, renderStyle }) => {
+  renderType: ({ card, columnName = 'type_line', cardFace, renderStyle = 'content' }) => {
     const { [columnName]: typeLine } = cardFace !== undefined ? card.card_faces[cardFace] : card
 
     return renderStyle === 'content'
@@ -212,7 +216,7 @@ const renders = {
         .replace(/Legendary/g, 'Lgd.')
   },
 
-  renderDate: ({ card, columnName }) => {
+  renderDate: ({ card, columnName = 'date_added' }) => {
     const date = new Date(card[columnName])
     let [year, month, day] = [date.getFullYear(), date.getMonth() + 1, date.getDate()]
 
@@ -223,10 +227,11 @@ const renders = {
 
   renderFlavorText: ({ card, cardFace }) => {
     const { flavor_text } = cardFace !== undefined ? card.card_faces[cardFace] : card
+    let align = _.words(flavor_text).length > 2 ? 'left' : 'center'
 
     return (
       flavor_text &&
-      <div style={styles.flavorText}>
+      <div align={align} style={styles.flavorText}>
         {flavor_text}
       </div>
     )

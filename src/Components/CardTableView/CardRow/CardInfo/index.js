@@ -1,36 +1,63 @@
 /* eslint-disable no-lone-blocks */
 
-import { Grid, Paper, Hidden, Divider } from '@material-ui/core'
+import { Box, Grid, Paper, Hidden, Divider } from '@material-ui/core'
 import { withStyles, useTheme } from '@material-ui/styles'
 import { connect } from 'react-redux'
 import clsx from 'clsx'
-import _ from 'lodash'
 
+import { updateCurrentCollection } from '@/Logic/redux'
 import { CardImage } from '@/Components'
 import renderCell from '@/CardRenders'
 import useStyles from './styles'
 
 
 /** UTILS **/
-const mapStateToProps = (state) => ({
-
-})
-
+const mapStateToProps = (state) => ({})
 const mapDispatchToProps = (dispatch) => ({
   dispatch: {
-
+    updateCurrentCollection: (collection) => dispatch(updateCurrentCollection(collection)),
   }
 })
 
-const renderWithFields = ({ fields, gridProps, ...rest }) => {
-  const res = fields.map((columnName, i) =>
-    <Grid item name={columnName} key={i} {...gridProps}>
-      {renderCell({ columnName, ...rest })}
-    </Grid>
-  )
+const renderGameFields = ({ card, renderStyle = 'content', ...rest }) => {
+  const [name, manaCost, typeLine, set, oracleText, flavorText, powerToughness] = [
+    renderCell({ card, columnName: 'name', renderStyle, ...rest }),
+    renderCell({ card, columnName: 'mana_cost', renderStyle, ...rest }),
+    renderCell({ card, columnName: 'type_line', renderStyle, ...rest }),
+    renderCell({ card, columnName: 'set', renderStyle, ...rest }),
+    renderCell({ card, columnName: 'oracle_text', renderStyle, ...rest }),
+    renderCell({ card, columnName: 'flavor_text', renderStyle, ...rest }),
+    renderCell({ card, columnName: 'power_toughness', renderStyle, ...rest }),
+  ]
 
-  return _.filter(res,
-    item => item.props.children && item.props.children !== '-'
+  return (
+    <Grid item container justifyContent='center'>
+      <Grid item container justifyContent='center' spacing={2} xs={12}>
+        <Grid item>
+          {name}
+        </Grid>
+        {manaCost && <Grid item>
+          {manaCost}
+        </Grid>}
+      </Grid>
+      <Grid item container justifyContent='center' spacing={1} xs={12}>
+        <Grid item>
+          {typeLine}
+        </Grid>
+        <Grid item>
+          {set}
+        </Grid>
+      </Grid>
+      {oracleText && <Grid component={Box} item xs={12} paddingTop={1}>
+        {oracleText}
+      </Grid>}
+      {flavorText && <Grid item xs={12} align='left'>
+        {flavorText}
+      </Grid>}
+      {powerToughness && <Grid item xs={12} align='right'>
+        {powerToughness}
+      </Grid>}
+    </Grid>
   )
 }
 
@@ -40,14 +67,9 @@ const CardInfo = (props) => {
   const {
     classes,
     card,
-    // dispatch,
+    dispatch,
   } = props
   const theme = useTheme()
-  const cardFields = ['name', 'amount', 'set', 'cmc', 'mana_cost', 'type_line', 'oracle_text', 'power_toughness', 'tag', 'price', 'total_price', 'flavor_text']
-  const cardFaceFields = {
-    faces: ['name', 'mana_cost', 'type_line', 'oracle_text', 'power_toughness', 'flavor_text'],
-    both: ['amount', 'set', 'tag', 'price', 'total_price'],
-  }
 
 
   /** EFFECTS **/
@@ -72,39 +94,50 @@ const CardInfo = (props) => {
       </Hidden>
 
       {/* CARD INFO */}
-      <Grid item container xs={11} justifyContent='center' align='center' spacing={card.is_dfc ? 2 : 1} component={Paper} elevation={3} className={classes.content}>
+      <Grid item container xs={12} md={10} lg={8} xl={6} justifyContent='center' align='center' spacing={card.is_dfc ? 2 : 1} component={Paper} elevation={3} className={classes.content}>
         {
           card.is_dfc
             ?
             <>
               {/* Front Face */}
-              <Grid item container direction='column' spacing={1} xs={12} lg={6}>
-                {renderWithFields({ card, fields: cardFaceFields['faces'], theme, renderStyle: 'content', cardFace: 0 })}
+              <Grid item container justifyContent='center' xs={12} lg={true}>
+                {renderGameFields({ card, theme, cardFace: 0 })}
               </Grid>
 
               <Hidden lgUp>
-                <Divider style={{ width: '98%' }} />
+                <Divider style={{ width: '100%' }} />
               </Hidden>
               <Hidden mdDown>
                 <Divider flexItem orientation='vertical' />
               </Hidden>
 
               {/* Back Face */}
-              <Grid item container direction='column' spacing={1} xs={12} lg={6}>
-                {renderWithFields({ card, fields: cardFaceFields['faces'], theme, renderStyle: 'content', cardFace: 1 })}
-              </Grid>
-
-              <Divider variant='middle' style={{ width: '98%' }} />
-
-              {/* Fields that are shared between the two faces */}
-              <Grid item container justifyContent='center' alignItems='center' spacing={1} xs={12}>
-                {renderWithFields({ card, fields: cardFaceFields['both'], theme, renderStyle: 'content' })}
+              <Grid item container justifyContent='center' xs={12} lg={true}>
+                {renderGameFields({ card, theme, cardFace: 1 })}
               </Grid>
             </>
 
             : /* Single faced card */
-            renderWithFields({ card, fields: cardFields, theme, renderStyle: 'content', gridProps: { xs: 12 } })
+            <Grid item container justifyContent='center' xs={12} md={10} lg={9} xl={8}>
+              {renderGameFields({ card, theme })}
+            </Grid>
         }
+
+        <Divider variant='middle' style={{ width: '100%' }} />
+
+        {/* EDITABLE FIELDS */}
+        {/* TODO: render editable files & add edit button functionality */}
+        <Grid item container justifyContent='center' direction='column' xs={12}>
+          <Grid item>
+            {renderCell({ card, columnName: 'tag', renderStyle: 'content' })}
+          </Grid>
+          <Grid item>
+            {renderCell({ card, columnName: 'price', renderStyle: 'content' })}
+          </Grid>
+          <Grid item>
+            wat3
+          </Grid>
+        </Grid>
       </Grid>
     </Grid>
   )

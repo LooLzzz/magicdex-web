@@ -84,7 +84,7 @@ const TopMenu = (props) => {
   return (
     <div className={classes.root}>
       <AppBar className={classes.appBar}>
-        <Grid container justifyContent='space-between'>
+        <Grid container wrap='nowrap' justifyContent='space-between'>
           <Grid item>
             <Tabs variant='scrollable' value={currentTab} onChange={handleTabChange}>
               <Tab value='home' label='Home' />

@@ -27,11 +27,26 @@ const accountReducers = {
     else
       localStorage.removeItem('collection')
 
-    state.activeUser = {
-      ...state.activeUser,
-      collection,
+    state.activeUser.collection = collection
+  },
+
+  updateCurrentCollection: (state, action) => {
+    const { cards } = action.payload
+    let { collection } = state.activeUser
+
+    for (const card in cards) {
+      const idx = collection.findIndex(item => item._id === card._id)
+      if (idx !== -1)
+        collection[idx] = {
+          ...collection[idx],
+          ...card,
+        }
+      else
+        collection.push(card)
     }
-  }
+
+    state.activeUser.collection = collection
+  },
 }
 
 export default accountReducers

@@ -43,7 +43,7 @@ const CardGridView = (props) => {
   return (
     <Grid item container spacing={2} xs={12} justifyContent='center'>
       {
-        sortedData.map((card, i) => {
+        sortedData && sortedData.map((card, i) => {
           const width = 209
           return (
             <Grid item key={i} xs='auto' >
