@@ -13,7 +13,7 @@ import {
 } from '@material-ui/icons'
 
 import renderCell from '@/CardRenders'
-import CardInfo from './CardInfo'
+import CardInfo from '../../CardInfo'
 import useStyles from './styles'
 
 
@@ -160,6 +160,12 @@ const CardRow = (props) => {
           <Collapse unmountOnExit in={isOpen} timeout="auto" onEnter={onCollapseEnter} onExited={onCollapseExited}>
             <CardInfo
               card={card}
+              topArrowProps={{
+                style: {
+                  borderTopColor: theme.palette.background.paper,
+                  left: theme.spacing(25),
+                },
+              }}
             />
           </Collapse>
         </TableCell>

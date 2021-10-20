@@ -15,6 +15,13 @@ const useStyles = (theme) => {
     button: {
       marginTop: theme.spacing(1),
     },
+    buttonThridly: {
+      color: '#fff',
+      backgroundColor: '#9c27b0',
+      '&:hover': {
+        backgroundColor: '#7b1fa2',
+      },
+    },
   }
 }
 

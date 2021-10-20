@@ -61,8 +61,11 @@ const renderCell = ({ card, columnName, ...rest }) => {
 /** RENDERS **/
 const renders = {
   defaultRender: ({ card, columnName, cardFace }) => {
-    const { [columnName]: value } = cardFace !== undefined ? card.card_faces[cardFace] : card
+    let { [columnName]: value } = cardFace !== undefined ? card.card_faces[cardFace] : card
+    value = value || card[columnName]
+    
     return (
+      value &&
       <span style={{ whiteSpace: 'pre-wrap' }}>
         {value}
       </span>

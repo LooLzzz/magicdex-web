@@ -34,6 +34,13 @@ const CardImage = (props) => {
 
 
   /** HANDLERS **/
+  const handleRootClick = e => {
+    rootProps?.onClick && rootProps.onClick(e)
+
+    // e.preventDefault()
+    // e.stopPropagation()
+  }
+
   const handleTransform = e => {
     setFlipped(!flipped)
   }
@@ -41,7 +48,7 @@ const CardImage = (props) => {
 
   /** RENDER **/
   return (
-    <Grid container direction="column" {...rootProps}>
+    <Grid container direction="column" {...rootProps} onClick={handleRootClick}>
       <Grid item className={classes.imageContainer}>
         <Tilt
           tiltEnable={tiltEnabled ?? false}
@@ -59,7 +66,6 @@ const CardImage = (props) => {
           {...tiltProps}
         >
           <ImageOverlay
-            onClick={packTransformButton && handleTransform}
             overlayEnabled={card?.foil}
             baseSrc={
               card
@@ -93,7 +99,8 @@ const CardImage = (props) => {
         isDfc && !packTransformButton && (
           <Grid item align='center' className={classes.button}>
             <Button
-              classes={{ root: 'buttonThridly-root' }}
+              // classes={{ root: 'buttonThridly-root' }}
+              className={classes.buttonThridly}
               variant='contained'
               // color='primary'
               // color='thridly'

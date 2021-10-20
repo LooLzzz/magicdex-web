@@ -168,7 +168,7 @@ const getLightTheme = () =>
       background: {
         default: '#D5D5D5',
         paper: '#F0F0F0',
-        secondary: colors.grey['A100'],
+        secondary: colors.grey['400'],
       },
       thridly: {
         main: colors.purple[500],
