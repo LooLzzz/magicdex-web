@@ -23,13 +23,11 @@ const CardImage = (props) => {
     packTransformButton,
   } = props
   const [flipped, setFlipped] = useState(false)
-  const [isDfc, setIsDfc] = useState(false)
 
 
   /** EFFECTS **/
   useEffect(() => {
     setFlipped(false)
-    setIsDfc(card?.card_faces && card?.card_faces.length > 1)
   }, [card])
 
 
@@ -69,7 +67,7 @@ const CardImage = (props) => {
             overlayEnabled={card?.foil}
             baseSrc={
               card
-                ? card.card_faces?.length > 1
+                ? card.is_transform
                   ? card.card_faces[flipped ? 1 : 0].image_uris.png
                   : card.image_uris.png
                 : '/cardback.png'
@@ -83,7 +81,7 @@ const CardImage = (props) => {
           <span
             onClick={packTransformButton && handleTransform}
             style={{
-              display: packTransformButton && isDfc ? 'unset' : 'none',
+              display: packTransformButton && card?.is_transform ? 'unset' : 'none',
               fontSize: '1.5em'
             }}
             className={clsx(
@@ -96,7 +94,7 @@ const CardImage = (props) => {
         </Tilt>
       </Grid>
       {
-        isDfc && !packTransformButton && (
+        card?.is_transform && !packTransformButton && (
           <Grid item align='center' className={classes.button}>
             <Button
               // classes={{ root: 'buttonThridly-root' }}

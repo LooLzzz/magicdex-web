@@ -25,8 +25,9 @@ const utils = {
         }
       })
       .map(sym => sym ? `ms-${sym.toLowerCase()}` : '')
-      .map(cost => (
+      .map((cost, i) => (
         <span
+          key={i}
           {...props}
           style={{
             ...styles.mana,

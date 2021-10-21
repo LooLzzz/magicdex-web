@@ -166,28 +166,32 @@ const CardTableView = (props) => {
         </Hidden>
 
         {/** TABLE VIEW **/}
-        <Grid item justifyContent='center' style={{flexGrow:1}}>
+        <Grid item style={{ flexGrow: 1 }}>
           <TableContainer component={Paper} className={classes.paper} elevation={5}>
-            <Table size="small" >
+            <Table size="small">
               <TableHead className={classes.tableHead}>
                 <TableRow>
 
-                  {Object.entries(columns).map(([columnName, columnDisplayName]) => (
-                    <TableCell
-                      style={{ paddingLeft: '16px' }}
-                      key={columnName}
-                      align="center"
-                      sortDirection={sortBy === columnName ? sortOrder : false}
-                    >
-                      <TableSortLabel
-                        active={sortBy === columnName}
-                        direction={sortBy === columnName ? sortOrder : 'asc'}
-                        onClick={e => handleHeaderClick(e, columnName)}
-                      >
-                        {columnDisplayName}
-                      </TableSortLabel>
-                    </TableCell>
-                  ))}
+                  {
+                    Object
+                      .entries(columns)
+                      .map(([columnName, columnDisplayName]) => (
+                        <TableCell
+                          style={{ paddingLeft: '16px' }}
+                          key={columnName}
+                          align="center"
+                          sortDirection={sortBy === columnName ? sortOrder : false}
+                        >
+                          <TableSortLabel
+                            active={sortBy === columnName}
+                            direction={sortBy === columnName ? sortOrder : 'asc'}
+                            onClick={e => handleHeaderClick(e, columnName)}
+                          >
+                            {columnDisplayName}
+                          </TableSortLabel>
+                        </TableCell>
+                      ))
+                  }
 
                   {/* Dropdown icon */}
                   <TableCell className={classes.iconCell} />

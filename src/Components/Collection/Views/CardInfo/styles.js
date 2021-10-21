@@ -20,12 +20,14 @@ const useStyles = (theme) => {
     topArrow: {
       content: '""',
       zIndex: 1,
-      top: -0.5,
+      top: -1,
       width: 0,
       height: 0,
       position: 'absolute',
       backgroundColor: 'unset',
-      border: '2rem solid transparent',
+      border: 'solid transparent',
+      borderWidth: '1.5rem 1.75rem 0rem 1.75rem',
+      left: `calc(50% - (1.75rem / 2))`,
       transition: 'left 0.3s ease',
     },
     image: {

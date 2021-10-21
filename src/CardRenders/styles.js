@@ -7,6 +7,7 @@ const styles = {
     fontSize: '1.25em',
   },
   flavorText: {
+    // marginTop: '0.2em',
     fontStyle: 'italic',
     fontFamily: 'Georgia, fangsong, Times New Roman',
     whiteSpace: 'pre-wrap',

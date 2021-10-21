@@ -1,5 +1,5 @@
 import axios from "axios"
-// import scryfall from "scryfall-client";
+import intersectionWith from 'lodash/intersectionWith'
 
 import { API_URL } from "@/Config"
 import { authHeadersDecorator, catchErrors, fetchScryfallCardData } from "./utils"
@@ -9,6 +9,24 @@ import { authHeadersDecorator, catchErrors, fetchScryfallCardData } from "./util
 const ROUTE_URL = `${API_URL}/collections`
 // const zip = (a, b) => a.map((k, i) => [k, b[i]]);
 
+const isTransform = (card) => {
+  const intersection = intersectionWith(
+    card.layout instanceof Array ? card.layout : [card.layout],
+    ['modal', 'transform'],
+    (a, b) => a.includes(b)
+  )
+  return intersection.length > 0
+}
+
+const isSplit = (card) => {
+  const intersection = intersectionWith(
+    card.layout instanceof Array ? card.layout : [card.layout],
+    ['split'],
+    (a, b) => a.includes(b)
+  )
+  return intersection.length > 0
+}
+
 const populateCardData = async (cards) => {
   const cardInfo =
     cards instanceof Array
@@ -16,15 +34,16 @@ const populateCardData = async (cards) => {
       : [cards.scryfall_id, cards.set]
 
   const scryfallData = await fetchScryfallCardData(cardInfo)
-  const isDfc = (card) => Boolean(card?.card_faces.length > 1)
+
 
   const populatedCards =
     cards.map((card, i) => ({
       ...scryfallData[i],
       ...card,
       date_created: new Date(card.date_created),
-      is_dfc: isDfc(scryfallData[i]),
-      mana_cost: isDfc(scryfallData[i])
+      is_transform: isTransform(scryfallData[i]),
+      is_split: isSplit(scryfallData[i]),
+      mana_cost: isTransform(scryfallData[i])
         ? [scryfallData[i].card_faces[0].mana_cost, scryfallData[i].card_faces[1].mana_cost]
         : scryfallData[i].mana_cost,
     }))

@@ -3,7 +3,6 @@
 import { Box, Grid, Paper, Hidden, Divider, Typography } from '@material-ui/core'
 import { withStyles, useTheme } from '@material-ui/styles'
 import { connect } from 'react-redux'
-import clsx from 'clsx'
 
 import { updateCurrentCollection } from '@/Logic/redux'
 import { CardImage } from '@/Components'
@@ -20,7 +19,7 @@ const mapDispatchToProps = (dispatch) => ({
 })
 
 const renderGameFields = ({ card, renderStyle = 'content', ...rest }) => {
-  const [name, manaCost, typeLine, set, oracleText, flavorText, artist, collectorNumber, powerToughness] = [
+  let [name, manaCost, typeLine, set, oracleText, flavorText, artist, collectorNumber, powerToughness] = [
     renderCell({ card, columnName: 'name', renderStyle, ...rest }),
     renderCell({ card, columnName: 'mana_cost', renderStyle, ...rest }),
     renderCell({ card, columnName: 'type_line', renderStyle, ...rest }),
@@ -53,10 +52,10 @@ const renderGameFields = ({ card, renderStyle = 'content', ...rest }) => {
       {oracleText && <Grid component={Box} item xs={12} paddingTop={1}>
         {oracleText}
       </Grid>}
-      {flavorText && <Grid item xs={12} align='left'>
+      {flavorText && <Grid item xs={12} align='left' style={{ marginTop: '0.45em' }}>
         {flavorText}
       </Grid>}
-      <Grid item container justifyContent='space-between' xs={12} wrap='nowrap' component={Typography} variant='overline'>
+      <Grid item container justifyContent='space-between' alignItems='baseline' xs={12} wrap='nowrap' component={Typography} variant='overline' style={{ marginTop: '0.3em' }}>
         <Grid item container spacing={2}>
           <Grid item>
             #{collectorNumber}
@@ -78,7 +77,7 @@ const CardInfo = (props) => {
   /** VARS **/
   const {
     classes,
-    dispatch,
+    // dispatch,
     card,
     rootComponent,
     rootProps,
@@ -120,9 +119,9 @@ const CardInfo = (props) => {
         </Hidden>
 
         {/* CARD INFO */}
-        <Grid item container xs={12} md={10} lg={8} xl={6} justifyContent='center' align='center' spacing={card.is_dfc ? 2 : 1} component={Paper} elevation={3} className={classes.content}>
+        <Grid item container xs={12} md={10} lg={8} xl={6} justifyContent='center' align='center' spacing={card.is_transform || card.is_split ? 2 : 1} component={Paper} elevation={3} className={classes.content}>
           {
-            card.is_dfc
+            card.is_transform || card.is_split
               ?
               <>
                 {/* Front Face */}

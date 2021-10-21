@@ -59,7 +59,7 @@ const FilterProvider = (props) => {
           // .filter(set =>
           //   set.set_type === 'token'
           // )
-          .map((set) => ({
+          .map(set => ({
             ...set,
             set_type: _.chain(set.set_type).replace(/[_]+/g, ' ').upperFirst().value(),
             released_at: new Date(set.released_at),
@@ -174,7 +174,7 @@ const FilterProvider = (props) => {
                         </code>
                       </>
                     }
-                  />  
+                  />
                 </ListItem>
 
                 <Divider />

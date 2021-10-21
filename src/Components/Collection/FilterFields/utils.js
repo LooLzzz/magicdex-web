@@ -108,6 +108,7 @@ const Utils = {
       renderTags={(value, getTagProps) => (
         value.map((option, index) => (
           <Chip
+            key={index}
             {...getTagProps({ index })}
             label={
               props?.ChipProps?.label

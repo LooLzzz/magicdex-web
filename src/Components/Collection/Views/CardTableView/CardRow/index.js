@@ -1,11 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
-import { useState, useEffect, useRef } from 'react'
+import { Fragment, useState, useEffect, useRef } from 'react'
 import { TableRow, TableCell, Collapse, IconButton, Checkbox, Paper } from '@material-ui/core'
 import { withStyles, useTheme } from '@material-ui/styles'
 import { connect } from 'react-redux'
 import useScrollPosition from '@react-hook/window-scroll'
-import _ from 'lodash'
+import upperFirst from 'lodash/upperFirst'
 import clsx from 'clsx'
 import {
   KeyboardArrowDown as KeyboardArrowDownIcon,
@@ -28,6 +28,7 @@ const CardRow = (props) => {
   const {
     classes,
     columns,
+    key,
     card,
     onMouseEnter,
     selectable,
@@ -89,7 +90,7 @@ const CardRow = (props) => {
 
   /** RENDER **/
   return (
-    <>
+    <Fragment key={key}>
       <TableRow
         className={clsx(classes.root, 'cursor-pointer')}
         onClick={handleIsOpenToggle}
@@ -100,9 +101,9 @@ const CardRow = (props) => {
           Object
             .entries(columns)
             .map(
-              ([columnName, columnDisplayName]) => (
+              ([columnName, columnDisplayName], i) => (
                 <TableCell
-                  key={columnName}
+                  key={i}
                   align='center'
                   {
                   ...( /* renderSet() setup */
@@ -120,7 +121,7 @@ const CardRow = (props) => {
                   {
                     columnName === 'set' && isMouseOver && (
                       <Paper className='floating' style={floatingCss(setRef, scrollPosition)}>
-                        {[card.set_name, _.upperFirst(card.rarity), '#' + card.collector_number].join(' - ')}
+                        {[card.set_name, upperFirst(card.rarity), '#' + card.collector_number].join(' - ')}
                       </Paper>
                     )
                   }
@@ -163,14 +164,13 @@ const CardRow = (props) => {
               topArrowProps={{
                 style: {
                   borderTopColor: theme.palette.background.paper,
-                  left: theme.spacing(25),
                 },
               }}
             />
           </Collapse>
         </TableCell>
       </TableRow>
-    </>
+    </Fragment>
   )
 }
 

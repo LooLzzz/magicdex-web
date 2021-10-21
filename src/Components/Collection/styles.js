@@ -16,6 +16,11 @@ const useStyles = (theme) => {
     root: {
       marginBottom: theme.spacing(3),
     },
+    fab: {
+      position: 'fixed',
+      bottom: theme.spacing(2),
+      right: theme.spacing(2),
+    },
     filtersContainer: {
       marginBottom: theme.spacing(4.5),
     },

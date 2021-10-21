@@ -1,5 +1,5 @@
 import Scryfall from "scryfall-client"
-import _ from "lodash"
+import zipObjectDeep from "lodash/zipObjectDeep"
 
 
 const Utils = {
@@ -35,7 +35,7 @@ const Utils = {
 
   fetchScryfallCardData: async (cardInfo) => {
     const all_sets = await Scryfall.getSets()
-    const setData = _.zipObjectDeep(all_sets.map(set => set.id), all_sets) // { 'M19': {...}, 'M20': {...}, ... }
+    const setData = zipObjectDeep(all_sets.map(set => set.id), all_sets) // { 'M19': {...}, 'M20': {...}, ... }
 
     const card_ids = cardInfo.map(card => ({ id: card.id }))
     const cardData = await Scryfall.getCollection(card_ids)

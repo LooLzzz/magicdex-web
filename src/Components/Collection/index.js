@@ -1,29 +1,26 @@
-/* eslint-disable no-lone-blocks */
 /* eslint-disable react-hooks/exhaustive-deps */
 
 import { useEffect, useState, createRef } from 'react'
-import { Grid, ListItemText, MenuItem, ListItem, ListSubheader, Divider, ButtonGroup, IconButton } from '@material-ui/core'
+import { Grid, ListItemText, MenuItem, ListItem, ListSubheader, Divider, ButtonGroup, IconButton, Fab } from '@material-ui/core'
 import { Skeleton } from '@material-ui/lab'
 import { withStyles } from '@material-ui/styles'
 import { connect } from 'react-redux'
-import { useHistory, Prompt } from 'react-router'
+import { useHistory } from 'react-router'
 import {
+  Add as AddIcon,
   MoreVert as MoreVertIcon,
   ViewList as ViewListIcon,
   ViewModule as ViewModuleIcon,
   ViewCompact as ViewCompactIcon,
 } from '@material-ui/icons'
-import _ from 'lodash'
-// import useMouse from '@react-hook/mouse-position'
-// import clsx from 'clsx'
+import upperFirst from 'lodash/upperFirst'
 
 import { setCurrentTab, setCurrentCollection } from '@/Logic/redux'
 import { MenuPopover } from '@/Components'
 import { MagicdexApi } from '@/Api'
 import { CardTableView, CardGridView } from './Views'
+import { CardPriceDataProvider, FilteredDataProvider } from './Providers'
 import FilterFields from './FilterFields'
-import CardPriceDataProvider from './CardPriceDataProvider'
-import FilteredDataProvider from './FilteredDataProvider'
 import useStyles from './styles'
 
 
@@ -84,6 +81,11 @@ const Collection = (props) => {
 
 
   /** HANDLERS **/
+  const handleFabClick = (e) => {
+    //TODO: add a new card to the collection & update the localStorage.
+    // user should choose `import from list` or a form to add a new card
+  }
+
   const toggleTableEditable = () => {
     setTableEditable(!tableEditable)
   }
@@ -127,117 +129,128 @@ const Collection = (props) => {
             </Grid>
             :
             // SHOW ACTUAL DATA VIEW
-            <Grid container justifyContent='center'>
-              <Grid item container xs={12} lg={10} wrap='nowrap' justifyContent='center' alignItems='center' className={classes.filtersContainer}>
-                <Grid item container xs={11}>
-                  <FilterFields
-                    setFilters={setFilters}
-                  />
-                </Grid>
-                <Grid item>
-                  <MenuPopover
-                    ref={menuRef}
-                    icon={<MoreVertIcon />}
-                    listProps={{ dense: true }}
-                  >
-                    <ListItem>
-                      <ButtonGroup variant='text' size='small'>
-                        <IconButton onClick={() => setView('table')} color={view === 'table' && 'secondary'}>
-                          <ViewListIcon />
-                        </IconButton>
-                        <IconButton onClick={() => setView('grid')} color={view === 'grid' && 'secondary'}>
-                          <ViewModuleIcon />
-                        </IconButton>
-                        <IconButton onClick={() => setView('compact')} color={view === 'compact' && 'secondary'}>
-                          <ViewCompactIcon />
-                        </IconButton>
-                      </ButtonGroup>
-                    </ListItem>
+            <>
+              <Grid container justifyContent='center'>
+                <Grid item container xs={12} lg={10} wrap='nowrap' justifyContent='center' alignItems='center' className={classes.filtersContainer}>
+                  <Grid item container xs={11}>
+                    <FilterFields
+                      setFilters={setFilters}
+                    />
+                  </Grid>
+                  <Grid item>
+                    <MenuPopover
+                      ref={menuRef}
+                      icon={<MoreVertIcon />}
+                      listProps={{ dense: true }}
+                    >
+                      <ListItem>
+                        <ButtonGroup variant='text' size='small'>
+                          <IconButton onClick={() => setView('table')} color={view === 'table' && 'secondary'}>
+                            <ViewListIcon />
+                          </IconButton>
+                          <IconButton onClick={() => setView('grid')} color={view === 'grid' && 'secondary'}>
+                            <ViewModuleIcon />
+                          </IconButton>
+                          <IconButton onClick={() => setView('compact')} color={view === 'compact' && 'secondary'}>
+                            <ViewCompactIcon />
+                          </IconButton>
+                        </ButtonGroup>
+                      </ListItem>
 
-                    <Divider />
+                      <Divider />
 
-                    <ListSubheader className={classes.subheader}>
-                      {`${_.upperFirst(view)} View`}
-                    </ListSubheader>
-                    {(() => {
-                      switch (view) {
-                        default:
-                        case 'table':
-                          return (
-                            <>
-                              <MenuItem onClick={toggleCurrency}>
-                                <ListItemText
-                                  primary={'Change Currency'}
-                                  secondary={`Viewing ${currency.toUpperCase()}`}
-                                />
-                              </MenuItem>
-                              <MenuItem onClick={toggleTableEditable}>
-                                {
-                                  tableEditable
-                                    ? 'Disable Edit'
-                                    : 'Enable Edit'
-                                }
-                              </MenuItem>
-                              <MenuItem>
-                                Reset Changes
-                              </MenuItem>
-                            </>
-                          )
-                        case 'grid':
-                          return (
-                            <>
-                              <MenuItem>
-                                Something here
-                              </MenuItem>
-                            </>
-                          )
-                        case 'compact':
-                          return (
-                            <>
-                              <MenuItem>
-                                TBD
-                              </MenuItem>
-                            </>
-                          )
-                      }
-                    })()}
-                  </MenuPopover>
-                </Grid>
-              </Grid>
-              <Grid item container wrap='nowrap' justifyContent='center' xs={12}>
-                <CardPriceDataProvider
-                  data={collection}
-                  currency={currency}
-                >
-                  <FilteredDataProvider
-                    filters={filters}
-                  // data = passed from parent
-                  >
-                    {
-                      (() => {
+                      <ListSubheader className={classes.subheader}>
+                        {`${upperFirst(view)} View`}
+                      </ListSubheader>
+                      {(() => {
                         switch (view) {
                           default:
                           case 'table':
-                            return <CardTableView
-                              columns={columns}
-                              setCurrency={setCurrency}
-                              currency={currency}
-                              isEditable={tableEditable}
-                            // data = {passed from parent}
-                            />
+                            return (
+                              <>
+                                <MenuItem onClick={toggleCurrency}>
+                                  <ListItemText
+                                    primary={'Change Currency'}
+                                    secondary={`Viewing ${currency.toUpperCase()}`}
+                                  />
+                                </MenuItem>
+                                <MenuItem onClick={toggleTableEditable}>
+                                  {
+                                    tableEditable
+                                      ? 'Disable Edit'
+                                      : 'Enable Edit'
+                                  }
+                                </MenuItem>
+                                <MenuItem>
+                                  Reset Changes
+                                </MenuItem>
+                              </>
+                            )
                           case 'grid':
-                            return <CardGridView
-                            // data = {passed from parent}
-                            />
+                            return (
+                              <>
+                                <MenuItem>
+                                  Something here
+                                </MenuItem>
+                              </>
+                            )
                           case 'compact':
-                            return <div>TBD</div>
+                            return (
+                              <>
+                                <MenuItem>
+                                  TBD
+                                </MenuItem>
+                              </>
+                            )
                         }
-                      })()
-                    }
-                  </FilteredDataProvider>
-                </CardPriceDataProvider>
+                      })()}
+                    </MenuPopover>
+                  </Grid>
+                </Grid>
+                <Grid item container wrap='nowrap' justifyContent='center' xs={12}>
+                  <CardPriceDataProvider
+                    data={collection}
+                    currency={currency}
+                  >
+                    <FilteredDataProvider
+                      filters={filters}
+                    // data = passed from parent
+                    >
+                      {
+                        (() => {
+                          switch (view) {
+                            default:
+                            case 'table':
+                              return <CardTableView
+                                columns={columns}
+                                setCurrency={setCurrency}
+                                currency={currency}
+                                isEditable={tableEditable}
+                              // data = {passed from parent}
+                              />
+                            case 'grid':
+                              return <CardGridView
+                              // data = {passed from parent}
+                              />
+                            case 'compact':
+                              return <div>TBD</div>
+                          }
+                        })()
+                      }
+                    </FilteredDataProvider>
+                  </CardPriceDataProvider>
+                </Grid>
               </Grid>
-            </Grid>
+
+              {/* FLOATING PLUS BUTTON */}
+              <Fab
+                color='primary'
+                className={classes.fab}
+                onClick={handleFabClick}
+              >
+                <AddIcon />
+              </Fab>
+            </>
         }
       </div>
     </>

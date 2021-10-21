@@ -1,3 +1,4 @@
+import { Fragment } from 'react'
 import { Paper, Chip } from '@material-ui/core'
 import _ from 'lodash'
 
@@ -63,7 +64,7 @@ const renders = {
   defaultRender: ({ card, columnName, cardFace }) => {
     let { [columnName]: value } = cardFace !== undefined ? card.card_faces[cardFace] : card
     value = value || card[columnName]
-    
+
     return (
       value &&
       <span style={{ whiteSpace: 'pre-wrap' }}>
@@ -111,21 +112,22 @@ const renders = {
           <span style={{ fontStyle: 'italic', fontSize: '0.88em' }}>{match}</span>
         )
       )
-
-      /* handle `\n` characters */
-      oracleText = oracleText
-        .map(text =>
-          typeof text === 'string' && text.includes('\n')
-            ? text.split('\n').map(line => <span>{line}<div style={{ height: '0.2rem' }} /></span>)
-            : text
-        )
     }
 
-    return oracleText
-      ? <div align={align} style={{ whiteSpace: 'pre-wrap' }}>
-        {oracleText}
-      </div>
-      : ''
+    return (
+      oracleText
+        ?
+        <div align={align} style={{ whiteSpace: 'pre-wrap' }}>
+          {
+            oracleText.map((text, i) =>
+              <Fragment key={i}>
+                {text}
+              </Fragment>
+            )
+          }
+        </div>
+        : ''
+    )
   },
 
   renderPowerToughness: ({ card, cardFace }) => {
@@ -133,18 +135,19 @@ const renders = {
 
     return power && toughness
       ?
-      <div align='right'>
+      <span align='right' style={{ fontSize: '1rem' }}>
         {`${power}/${toughness}`}
-      </div>
+      </span>
       : ''
   },
 
-  renderSet: ({ card, theme }) => {
-    const { set_data, rarity } = card
+  renderSet: ({ card, theme, renderStyle }) => {
+    const { set_data, rarity, foil } = card
     const set = set_data?.parent_set_code ? set_data.parent_set_code : set_data.code
     return (
       <span
-        className={['ss', 'ss-fw', `ss-${rarity}`, `ss-${set}`].join(' ')}
+        className={`ss ss-fw ss-${rarity} ss-${set}`}
+        title={renderStyle === 'content' ? `${set_data.name} - ${_.upperFirst(rarity)}${foil ? ' [F]' : ''}` : null}
         style={{
           ...styles.set,
           ...(rarity === 'common' && theme.palette.type === 'dark' ? { color: '#CCCCCC' } : {})
@@ -182,7 +185,7 @@ const renders = {
         ? //tags.join('; ')
         tags.map((tag, i) =>
           <Chip
-            onDelete={() => {/*TODO: add delete functionality to tag chips */ }}
+            // onDelete={() => {/*TODO: add delete functionality to tag chips */ }}
             label={tag}
             size='small'
             key={i}

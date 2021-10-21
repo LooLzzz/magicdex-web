@@ -20,9 +20,6 @@ const sharedOverrides = {
       "a:hover": {
         textDecoration: "underline",
       },
-      ".hidden": {
-        display: "none",
-      },
       ".cursor-pointer": {
         cursor: "pointer",
       },

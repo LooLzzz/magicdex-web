@@ -89,8 +89,8 @@ const TopMenu = (props) => {
             <Tabs variant='scrollable' value={currentTab} onChange={handleTabChange}>
               <Tab value='home' label='Home' />
               <Tab value='collection' label='Collection' />
-              <Tab value='login' className='hidden' />
-              <Tab value='register' className='hidden' />
+              <Tab value='login' style={{ display: 'none' }} />
+              <Tab value='register' style={{ display: 'none' }} />
             </Tabs>
           </Grid>
           <Grid item>

@@ -12,17 +12,19 @@ import useStyles from './styles'
 
 const MenuPopover = forwardRef((props, ref) => {
   /** VARS **/
-  const [Icon, setIcon] = useState(() => { })
-  const [menuAnchor, setMenuAnchor] = useState(null)
-  const menuOpen = Boolean(menuAnchor)
-  const iconButtonRef = useRef()
-  const classes = makeStyles(useStyles(useTheme()))()
   const {
     icon,
     iconButtonProps,
     popoverProps,
     listProps,
   } = props
+  const classes = makeStyles(useStyles(useTheme()))()
+  
+  const iconButtonRef = useRef()
+  const [Icon, setIcon] = useState(icon)
+  
+  const [menuAnchor, setMenuAnchor] = useState(null)
+  const menuOpen = Boolean(menuAnchor)
 
 
   /** EFFECTS **/
@@ -30,11 +32,6 @@ const MenuPopover = forwardRef((props, ref) => {
     openMenu: () => { handleMenuOpen(iconButtonRef) },
     closeMenu: () => { handleMenuClose(null) },
   }))
-
-  // useEffect(() => {
-  //   //onMount
-  //   console.log(props.ref)
-  // }, [])
 
   useEffect(() => {
     setIcon(icon)
