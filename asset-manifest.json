@@ -1,0 +1,24 @@
+{
+  "files": {
+    "main.css": "/magicdex-web/static/css/main.a97d7a34.chunk.css",
+    "main.js": "/magicdex-web/static/js/main.8209149d.chunk.js",
+    "main.js.map": "/magicdex-web/static/js/main.8209149d.chunk.js.map",
+    "runtime-main.js": "/magicdex-web/static/js/runtime-main.60a6af4b.js",
+    "runtime-main.js.map": "/magicdex-web/static/js/runtime-main.60a6af4b.js.map",
+    "static/css/2.d4000ece.chunk.css": "/magicdex-web/static/css/2.d4000ece.chunk.css",
+    "static/js/2.16d8b5fc.chunk.js": "/magicdex-web/static/js/2.16d8b5fc.chunk.js",
+    "static/js/2.16d8b5fc.chunk.js.map": "/magicdex-web/static/js/2.16d8b5fc.chunk.js.map",
+    "index.html": "/magicdex-web/index.html",
+    "static/css/2.d4000ece.chunk.css.map": "/magicdex-web/static/css/2.d4000ece.chunk.css.map",
+    "static/css/main.a97d7a34.chunk.css.map": "/magicdex-web/static/css/main.a97d7a34.chunk.css.map",
+    "static/js/2.16d8b5fc.chunk.js.LICENSE.txt": "/magicdex-web/static/js/2.16d8b5fc.chunk.js.LICENSE.txt",
+    "static/media/index.css": "/magicdex-web/static/media/roboto-vietnamese-400-normal.52cebac0.woff2"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.60a6af4b.js",
+    "static/css/2.d4000ece.chunk.css",
+    "static/js/2.16d8b5fc.chunk.js",
+    "static/css/main.a97d7a34.chunk.css",
+    "static/js/main.8209149d.chunk.js"
+  ]
+}
