@@ -82,6 +82,20 @@ const Collection = (props) => {
 
   /** HANDLERS **/
   const handleFabClick = (e) => {
+    // DEBUG
+    // let res = {}
+    // try {
+    //   res = await axios.get('http://localhost:5000/collections/user/test/', {
+    //     headers: {
+    //       'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+    //     }
+    //   })
+    //   res = res.data
+    // } catch (e) {
+    //   res = { ...e }
+    // }
+    // console.log({ ...res })
+
     //TODO: add a new card to the collection & update the localStorage.
     // user should choose `import from list` or a form to add a new card
   }

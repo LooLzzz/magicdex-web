@@ -10,6 +10,7 @@ import useSize from '@react-hook/size'
 import _ from 'lodash'
 
 import { CardImage } from '@/Components'
+// import { getCardPrints } from '@/Api'
 import CardInfo from '../CardInfo'
 import useStyles from './styles'
 
@@ -86,6 +87,12 @@ const CardGridView = (props) => {
         box: e.currentTarget.getBoundingClientRect(),
       })
     }
+
+    // DEBUG
+    // console.log({
+    //   lang: (await getCardPrints(card, 'lang')).map(({ lang }) => lang),
+    //   prints: (await getCardPrints(card)).map(({ set }) => set),
+    // })
   }
 
 
