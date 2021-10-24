@@ -29,6 +29,8 @@ const CardGridView = (props) => {
   const {
     // classes,
     data,
+    tiltEnabled,
+    transform3dEnabled,
     // dispatch,
   } = props
   const cardWidth = 209
@@ -59,10 +61,21 @@ const CardGridView = (props) => {
   useEffect(() => {
     const n = Math.floor(containerWidth / (cardWidth + 16))
 
-    setCardsPerRow(n)
+    setCardsPerRow(state => {
+      if (state !== n) {
+        //close the collapse
+        setSelectedCard(state => ({
+          ...state,
+          targetCollapse: undefined,
+        }))
+        return n
+      }
+      return state
+    })
     setCollapseRefs(
       _.times(Math.floor(data.length / n) + 1, () => createRef())
     )
+
   }, [containerWidth, cardWidth, data])
 
 
@@ -87,12 +100,6 @@ const CardGridView = (props) => {
         box: e.currentTarget.getBoundingClientRect(),
       })
     }
-
-    // DEBUG
-    // console.log({
-    //   lang: (await getCardPrints(card, 'lang')).map(({ lang }) => lang),
-    //   prints: (await getCardPrints(card)).map(({ set }) => set),
-    // })
   }
 
 
@@ -108,9 +115,9 @@ const CardGridView = (props) => {
               {
                 card &&
                 <Grid item xs='auto'>
-                  <CardImage
-                    packTransformButton
-                    tiltEnabled
+                  <CardImage packTransformButton
+                    transform3dEnabled={transform3dEnabled}
+                    tiltEnabled={tiltEnabled}
                     tiltProps={{
                       tiltMaxAngleX: 12.5,
                       tiltMaxAngleY: 12.5,
@@ -130,12 +137,12 @@ const CardGridView = (props) => {
               {
                 (((i + 1) % cardsPerRow === 0) || (i === sortedData.length - 1)) &&
                 <Grid item xs={12}>
-                  <Collapse //unmountOnExit
+                  <Collapse unmountOnExit
                     ref={collapseRefs[targetCollapseIdx]}
                     timeout="auto"
                     in={targetCollapseIdx === selectedCard.targetCollapse}
+                    onEntering={() => scrollIntoView(collapseRefs[targetCollapseIdx]?.current, { scrollMode: 'if-needed', behavior: 'smooth', block: 'start' })}
                     onEntered={() => scrollIntoView(collapseRefs[targetCollapseIdx]?.current, { scrollMode: 'if-needed', behavior: 'smooth', block: 'end' })}
-                    onEntering={() => scrollIntoView(collapseRefs[targetCollapseIdx]?.current, { behavior: 'smooth', block: 'start' })}
                   >
                     {
                       selectedCard?.data &&

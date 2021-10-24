@@ -1,31 +1,13 @@
 import axios from "axios"
-import intersectionWith from 'lodash/intersectionWith'
 
 import { API_URL } from "@/Config"
-import { authHeadersDecorator, catchErrors, fetchScryfallCardData } from "./utils"
+import { authHeadersDecorator, catchErrors, fetchScryfallCardData, arrayContains } from "./utils"
 // import { fetchScryfallSymbolData, fetchScryfallSetData } from "./utils";
 
 
 const ROUTE_URL = `${API_URL}/collections`
 // const zip = (a, b) => a.map((k, i) => [k, b[i]]);
 
-const isTransform = (card) => {
-  const intersection = intersectionWith(
-    card.layout instanceof Array ? card.layout : [card.layout],
-    ['modal', 'transform'],
-    (a, b) => a.includes(b)
-  )
-  return intersection.length > 0
-}
-
-const isSplit = (card) => {
-  const intersection = intersectionWith(
-    card.layout instanceof Array ? card.layout : [card.layout],
-    ['split'],
-    (a, b) => a.includes(b)
-  )
-  return intersection.length > 0
-}
 
 const populateCardData = async (cards) => {
   const cardInfo =
@@ -35,18 +17,25 @@ const populateCardData = async (cards) => {
 
   const scryfallData = await fetchScryfallCardData(cardInfo)
 
+  const populatedCards = cards.map((card, i) => {
+    const { is_transform, is_split, is_flip } = {
+      is_transform: arrayContains(scryfallData[i].layout, ['modal', 'transform']),
+      is_split: arrayContains(scryfallData[i].layout, ['split', 'fuse']),
+      is_flip: arrayContains(scryfallData[i].layout, ['flip']),
+    }
 
-  const populatedCards =
-    cards.map((card, i) => ({
+    return {
       ...scryfallData[i],
       ...card,
       date_created: new Date(card.date_created),
-      is_transform: isTransform(scryfallData[i]),
-      is_split: isSplit(scryfallData[i]),
-      mana_cost: isTransform(scryfallData[i])
+      is_transform,
+      is_split,
+      is_flip,
+      mana_cost: is_transform
         ? [scryfallData[i].card_faces[0].mana_cost, scryfallData[i].card_faces[1].mana_cost]
         : scryfallData[i].mana_cost,
-    }))
+    }
+  })
 
   return (cards instanceof Array)
     ? populatedCards
@@ -153,17 +142,6 @@ const Collections = {
       .then(response => response)
       .catch(err => catchErrors(err))
   },
-
-  // /**
-  //  * Get all sets names and codes.
-  //  */
-  // getAllSets: async () => {
-  //   return await fetchScryfallSetData();
-  // },
-
-  // getAllSymbols: async () => {
-  //   return await fetchScryfallSymbolData();
-  // },
 }
 
 
@@ -187,7 +165,5 @@ export const {
   getCardById,
   updateCardById,
   deleteCardById,
-  // getAllSets,
-  // getAllSymbols,
 } = decoratedCollections
 // } = Collections

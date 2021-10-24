@@ -1,5 +1,6 @@
 import Scryfall from "scryfall-client"
 import zipObjectDeep from "lodash/zipObjectDeep"
+import intersectionWith from 'lodash/intersectionWith'
 
 
 const Utils = {
@@ -45,6 +46,23 @@ const Utils = {
       set_data: setData[card.set_id],
     }))
   },
+
+  arrayContains: (array, values, type = 'some') => {
+    array = array instanceof Array ? array : [array]
+    values = values instanceof Array ? values : [values]
+
+    const intersection = intersectionWith(array, values,
+      (a, b) => a.includes(b)
+    )
+    switch (type) {
+      case 'some':
+        return intersection.length > 0
+      case 'every':
+        return intersection.length === values.length
+      default:
+        return false
+    }
+  },
 }
 
 export default Utils
@@ -54,4 +72,5 @@ export const {
   authHeadersDecorator,
   catchErrors,
   fetchScryfallCardData,
+  arrayContains,
 } = Utils

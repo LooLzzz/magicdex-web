@@ -23,7 +23,7 @@ const accountReducers = {
     const { collection } = action.payload
 
     if (collection)
-      localStorage.setItem('collection', JSON.stringify(collection ?? []))
+      localStorage.setItem('collection', JSON.stringify(collection || []))
     else
       localStorage.removeItem('collection')
 

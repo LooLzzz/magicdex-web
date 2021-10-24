@@ -1,5 +1,3 @@
-/* eslint-disable no-lone-blocks */
-
 import { useState, useEffect } from 'react'
 import { withStyles } from '@material-ui/styles'
 import clsx from 'clsx'
@@ -11,6 +9,7 @@ const ImageOverlay = (props) => {
   /** VARS **/
   const {
     classes,
+    rootProps,
     baseSrc,
     baseProps,
     overlaySrc,
@@ -34,15 +33,12 @@ const ImageOverlay = (props) => {
   }, [baseSrc, overlaySrc])
 
 
-  /** HANDLERS **/
-  { }
-
-
   /** RENDER **/
   return (
     <div
       className={classes.root}
       style={{ width: width, height: height }}
+      {...rootProps}
       {...rest}
     >
       <img

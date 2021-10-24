@@ -3,6 +3,10 @@ const styles = {
     marginRight: '0.25em',
     fontSize: '0.85em',
   },
+  colorIndicator: {
+    marginRight: '0.25em',
+    fontSize: '0.9em',
+  },
   set: {
     fontSize: '1.25em',
   },

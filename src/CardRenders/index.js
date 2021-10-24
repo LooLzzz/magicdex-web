@@ -94,7 +94,7 @@ const renders = {
         /\{/g,
         /\}/g,
         match => (
-          utils.textToManaFont(match, {
+          utils.toManaFont(match, {
             style: {
               fontSize: '0.68em',
               transform: 'translateY(-1px)'
@@ -141,7 +141,7 @@ const renders = {
       : ''
   },
 
-  renderSet: ({ card, theme, renderStyle }) => {
+  renderSet: ({ card, theme, renderStyle = 'row' }) => {
     const { set_data, rarity, foil } = card
     const set = set_data?.parent_set_code ? set_data.parent_set_code : set_data.code
     return (
@@ -197,29 +197,41 @@ const renders = {
 
   renderManaCost: ({ card, columnName = 'mana_cost', cardFace, renderStyle = 'row' }) => {
     let { [columnName]: manaCost } = cardFace !== undefined ? card.card_faces[cardFace] : card
+    manaCost = manaCost || []
 
     if (!(manaCost instanceof Array))
-      manaCost = [manaCost]
+      if (manaCost.includes('//'))
+        manaCost = manaCost.split('//').map(v => v.trim())
+      else
+        manaCost = [manaCost]
     manaCost = _.compact(manaCost)
 
     if (manaCost.length === 0)
       return renderStyle === 'row' ? '-' : ''
 
-    manaCost = manaCost.map(cost => utils.textToManaFont(cost))
+    manaCost = manaCost.map(cost => utils.toManaFont(cost))
     if (manaCost.length > 1)
       manaCost.splice(1, 0, ' // ') // add a separator between the two mana costs
     return manaCost
   },
 
-  renderType: ({ card, columnName = 'type_line', cardFace, renderStyle = 'content' }) => {
-    const { [columnName]: typeLine } = cardFace !== undefined ? card.card_faces[cardFace] : card
+  renderType: ({ card, columnName = 'type_line', cardFace, renderStyle = 'row' }) => {
+    let { [columnName]: typeLine, color_indicator: colorIndicator } = cardFace !== undefined ? card.card_faces[cardFace] : card
 
-    return renderStyle === 'content'
-      ? typeLine
-        .replace(/—/g, '-')
-      : typeLine
-        .replace(/—/g, '-')
-        .replace(/Legendary/g, 'Lgd.')
+    switch (renderStyle) {
+      default:
+      case 'row':
+        return typeLine
+          .replace(/—/g, '-')
+          .replace(/Legendary/g, 'Lgd.')
+
+      case 'content':
+        typeLine = typeLine.replace(/—/g, '-')
+        colorIndicator = colorIndicator && utils.toColorIndicator(colorIndicator)
+        return colorIndicator
+          ? <>{colorIndicator}{typeLine}</>
+          : typeLine
+    }
   },
 
   renderDate: ({ card, columnName = 'date_added' }) => {

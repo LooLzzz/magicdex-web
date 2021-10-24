@@ -32,39 +32,39 @@ const renderGameFields = ({ card, renderStyle = 'content', ...rest }) => {
   ]
 
   return (
-    <Grid item container justifyContent='center'>
-      <Grid item container justifyContent='center' spacing={2} xs={12}>
-        <Grid item>
+    <Grid item container justifyContent='center' direction='column'>
+      <Grid item container justifyContent='center' spacing={2}>
+        <Grid item name='name'>
           {name}
         </Grid>
-        {manaCost && <Grid item>
+        {manaCost && <Grid item name='mana-cost'>
           {manaCost}
         </Grid>}
       </Grid>
-      <Grid item container justifyContent='center' spacing={1} xs={12}>
-        <Grid item>
+      <Grid item container component={Box} justifyContent='center' spacing={1} flexGrow={1}>
+        <Grid item name='type-line'>
           {typeLine}
         </Grid>
-        <Grid item>
+        <Grid item name='set'>
           {set}
         </Grid>
       </Grid>
-      {oracleText && <Grid component={Box} item xs={12} paddingTop={1}>
+      {oracleText && <Grid item name='oracle-text' component={Box} paddingTop={1} flexGrow={1}>
         {oracleText}
       </Grid>}
-      {flavorText && <Grid item xs={12} align='left' style={{ marginTop: '0.45em' }}>
+      {flavorText && <Grid item name='flavor-text' component={Box} align='left' flexGrow={1} paddingTop='0.45em'>
         {flavorText}
       </Grid>}
-      <Grid item container justifyContent='space-between' alignItems='baseline' xs={12} wrap='nowrap' component={Typography} variant='overline' style={{ marginTop: '0.3em' }}>
-        <Grid item container spacing={2}>
-          <Grid item>
+      <Grid item container justifyContent='space-between' alignItems='baseline' wrap='nowrap' component={Typography} variant='overline' style={{ marginTop: '0.3em' }}>
+        <Grid item container spacing={1}>
+          <Grid item name='collector-number'>
             #{collectorNumber}
           </Grid>
-          <Grid item>
+          <Grid item name='artist'>
             <span className='ms ms-shadow ms-artist-nib' />{artist}
           </Grid>
         </Grid>
-        {powerToughness && <Grid item>
+        {powerToughness && <Grid item name='power-toughness'>
           {powerToughness}
         </Grid>}
       </Grid>
@@ -82,6 +82,7 @@ const CardInfo = (props) => {
     rootComponent,
     rootProps,
     topArrowProps,
+    transform3dEnabled = true,
   } = props
   const theme = useTheme()
 
@@ -113,6 +114,7 @@ const CardInfo = (props) => {
         <Hidden smDown>
           <Grid item className={classes.image}>
             <CardImage
+              transform3dEnabled={transform3dEnabled}
               card={card}
             />
           </Grid>
@@ -121,7 +123,7 @@ const CardInfo = (props) => {
         {/* CARD INFO */}
         <Grid item container xs={12} md={10} lg={8} xl={6} justifyContent='center' align='center' spacing={card.is_transform || card.is_split ? 2 : 1} component={Paper} elevation={3} className={classes.content}>
           {
-            card.is_transform || card.is_split
+            card.is_transform || card.is_split || card.is_flip
               ?
               <>
                 {/* Front Face */}

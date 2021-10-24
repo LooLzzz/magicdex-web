@@ -9,13 +9,6 @@ import CardRow from './CardRow'
 import useStyles from './styles'
 
 
-// _.mixin({
-//   sortWith: (arr, key, comparator) => {
-//     const keyComparator = (key) => (a, b) => comparator(a[key], b[key])
-//     return _.map(arr).sort(keyComparator(key))
-//   }
-// })
-
 const mapStateToProps = (state) => ({
 
 })
@@ -103,7 +96,6 @@ const CardTableView = (props) => {
     )
   }, [data, sortOrder, sortBy])
 
-
   useEffect(() => {
     if (!isEditable)
       setSelectedCardIds([])
@@ -158,7 +150,7 @@ const CardTableView = (props) => {
         <Hidden mdDown>
           <Grid item>
             <div className={classes['card-image']}>
-              <CardImage tiltEnabled
+              <CardImage tiltEnabled transform3dEnabled
                 card={currentHoveringCard}
               />
             </div>
@@ -167,7 +159,7 @@ const CardTableView = (props) => {
 
         {/** TABLE VIEW **/}
         <Grid item style={{ flexGrow: 1 }}>
-          <TableContainer component={Paper} className={classes.paper} elevation={5}>
+          <TableContainer component={Paper} className={classes.tableContainer} elevation={5}>
             <Table size="small">
               <TableHead className={classes.tableHead}>
                 <TableRow>
@@ -206,7 +198,7 @@ const CardTableView = (props) => {
               </TableHead>
 
               <TableBody>
-                {sortedData.map(card => (
+                {sortedData instanceof Array && sortedData.map(card => (
                   <CardRow
                     onMouseEnter={e => handleRowHover(card)}
                     key={card._id}

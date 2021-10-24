@@ -1,5 +1,5 @@
 import clsx from 'clsx'
-import _ from 'lodash'
+import compact from 'lodash/compact'
 
 import styles from './styles'
 
@@ -11,10 +11,12 @@ const utils = {
       : date
   ),
 
-  textToManaFont: (txt, props) => {
+  toManaFont: (txt, props) => {
+    if (typeof txt === 'string')
+      txt = txt
+        .replace(/(^{)|(\/)|(}$)/g, '') // remove starting '{', trailing '}' and any '/'
+        .split('}{')
     return txt
-      .replace(/(^{)|(\/)|(}$)/g, '') // remove starting '{', trailing '}' and any '/'
-      .split('}{')
       .map(sym => {
         switch (sym) {
           default:
@@ -34,6 +36,26 @@ const utils = {
             ...props?.style,
           }}
           className={clsx('ms', 'ms-cost', 'ms-shadow', 'ms-fw', cost)} />
+      ))
+  },
+
+  toColorIndicator: (txt, props) => {
+    if (typeof txt === 'string')
+      txt = txt
+        .replace(/(^{)|(\/)|(}$)/g, '') // remove starting '{', trailing '}' and any '/'
+        .split('}{')
+    txt = compact(txt) // remove empty strings
+
+    return txt
+      .map((ci, i) => (
+        <span
+          key={i}
+          {...props}
+          style={{
+            ...styles.colorIndicator,
+            ...props?.style,
+          }}
+          className={clsx('ms', 'ms-ci', `ms-ci-${ci.length}`, `ms-ci-${ci.toLowerCase()}`)} />
       ))
   },
 
@@ -59,7 +81,7 @@ const utils = {
         str.substring(endIdx + 1)
       )
     }
-    return _.compact(arr) // remove any empty strings
+    return compact(arr) // remove any empty strings
   }
 }
 
@@ -67,6 +89,7 @@ export default utils
 
 export const {
   addLeadingZero,
-  textToManaFont,
+  toManaFont,
+  toColorIndicator,
   transformStringArray,
 } = utils

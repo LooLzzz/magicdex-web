@@ -6,9 +6,13 @@ const useStyles = (theme) => {
   return {
     root: {},
     'card-image': {
+      zIndex: 1,
       position: 'sticky',
       top: theme.spacing(8),
       marginRight: theme.spacing(2),
+    },
+    tableContainer: {
+      overflow: 'visible',
     },
   }
 }

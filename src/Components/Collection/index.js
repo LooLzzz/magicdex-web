@@ -51,6 +51,8 @@ const Collection = (props) => {
   const [filters, setFilters] = useState()
   const [currency, setCurrency] = useState(_currency ?? 'usd') // one of ['usd', 'eur']
   const [tableEditable, setTableEditable] = useState(false)
+  const [tiltEnabled, setTiltEnabled] = useState(false)
+  const [transform3dEnabled, setTransform3dEnabled] = useState(false)
   const columns = {
     amount: 'amount',
     name: 'name',
@@ -98,6 +100,14 @@ const Collection = (props) => {
 
     //TODO: add a new card to the collection & update the localStorage.
     // user should choose `import from list` or a form to add a new card
+  }
+
+  const toggleTransform3d = () => {
+    setTransform3dEnabled(!transform3dEnabled)
+  }
+
+  const toggleTlit = () => {
+    setTiltEnabled(!tiltEnabled)
   }
 
   const toggleTableEditable = () => {
@@ -203,8 +213,11 @@ const Collection = (props) => {
                           case 'grid':
                             return (
                               <>
-                                <MenuItem>
-                                  Something here
+                                <MenuItem onClick={toggleTlit}>
+                                  {tiltEnabled ? 'Disable Tilt' : 'Enable Tilt'}
+                                </MenuItem>
+                                <MenuItem onClick={toggleTransform3d}>
+                                  {transform3dEnabled ? 'Disable 3D Transform' : 'Enable 3D Transform'}
                                 </MenuItem>
                               </>
                             )
@@ -240,10 +253,14 @@ const Collection = (props) => {
                                 setCurrency={setCurrency}
                                 currency={currency}
                                 isEditable={tableEditable}
+                                tiltEnabled={tiltEnabled}
+                                transform3dEnabled={transform3dEnabled}
                               // data = {passed from parent}
                               />
                             case 'grid':
                               return <CardGridView
+                                tiltEnabled={tiltEnabled}
+                                transform3dEnabled={transform3dEnabled}
                               // data = {passed from parent}
                               />
                             case 'compact':

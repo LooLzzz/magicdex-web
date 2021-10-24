@@ -16,7 +16,7 @@ const CardPriceDataProvider = (props) => {
   /** EFFECTS **/
   useEffect(() => {
     setCardPriceData(
-      data.map(card => {
+      data instanceof Array && data.map(card => {
         const { prices, foil, amount } = card
         const price = Number(foil ? prices?.[`${currency}_foil`] : prices?.[currency])
 
