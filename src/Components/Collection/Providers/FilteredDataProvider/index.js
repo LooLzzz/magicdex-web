@@ -8,7 +8,6 @@ const FilteredDataProvider = (props) => {
     children,
     data,
     filters,
-    // dispatch,
     ...rest
   } = props
   const [filteredData, setFilteredData] = useState(data)
@@ -16,8 +15,6 @@ const FilteredDataProvider = (props) => {
 
   /** EFFECTS **/
   useEffect(() => {
-    // console.log('setFilteredData envoked with', { data, filters }) //DEBUG
-
     setFilteredData(
       _.filter(data ?? [],
         row => (

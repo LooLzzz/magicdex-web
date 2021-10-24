@@ -1,7 +1,8 @@
 import { FormControlLabel, Grid, Radio, RadioGroup, TextField, Chip } from "@material-ui/core"
 import { Autocomplete } from "@material-ui/lab"
 // import clsx from "clsx"
-import _ from 'lodash'
+// import _ from 'lodash'
+
 
 const formatCode = (code) => {
   code = code.toLowerCase()
@@ -107,6 +108,7 @@ const Utils = {
       renderTags={(value, getTagProps) => (
         value.map((option, index) => (
           <Chip
+            key={index}
             {...getTagProps({ index })}
             label={
               props?.ChipProps?.label

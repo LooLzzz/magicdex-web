@@ -1,27 +1,51 @@
-import axios from "axios";
-// import scryfall from "scryfall-client";
+import axios from "axios"
+import intersectionWith from 'lodash/intersectionWith'
 
 import { API_URL } from "@/Config"
-import { authHeadersDecorator, catchErrors, fetchScryfallCardData } from "./utils";
+import { authHeadersDecorator, catchErrors, fetchScryfallCardData } from "./utils"
 // import { fetchScryfallSymbolData, fetchScryfallSetData } from "./utils";
 
 
 const ROUTE_URL = `${API_URL}/collections`
 // const zip = (a, b) => a.map((k, i) => [k, b[i]]);
 
+const isTransform = (card) => {
+  const intersection = intersectionWith(
+    card.layout instanceof Array ? card.layout : [card.layout],
+    ['modal', 'transform'],
+    (a, b) => a.includes(b)
+  )
+  return intersection.length > 0
+}
+
+const isSplit = (card) => {
+  const intersection = intersectionWith(
+    card.layout instanceof Array ? card.layout : [card.layout],
+    ['split'],
+    (a, b) => a.includes(b)
+  )
+  return intersection.length > 0
+}
+
 const populateCardData = async (cards) => {
   const cardInfo =
     cards instanceof Array
-      ? cards.map(card => ({id:card.scryfall_id, set_id:card.set}))
+      ? cards.map(card => ({ id: card.scryfall_id, set_id: card.set }))
       : [cards.scryfall_id, cards.set]
-  
+
   const scryfallData = await fetchScryfallCardData(cardInfo)
+
 
   const populatedCards =
     cards.map((card, i) => ({
       ...scryfallData[i],
       ...card,
       date_created: new Date(card.date_created),
+      is_transform: isTransform(scryfallData[i]),
+      is_split: isSplit(scryfallData[i]),
+      mana_cost: isTransform(scryfallData[i])
+        ? [scryfallData[i].card_faces[0].mana_cost, scryfallData[i].card_faces[1].mana_cost]
+        : scryfallData[i].mana_cost,
     }))
 
   return (cards instanceof Array)
@@ -36,12 +60,12 @@ const Collections = {
    */
   getCards: ({ page, per_page, cards, headers }) => {
     // const headers = { ...getAuthHeaders() };
-    const params = { page, per_page, cards };
+    const params = { page, per_page, cards }
 
     return axios
       .get(ROUTE_URL, { params, headers })
       .then(response => populateCardData(response.data.data))
-      .catch(err => catchErrors(err));
+      .catch(err => catchErrors(err))
   },
 
   /**
@@ -53,7 +77,7 @@ const Collections = {
     return axios
       .post(ROUTE_URL, { cards }, { headers })
       .then(response => response)
-      .catch(err => catchErrors(err));
+      .catch(err => catchErrors(err))
   },
 
   /**
@@ -65,7 +89,7 @@ const Collections = {
     return axios
       .delete(ROUTE_URL, { cards }, { headers })
       .then(response => response)
-      .catch(err => catchErrors(err));
+      .catch(err => catchErrors(err))
   },
 
 
@@ -74,12 +98,12 @@ const Collections = {
    */
   getAllCards: ({ cards, headers }) => {
     // const headers = { ...getAuthHeaders() };
-    const params = { cards };
+    const params = { cards }
 
     return axios
       .get(`${ROUTE_URL}/all`, { params, headers })
       .then(response => populateCardData(response.data.data))
-      .catch(err => catchErrors(err));
+      .catch(err => catchErrors(err))
   },
 
   /**
@@ -91,7 +115,7 @@ const Collections = {
     return axios
       .delete(`${ROUTE_URL}/all`, { headers })
       .then(response => response)
-      .catch(err => catchErrors(err));
+      .catch(err => catchErrors(err))
   },
 
   /**
@@ -103,7 +127,7 @@ const Collections = {
     return axios
       .get(`${ROUTE_URL}/${card_id}`, { headers })
       .then(response => populateCardData(response.data))
-      .catch(err => catchErrors(err));
+      .catch(err => catchErrors(err))
   },
 
   /**
@@ -115,7 +139,7 @@ const Collections = {
     return axios
       .post(`${ROUTE_URL}/${card_id}`, data, { headers })
       .then(response => response)
-      .catch(err => catchErrors(err));
+      .catch(err => catchErrors(err))
   },
 
   /**
@@ -127,7 +151,7 @@ const Collections = {
     return axios
       .delete(`${ROUTE_URL}/${card_id}`, { headers })
       .then(response => response)
-      .catch(err => catchErrors(err));
+      .catch(err => catchErrors(err))
   },
 
   // /**
@@ -140,7 +164,7 @@ const Collections = {
   // getAllSymbols: async () => {
   //   return await fetchScryfallSymbolData();
   // },
-};
+}
 
 
 /** EXPORTS **/
@@ -151,7 +175,7 @@ const decoratedCollections =
       .map(([k, v]) => [k, authHeadersDecorator(v)])
   )
 
-export default decoratedCollections;
+export default decoratedCollections
 // export default Collections;
 
 export const {

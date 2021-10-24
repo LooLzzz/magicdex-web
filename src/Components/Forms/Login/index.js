@@ -63,7 +63,7 @@ const Login = (props) => {
     MagicdexApi
       .login({ username: usernameInput, password: passwordInput })
       .then(res => {
-        dispatch.setActiveUser(res.data)
+        dispatch.setActiveUser(res)
         enqueueSnackbar('Login successful', { variant: 'success' })
       })
       .catch(err => {

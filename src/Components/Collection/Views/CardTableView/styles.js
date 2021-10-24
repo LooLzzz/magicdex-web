@@ -4,8 +4,11 @@ const useStyles = (theme) => {
   // const mainSidesPadding = theme.spacing(10)
 
   return {
-    image: {
-
+    root: {},
+    'card-image': {
+      position: 'sticky',
+      top: theme.spacing(8),
+      marginRight: theme.spacing(2),
     },
   }
 }

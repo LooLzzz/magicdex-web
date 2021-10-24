@@ -1,5 +1,5 @@
 import Scryfall from "scryfall-client"
-import _ from "lodash"
+import zipObjectDeep from "lodash/zipObjectDeep"
 
 
 const Utils = {
@@ -24,34 +24,34 @@ const Utils = {
 
   catchErrors: (error) => {
     if (error.response)
-      console.error('Request made and server responded', error.response);
+      console.error('Request made and server responded', error.response)
     else if (error.request)
-      console.error('Request was made but no response was recieved', error.request);
+      console.error('Request was made but no response was recieved', error.request)
     else
-      console.error("Something happened in setting up the request that triggered an error", error.message);
+      console.error("Something happened in setting up the request that triggered an error", error.message)
 
-    return error;
+    return error
   },
 
   fetchScryfallCardData: async (cardInfo) => {
     const all_sets = await Scryfall.getSets()
-    const setData = _.zipObjectDeep(all_sets.map(set => set.id), all_sets) // { 'M19': {...}, 'M20': {...}, ... }
+    const setData = zipObjectDeep(all_sets.map(set => set.id), all_sets) // { 'M19': {...}, 'M20': {...}, ... }
 
     const card_ids = cardInfo.map(card => ({ id: card.id }))
-    const cardData = await Scryfall.getCollection(card_ids);
+    const cardData = await Scryfall.getCollection(card_ids)
 
     return cardData.map((card) => ({
       ...card,
       set_data: setData[card.set_id],
-    }));
+    }))
   },
 }
 
-export default Utils;
+export default Utils
 
 export const {
   getAuthHeaders,
   authHeadersDecorator,
   catchErrors,
   fetchScryfallCardData,
-} = Utils;
+} = Utils

@@ -1,18 +1,20 @@
-import { getDarkTheme, getLightTheme } from "@/Themes";
+import { getDarkTheme, getLightTheme } from "@/Themes"
 
 /** LOCAL STORAGE **/
-let themeType = localStorage.getItem("themeType");
-let accessToken = localStorage.getItem("accessToken");
+let themeType = localStorage.getItem("themeType") ?? 'dark'
+let accessToken = localStorage.getItem("accessToken")
+let username = localStorage.getItem("username")
+let collection = JSON.parse(localStorage.getItem("collection")) ?? []
 
-themeType = themeType ? themeType : "dark";
+themeType = themeType ? themeType : "dark"
 
 
 /** STATE **/
 const INITIAL_STATE = {
   activeUser: {
-    username: undefined,
-    accessToken: accessToken,
-    collection: [],
+    username,
+    accessToken,
+    collection,
   },
   theme: {
     currentTheme: themeType === 'dark' ? getDarkTheme() : getLightTheme(),
@@ -21,6 +23,6 @@ const INITIAL_STATE = {
   topMenu: {
     currentTab: 'home',
   }
-};
+}
 
-export default INITIAL_STATE;
+export default INITIAL_STATE

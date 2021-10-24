@@ -9,9 +9,9 @@ const useStyles = (theme) => {
         borderBottom: 'unset',
       },
     },
-    collapsableContent: {
-      paddingBottom: 0,
-      paddingTop: 0,
+    checkbox: {
+      borderLeft: `1px solid ${theme.palette.divider}`,
+      paddingRight: '6px'
     },
   }
 }

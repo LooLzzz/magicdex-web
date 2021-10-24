@@ -19,6 +19,7 @@ export const {
   setCurrentTab,
   toggleCurrentThemeType,
   setCurrentCollection,
+  updateCurrentCollection,
 } = reducerSlice.actions;
 
 export default reducerSlice.reducer;

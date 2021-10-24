@@ -1,28 +1,26 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
-import { useEffect, useState, useRef } from 'react'
+import { Fragment, useState, useEffect, useRef } from 'react'
 import { TableRow, TableCell, Collapse, IconButton, Checkbox, Paper } from '@material-ui/core'
-import { withStyles } from '@material-ui/styles'
+import { withStyles, useTheme } from '@material-ui/styles'
 import { connect } from 'react-redux'
 import useScrollPosition from '@react-hook/window-scroll'
-import _ from 'lodash'
+import upperFirst from 'lodash/upperFirst'
 import clsx from 'clsx'
 import {
   KeyboardArrowDown as KeyboardArrowDownIcon,
   KeyboardArrowUp as KeyboardArrowUpIcon
 } from '@material-ui/icons'
 
-import { renderCell } from './../renders'
-import CardInfo from './../CardInfo'
+import renderCell from '@/CardRenders'
+import CardInfo from '../../CardInfo'
 import useStyles from './styles'
 
 
 const mapStateToProps = (state) => ({})
 
 const mapDispatchToProps = (dispatch) => ({
-  dispatch: {
-
-  }
+  // dispatch: {}
 })
 
 const CardRow = (props) => {
@@ -30,18 +28,25 @@ const CardRow = (props) => {
   const {
     classes,
     columns,
-    data,
+    key,
+    card,
     onMouseEnter,
+    selectable,
+    onSelected,
+    selectedCardIds,
+    closeAllRows,
+    closeSignal,
     // dispatch,
   } = props
+  const theme = useTheme()
   const setRef = useRef()
   const scrollPosition = useScrollPosition()
-  const [dataWithPrice, setDataWithPrice] = useState(data)
   const [isOpen, setIsOpen] = useState(false)
+  const [showContent, setShowContent] = useState(false)
 
   const [isMouseOver, setIsMouseOver] = useState(false)
-  
-  
+
+
   /** UTILS **/
   const floatingCss = (ref, scrollPosition) => {
     const { x, y, width, height } = ref.current?.getBoundingClientRect() ?? { x: 0, y: 0, width: 0, height: 0 }
@@ -57,42 +62,51 @@ const CardRow = (props) => {
 
   /** EFFECTS **/
   useEffect(() => {
-    const { prices, foil, amount } = data
-    const price = Number(foil ? prices?.usd_foil : prices?.usd)
+    if (closeSignal !== card._id)
+      setIsOpen(false)
+  }, [closeSignal])
 
-    setDataWithPrice({
-      ...data,
-      price: price,
-      total_price: price * amount,
-    })
-  }, [data])
+
+  /** HANDLERS **/
+  const handleSelectChange = (e) => {
+    onSelected(card._id, e.target.checked)
+  }
+
+  const handleIsOpenToggle = () => {
+    if (!isOpen)
+      closeAllRows(card._id)
+
+    setIsOpen(!isOpen)
+  }
+
+  const onCollapseExited = (isAppearing) => {
+    setShowContent(false)
+  }
+
+  const onCollapseEnter = (isAppearing) => {
+    setShowContent(true)
+  }
 
 
   /** RENDER **/
   return (
-    <>
+    <Fragment key={key}>
       <TableRow
         className={clsx(classes.root, 'cursor-pointer')}
-        onClick={e => setIsOpen(!isOpen)}
+        onClick={handleIsOpenToggle}
         onMouseEnter={onMouseEnter}
+      // onContextMenu={e => {console.log(card.name);e.preventDefault()}} //TODO: add context menu
       >
-        <TableCell onClick={e => e.stopPropagation()}>
-          <Checkbox
-          // TODO
-          />
-        </TableCell>
-
         {
           Object
             .entries(columns)
             .map(
-              ([columnName, columnDisplayName]) => (
+              ([columnName, columnDisplayName], i) => (
                 <TableCell
-                  key={columnName}
+                  key={i}
                   align='center'
-
-                  /** renderSet() setup **/
-                  {...(
+                  {
+                  ...( /* renderSet() setup */
                     columnName === 'set'
                       ? {
                         ref: setRef,
@@ -100,13 +114,14 @@ const CardRow = (props) => {
                         onMouseLeave: e => setIsMouseOver(false),
                       }
                       : {}
-                  )}
+                  ) /* renderSet() setup */
+                  }
                 >
-                  {renderCell(dataWithPrice, columnName)}
+                  {renderCell({ card, columnName, theme })}
                   {
                     columnName === 'set' && isMouseOver && (
                       <Paper className='floating' style={floatingCss(setRef, scrollPosition)}>
-                        {[data.set_name, _.upperFirst(data.rarity), '#' + data.collector_number].join(' - ')}
+                        {[card.set_name, upperFirst(card.rarity), '#' + card.collector_number].join(' - ')}
                       </Paper>
                     )
                   }
@@ -115,8 +130,9 @@ const CardRow = (props) => {
             )
         }
 
+        {/* DROPDOWN ARROW */}
         <TableCell>
-          <IconButton size='small' onClick={e => setIsOpen(!isOpen)}>
+          <IconButton size='small' onClick={handleIsOpenToggle}>
             {
               isOpen
                 ? <KeyboardArrowUpIcon />
@@ -124,19 +140,37 @@ const CardRow = (props) => {
             }
           </IconButton>
         </TableCell>
+
+        {/* CHECKBOX */}
+        {
+          selectable &&
+          <>
+            <TableCell onClick={e => e.stopPropagation()} className={classes.checkbox}>
+              <Checkbox
+                size='small'
+                checked={selectedCardIds.includes(card._id)}
+                onChange={handleSelectChange}
+              />
+            </TableCell>
+          </>
+        }
       </TableRow>
 
-
-      <TableRow>
-        <TableCell colSpan={999} className={classes.collapsableContent}>
-          <Collapse in={isOpen} timeout="auto" unmountOnExit>
+      <TableRow onMouseEnter={onMouseEnter} className={classes.row} style={{ display: showContent ? 'table-row' : 'none' }}>
+        <TableCell colSpan={10} style={{ padding: 0 }}>
+          <Collapse unmountOnExit in={isOpen} timeout="auto" onEnter={onCollapseEnter} onExited={onCollapseExited}>
             <CardInfo
-              collection={dataWithPrice}
+              card={card}
+              topArrowProps={{
+                style: {
+                  borderTopColor: theme.palette.background.paper,
+                },
+              }}
             />
           </Collapse>
         </TableCell>
       </TableRow>
-    </>
+    </Fragment>
   )
 }
 

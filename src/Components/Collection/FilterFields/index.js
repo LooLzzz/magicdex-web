@@ -1,8 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-lone-blocks */
 
-import { useEffect, useState, createRef } from "react"
-import { InputAdornment, TextField, ListItem, ListSubheader, Divider } from "@material-ui/core"
+import React, { useEffect, useState, createRef } from "react"
+import { Grid, InputAdornment, TextField, ListItem, ListSubheader, Divider } from "@material-ui/core"
 import { withStyles } from "@material-ui/styles"
 import { connect } from "react-redux"
 import Scryfall from "scryfall-client"
@@ -59,7 +59,7 @@ const FilterProvider = (props) => {
           // .filter(set =>
           //   set.set_type === 'token'
           // )
-          .map((set) => ({
+          .map(set => ({
             ...set,
             set_type: _.chain(set.set_type).replace(/[_]+/g, ' ').upperFirst().value(),
             released_at: new Date(set.released_at),
@@ -74,7 +74,7 @@ const FilterProvider = (props) => {
   useEffect(() => {
     setFilters({
       name: v => v.toLowerCase().includes(cardName.toLowerCase()),
-      oracle_text: v => v.toLowerCase().includes(oracleText),
+      oracle_text: v => v ? v.toLowerCase().includes(oracleText) : true,
       type_line: v => v.toLowerCase().includes(typeLine),
       tag: v => (
         tagArray.length > 0
@@ -104,10 +104,11 @@ const FilterProvider = (props) => {
 
   /** RENDER **/
   return (
-    <div className={classes.root}>
+    <Grid item container className={classes.root}>
       <TextField
         id="filled-search"
         label="Search Card Name"
+        size='small'
         type="search"
         color='secondary'
         variant="filled"
@@ -236,7 +237,7 @@ const FilterProvider = (props) => {
           ),
         }}
       />
-    </div>
+    </Grid>
   )
 }
 

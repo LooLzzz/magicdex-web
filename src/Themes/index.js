@@ -1,7 +1,8 @@
 /* eslint-disable no-unused-vars */
 
-import { createTheme, colors } from "@material-ui/core";
+import { createTheme, colors } from "@material-ui/core"
 const baseTheme = createTheme()
+const getContrastText = baseTheme.palette.getContrastText
 
 /** SHARED VALUES **/
 const sharedOverrides = {
@@ -19,9 +20,6 @@ const sharedOverrides = {
       "a:hover": {
         textDecoration: "underline",
       },
-      ".hidden": {
-        display: "none",
-      },
       ".cursor-pointer": {
         cursor: "pointer",
       },
@@ -31,6 +29,12 @@ const sharedOverrides = {
         maxWidth: baseTheme.spacing(25),
         padding: `${baseTheme.spacing(0.5)}px ${baseTheme.spacing(1.25)}px ${baseTheme.spacing(0.5)}px ${baseTheme.spacing(1.25)}px`,
       },
+    },
+  },
+  MuiListItemText: {
+    multiline: {
+      marginTop: 0,
+      marginBottom: 0,
     },
   },
   MuiTextField: {
@@ -56,7 +60,7 @@ const sharedOverrides = {
       paddingRight: baseTheme.spacing(8),
     },
   },
-};
+}
 
 
 /** DARK THEME **/
@@ -66,6 +70,8 @@ const darkPrimary = {
   // main: '#404664',
 }
 const darkSecondary = {
+  // main: colors.purple[500],
+  // main: '#731FA1',
   // main: '#BF9EEE',
   // main: '#8A8FEE',
   main: '#DA7B08',
@@ -74,6 +80,13 @@ const darkSecondary = {
   // main: '#F56C40',
   // main: colors.orange['900'],
   // main: colors.deepPurple['200'],
+}
+const darkThirdly = {
+  main: colors.purple[800],
+  secondary: colors.purple[700]
+  // main: '#DA7B08',
+  // main: '#731FA1',
+  // main: '#45155F',
 }
 
 const getDarkTheme = () =>
@@ -84,8 +97,18 @@ const getDarkTheme = () =>
       table: {
         divider: '#424242',
       },
-      primary: { ...darkPrimary },
-      secondary: { ...darkSecondary },
+      primary: {
+        ...darkPrimary,
+        contrastText: getContrastText(darkPrimary.main)
+      },
+      secondary: {
+        ...darkSecondary,
+        contrastText: getContrastText(darkSecondary.main)
+      },
+      thridly: {
+        ...darkThirdly,
+        contrastText: getContrastText(darkThirdly.main)
+      },
       background: {
         secondary: colors.grey['700'],
       }
@@ -103,8 +126,15 @@ const getDarkTheme = () =>
           '.floating': {
             ...sharedOverrides.MuiCssBaseline['.floating'],
             backgroundColor: colors.grey['700'],
-            color: baseTheme.palette.getContrastText(colors.grey['700']),
-          }
+            color: getContrastText(colors.grey['700']),
+          },
+          '.buttonThridly-root': {
+            color: getContrastText(darkThirdly.main),
+            backgroundColor: darkThirdly.main,
+            '&:hover': {
+              backgroundColor: darkThirdly.secondary,
+            },
+          },
         },
       },
       MuiCircularProgress: {
@@ -113,7 +143,7 @@ const getDarkTheme = () =>
         },
       },
     },
-  });
+  })
 
 
 /** LIGHT THEME **/
@@ -121,13 +151,26 @@ const getLightTheme = () =>
   createTheme({
     palette: {
       type: 'light',
+      secondary: {
+        // main: colors.orange[900],
+        // main: colors.purple['A400'],
+        // main: '#9568AD',
+        // main: '#D695F9',
+        main: '#E3468C',
+        contrastText: getContrastText('#E3468C'),
+      },
       table: {
         divider: 'rgba(150, 150, 150, 0.75)'
       },
       background: {
         default: '#D5D5D5',
         paper: '#F0F0F0',
-        secondary: colors.grey['A100'],
+        secondary: colors.grey['400'],
+      },
+      thridly: {
+        main: colors.purple[500],
+        secondary: colors.purple[700],
+        contrastText: getContrastText(colors.purple[500]),
       },
     },
 
@@ -139,12 +182,19 @@ const getLightTheme = () =>
           '.floating': {
             ...sharedOverrides.MuiCssBaseline['.floating'],
             backgroundColor: colors.grey['A100'],
-            color: baseTheme.palette.getContrastText(colors.grey['A100']),
-          }
+            color: getContrastText(colors.grey['A100']),
+          },
+          '.buttonThridly-root': {
+            color: getContrastText(colors.purple[500]),
+            backgroundColor: colors.purple[500],
+            '&:hover': {
+              backgroundColor: colors.purple[700],
+            },
+          },
         },
       },
     },
-  });
+  })
 
 
-export { getDarkTheme, getLightTheme };
+export { getDarkTheme, getLightTheme }

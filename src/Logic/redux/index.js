@@ -4,6 +4,7 @@ import reducer, {
   setCurrentTab,
   toggleCurrentThemeType,
   setCurrentCollection,
+  updateCurrentCollection,
 } from './reducerSlice'
 
 export {
@@ -11,6 +12,7 @@ export {
   store,
   setActiveUser,
   setCurrentCollection,
+  updateCurrentCollection,
   setCurrentTab,
   toggleCurrentThemeType,
 }

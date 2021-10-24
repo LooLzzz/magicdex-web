@@ -14,38 +14,21 @@ const useStyles = (theme) => {
       },
     },
     root: {
-      marginBottom: theme.spacing(2),
-      // maxWidth: theme.spacing(200),
-      // display: 'flex',
-      // justifyContent: 'center',
+      marginBottom: theme.spacing(3),
+    },
+    fab: {
+      position: 'fixed',
+      bottom: theme.spacing(2),
+      right: theme.spacing(2),
     },
     filtersContainer: {
-      // width: '100%',
-      marginBottom: theme.spacing(2),
+      marginBottom: theme.spacing(4.5),
     },
-    search: {
-
-    },
-    paper: {
-      // display: 'flex',
-      // justifyContent: 'center',
-      // flexShrink: 1,
-      marginBottom: theme.spacing(2),
-    },
-    iconCell: {
-      width: 0,
-    },
-    'card-image': {
-      position: 'sticky',
-      top: theme.spacing(8),
-      marginRight: theme.spacing(2),
-    },
-    floating: {
-      position: 'fixed',
-      zIndex: '999',
-      padding: `${theme.spacing(1)}px ${theme.spacing(1.5)}px ${theme.spacing(1)}px ${theme.spacing(1.5)}px`,
-      backgroundColor: theme.palette.background.secondary,
-      color: theme.palette.getContrastText(theme.palette.background.secondary),
+    subheader: {
+      justifyContent: 'center',
+      fontWeight: 600,
+      height: '2.5rem',
+      alignItems: 'baseline',
     },
   }
 }

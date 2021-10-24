@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 
-import { createRef } from "react";
-import { AppBar, Tabs, Tab, Grid, MenuItem, Divider, ListSubheader, ListItem, ListItemText, ListItemSecondaryAction, Switch, ListItemIcon } from "@material-ui/core";
+import { createRef } from "react"
+import { AppBar, Tabs, Tab, Grid, MenuItem, Divider, ListSubheader, ListItem, ListItemText, ListItemSecondaryAction, Switch, ListItemIcon } from "@material-ui/core"
 import { withStyles } from "@material-ui/styles"
 import {
   Menu as MenuIcon,
@@ -10,17 +10,16 @@ import {
   Brightness3 as DarkmodeIcon,
   BrightnessHigh as LightmodeIcon,
 } from '@material-ui/icons'
-import { connect } from "react-redux";
-import { useHistory } from "react-router";
-import { useSnackbar } from "notistack";
+import { connect } from "react-redux"
+import { useHistory } from "react-router"
+import { useSnackbar } from "notistack"
 
-import MenuPopover from './MenuPopover'
-import { setActiveUser, toggleCurrentThemeType } from "@/Logic/redux";
-import useStyles from "./styles";
+import { MenuPopover } from '@/Components'
+import { setActiveUser, toggleCurrentThemeType } from "@/Logic/redux"
+import useStyles from "./styles"
 
 
 const mapStateToProps = (state) => ({
-  theme: state.actions.theme.currentTheme,
   themeType: state.actions.theme.currentThemeType,
   username: state.actions.activeUser.username,
   currentTab: state.actions.topMenu.currentTab,
@@ -35,36 +34,28 @@ const mapDispatchToProps = (dispatch) => ({
 
 const TopMenu = (props) => {
   //VARS
-  const history = useHistory();
-  const { enqueueSnackbar } = useSnackbar();
+  const history = useHistory()
+  const { enqueueSnackbar } = useSnackbar()
   const {
     classes,
-    // theme,
     dispatch,
     currentTab,
     themeType,
     username,
-  } = props;
+  } = props
   const menuRef = createRef()
-
-
-  //EFFECTS
-  // useEffect(() => {
-  //   //DEBUG
-  //   console.log(menuRef)
-  // }, [menuRef])
 
 
   //HANDLERS
   const handleTabChange = (event, value) => {
     // dispatch.setCurrentTab({tab:value});
-    history.push( '/' + value )
+    history.push('/' + value)
   }
-  
+
   const handleMenuItemClick = (e) => {
     let goto = e.currentTarget.attributes.goto?.value
     let id = e.currentTarget.attributes.id?.value
-    
+
     switch (id) {
       default:
         menuRef.current?.closeMenu()
@@ -75,12 +66,11 @@ const TopMenu = (props) => {
         menuRef.current?.closeMenu()
         history.push(goto)
         break
-      
+
       case 'logout':
         // menuRef.current?.closeMenu()
-        dispatch.setActiveUser({username:null})
+        dispatch.setActiveUser({ username: null })
         enqueueSnackbar('Logged out', { variant: "info" })
-        localStorage.removeItem('accessToken')
         break
 
       case 'mode':
@@ -94,14 +84,13 @@ const TopMenu = (props) => {
   return (
     <div className={classes.root}>
       <AppBar className={classes.appBar}>
-        <Grid container justifyContent='space-between'>
+        <Grid container wrap='nowrap' justifyContent='space-between'>
           <Grid item>
             <Tabs variant='scrollable' value={currentTab} onChange={handleTabChange}>
-              <Tab value='home'       label='Home' />
+              <Tab value='home' label='Home' />
               <Tab value='collection' label='Collection' />
-              {/* { username ? <Tab label='Collection' value='collection' /> : [] } */}
-              <Tab value='login'      className='hidden' />
-              <Tab value='register'   className='hidden' />
+              <Tab value='login' style={{ display: 'none' }} />
+              <Tab value='register' style={{ display: 'none' }} />
             </Tabs>
           </Grid>
           <Grid item>
@@ -112,22 +101,22 @@ const TopMenu = (props) => {
               </ListSubheader>
               {
                 username
-                  ? 
-                    <MenuItem onClick={handleMenuItemClick} id='logout'>Logout</MenuItem>
-                  : 
+                  ?
+                  <MenuItem onClick={handleMenuItemClick} id='logout'>Logout</MenuItem>
+                  :
                   <>
                     <MenuItem onClick={handleMenuItemClick} id='login' goto='/login'>Login</MenuItem>
                     <MenuItem onClick={handleMenuItemClick} id='register' goto='/register'>Register</MenuItem>
                   </>
               }
-              
+
               <Divider />
-              
+
               <ListSubheader>
                 <SettingsIcon />
                 Settings
               </ListSubheader>
-              <ListItem style={{paddingTop:0, paddingBottom:0}}>
+              <ListItem style={{ paddingTop: 0, paddingBottom: 0 }}>
                 <ListItemText primary='Toggle Theme' secondary={themeType} />
                 {/* <ListItemIcon style={{justifyContent:'center'}}>
                 {
@@ -151,13 +140,13 @@ const TopMenu = (props) => {
         </Grid>
       </AppBar>
     </div>
-  );
-};
+  )
+}
 
 // EXPORT WITH HOOKS AND DECORATORS
 export default
-  connect(mapStateToProps, mapDispatchToProps) (
-    withStyles(useStyles) (
+  connect(mapStateToProps, mapDispatchToProps)(
+    withStyles(useStyles)(
       TopMenu
     )
-  );
+  )
