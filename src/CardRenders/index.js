@@ -1,9 +1,10 @@
 import { Fragment } from 'react'
-import { Paper, Chip } from '@material-ui/core'
+import { Paper, Chip, Hidden } from '@material-ui/core'
 import _ from 'lodash'
 
-import styles from './styles'
+import { EllipsisText } from '@/Components'
 import utils from './utils'
+import styles from './styles'
 
 
 /** Card render delegation helper function **/
@@ -74,11 +75,32 @@ const renders = {
   },
 
   renderName: ({ card, cardFace, renderStyle = 'row' }) => {
-    const { name } = cardFace !== undefined ? card.card_faces[cardFace] : card
+    let { name } = cardFace !== undefined ? card.card_faces[cardFace] : card
 
-    return renderStyle === 'row'
-      ? name
-      : <b>{name}</b>
+    switch (renderStyle) {
+      default:
+      case 'row':
+        return (
+          name.includes('//')
+            ? name
+              .split('//')
+              .map((value, i) => {
+                value = value.trim()
+                return i === 0
+                  ?
+                  <EllipsisText key={i}
+                    text={value}
+                  />
+                  : <Hidden lgDown key={i}>
+                    {' // ' + value}
+                  </Hidden>
+              })
+            : name
+        )
+
+      case 'content':
+        return <b>{name}</b>
+    }
   },
 
   renderOracleText: ({ card, columnName = 'oracle_text', cardFace }) => {
@@ -221,16 +243,30 @@ const renders = {
     switch (renderStyle) {
       default:
       case 'row':
-        return typeLine
+        typeLine = typeLine
           .replace(/—/g, '-')
           .replace(/Legendary/g, 'Lgd.')
+        return (
+          typeLine.includes('//')
+            ? typeLine
+              .split('//')
+              .map((type, i) => {
+                type = type.trim()
+                return i === 0
+                  ? <Fragment key={i}>{type}</Fragment>
+                  : <Hidden lgDown key={i}>{' // ' + type}</Hidden>
+              })
+            : typeLine
+        )
 
       case 'content':
         typeLine = typeLine.replace(/—/g, '-')
         colorIndicator = colorIndicator && utils.toColorIndicator(colorIndicator)
-        return colorIndicator
-          ? <>{colorIndicator}{typeLine}</>
-          : typeLine
+        return (
+          colorIndicator
+            ? <>{colorIndicator}{typeLine}</>
+            : typeLine
+        )
     }
   },
 

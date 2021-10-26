@@ -143,7 +143,7 @@ const CardTableView = (props) => {
 
   /** RENDER **/
   return (
-    <Grid item container spacing={1} xs={12}>
+    <Grid item container spacing={1} xs={11}>
       <Grid item container wrap='nowrap' justifyContent='center'>
 
         {/** CARD PREVIEW **/}
@@ -158,7 +158,7 @@ const CardTableView = (props) => {
         </Hidden>
 
         {/** TABLE VIEW **/}
-        <Grid item style={{ flexGrow: 1 }}>
+        <Grid item>
           <TableContainer component={Paper} className={classes.tableContainer} elevation={5}>
             <Table size="small">
               <TableHead className={classes.tableHead}>
@@ -186,7 +186,9 @@ const CardTableView = (props) => {
                   }
 
                   {/* Dropdown icon */}
-                  <TableCell className={classes.iconCell} />
+                  <Hidden smDown>
+                    <TableCell className={classes.iconCell} />
+                  </Hidden>
 
                   {/** Checkbox **/}
                   {

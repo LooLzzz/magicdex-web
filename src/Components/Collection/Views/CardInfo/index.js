@@ -1,6 +1,6 @@
 /* eslint-disable no-lone-blocks */
 
-import { Box, Grid, Paper, Hidden, Divider, Typography } from '@material-ui/core'
+import { Box, Grid, Paper, Hidden, Divider, Typography, useMediaQuery } from '@material-ui/core'
 import { withStyles, useTheme } from '@material-ui/styles'
 import { connect } from 'react-redux'
 
@@ -85,14 +85,15 @@ const CardInfo = (props) => {
     transform3dEnabled = true,
   } = props
   const theme = useTheme()
+  const smDown = useMediaQuery(theme => theme.breakpoints.down('sm'))
 
 
   /** EFFECTS **/
-  { }
+  { } //for future use
 
 
   /** HANDLERS **/
-  { }
+  { } //for future use
 
 
   /** RENDER **/
@@ -103,7 +104,10 @@ const CardInfo = (props) => {
         {...topArrowProps}
       />
 
-      <Grid container justifyContent='center' alignItems='flex-start'
+      <Grid container
+        justifyContent='center'
+        alignItems={smDown ? 'center' : 'flex-start'}
+        direction={smDown ? 'column' : 'row'}
         component={rootComponent}
         wrap='nowrap'
         className={classes.root}
@@ -119,9 +123,24 @@ const CardInfo = (props) => {
             />
           </Grid>
         </Hidden>
+        <Hidden mdUp xmDown>
+          <Grid item style={{ marginBottom: 16 }}>
+            <CardImage
+              transform3dEnabled={transform3dEnabled}
+              card={card}
+            />
+          </Grid>
+        </Hidden>
 
         {/* CARD INFO */}
-        <Grid item container xs={12} md={10} lg={8} xl={6} justifyContent='center' align='center' spacing={card.is_transform || card.is_split ? 2 : 1} component={Paper} elevation={3} className={classes.content}>
+        <Grid item container xs={12} md={10} lg={8} xl={6}
+          justifyContent='center'
+          align='center'
+          spacing={card.is_transform || card.is_split ? 2 : 1}
+          component={Paper}
+          elevation={3}
+          className={classes.content}
+        >
           {
             card.is_transform || card.is_split || card.is_flip
               ?

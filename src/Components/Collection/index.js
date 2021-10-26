@@ -1,13 +1,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
 import { useEffect, useState, createRef } from 'react'
-import { Grid, ListItemText, MenuItem, ListItem, ListSubheader, Divider, ButtonGroup, IconButton, Fab } from '@material-ui/core'
+import { Grid, ListItemText, MenuItem, ListItem, ListSubheader, Divider, ButtonGroup, IconButton, Fab, useMediaQuery } from '@material-ui/core'
 import { Skeleton } from '@material-ui/lab'
 import { withStyles } from '@material-ui/styles'
 import { connect } from 'react-redux'
 import { useHistory } from 'react-router'
 import {
   Add as AddIcon,
+  CloudUpload as CloudUploadIcon,
   MoreVert as MoreVertIcon,
   ViewList as ViewListIcon,
   ViewModule as ViewModuleIcon,
@@ -53,7 +54,10 @@ const Collection = (props) => {
   const [tableEditable, setTableEditable] = useState(false)
   const [tiltEnabled, setTiltEnabled] = useState(false)
   const [transform3dEnabled, setTransform3dEnabled] = useState(false)
-  const columns = {
+
+  const smDown = useMediaQuery((theme) => theme.breakpoints.down('sm'))
+  const mdDown = useMediaQuery((theme) => theme.breakpoints.down('md'))
+  const [columns, setColumns] = useState({
     amount: 'amount',
     name: 'name',
     set: 'set',
@@ -62,7 +66,7 @@ const Collection = (props) => {
     foil: 'foil',
     total_price: `price (${currency})`,
     date_created: 'date added',
-  }
+  })
 
 
   /** EFFECTS **/
@@ -70,6 +74,42 @@ const Collection = (props) => {
     //onMount
     dispatch.setCurrentTab({ tab: 'collection' })
   }, [])
+
+  useEffect(() => {
+    if (smDown) {
+      setColumns({
+        name: 'name',
+        set: 'set',
+        mana_cost: 'mana cost',
+        type_line: 'type',
+        foil: 'foil',
+        total_price: `price (${currency})`,
+      })
+    }
+    else if (mdDown) {
+      setColumns({
+        amount: 'amount',
+        name: 'name',
+        set: 'set',
+        mana_cost: 'mana cost',
+        type_line: 'type',
+        foil: 'foil',
+        total_price: `price (${currency})`,
+      })
+    }
+    else {
+      setColumns({
+        amount: 'amount',
+        name: 'name',
+        set: 'set',
+        mana_cost: 'mana cost',
+        type_line: 'type',
+        foil: 'foil',
+        total_price: `price (${currency})`,
+        date_created: 'date added',
+      })
+    }
+  }, [smDown, mdDown, currency])
 
   useEffect(() => {
     if (!username)
@@ -83,20 +123,19 @@ const Collection = (props) => {
 
 
   /** HANDLERS **/
-  const handleFabClick = (e) => {
-    // DEBUG
-    // let res = {}
-    // try {
-    //   res = await axios.get('http://localhost:5000/collections/user/test/', {
-    //     headers: {
-    //       'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
-    //     }
-    //   })
-    //   res = res.data
-    // } catch (e) {
-    //   res = { ...e }
-    // }
-    // console.log({ ...res })
+  const handleFabClick = fabType => e => {
+    switch (fabType) {
+      case 'add':
+        console.log('fab: add')
+        break
+
+      case 'import-export':
+        console.log('fab: import-export')
+        break
+
+      default:
+        break
+    }
 
     //TODO: add a new card to the collection & update the localStorage.
     // user should choose `import from list` or a form to add a new card
@@ -273,14 +312,31 @@ const Collection = (props) => {
                 </Grid>
               </Grid>
 
-              {/* FLOATING PLUS BUTTON */}
-              <Fab
-                color='primary'
-                className={classes.fab}
-                onClick={handleFabClick}
-              >
-                <AddIcon />
-              </Fab>
+              {/* FLOATING ACTION BUTTONS */}
+              <div className={classes.fab}>
+                <Grid container spacing={1} direction="column-reverse">
+                  <Grid item>
+                    <Fab
+                      title='Add a Card'
+                      size='small'
+                      color='primary'
+                      onClick={handleFabClick('add')}
+                    >
+                      <AddIcon />
+                    </Fab>
+                  </Grid>
+                  <Grid item>
+                    <Fab
+                      title='Import/Export'
+                      size='small'
+                      color='primary'
+                      onClick={handleFabClick('import-export')}
+                    >
+                      <CloudUploadIcon />
+                    </Fab>
+                  </Grid>
+                </Grid>
+              </div>
             </>
         }
       </div>

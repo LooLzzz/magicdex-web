@@ -1,10 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
 import { Fragment, useState, useEffect, useRef } from 'react'
-import { TableRow, TableCell, Collapse, IconButton, Checkbox, Paper } from '@material-ui/core'
+import { Hidden, TableRow, TableCell, Collapse, IconButton, Checkbox, Paper } from '@material-ui/core'
 import { withStyles, useTheme } from '@material-ui/styles'
 import { connect } from 'react-redux'
-import useScrollPosition from '@react-hook/window-scroll'
 import upperFirst from 'lodash/upperFirst'
 import clsx from 'clsx'
 import {
@@ -40,24 +39,11 @@ const CardRow = (props) => {
   } = props
   const theme = useTheme()
   const setRef = useRef()
-  const scrollPosition = useScrollPosition()
+  // const scrollPosition = useScrollPosition()
   const [isOpen, setIsOpen] = useState(false)
   const [showContent, setShowContent] = useState(false)
 
   const [isMouseOver, setIsMouseOver] = useState(false)
-
-
-  /** UTILS **/
-  const floatingCss = (ref, scrollPosition) => {
-    const { x, y, width, height } = ref.current?.getBoundingClientRect() ?? { x: 0, y: 0, width: 0, height: 0 }
-    return {
-      zIndex: 1,
-      position: 'absolute',
-      left: x + width,
-      top: y + (height / 8) + scrollPosition,
-      // display: isMouseOver ? 'block' : 'none',
-    }
-  }
 
 
   /** EFFECTS **/
@@ -104,6 +90,7 @@ const CardRow = (props) => {
               ([columnName, columnDisplayName], i) => (
                 <TableCell
                   key={i}
+                  className={classes.content}
                   align='center'
                   {
                   ...( /* renderSet() setup */
@@ -120,7 +107,7 @@ const CardRow = (props) => {
                   {renderCell({ card, columnName, theme })}
                   {
                     columnName === 'set' && isMouseOver && (
-                      <Paper className='floating' style={floatingCss(setRef, scrollPosition)}>
+                      <Paper elevation={5} className={classes.floating}>
                         {[card.set_name, upperFirst(card.rarity), '#' + card.collector_number].join(' - ')}
                       </Paper>
                     )
@@ -131,15 +118,17 @@ const CardRow = (props) => {
         }
 
         {/* DROPDOWN ARROW */}
-        <TableCell>
-          <IconButton size='small' onClick={handleIsOpenToggle}>
-            {
-              isOpen
-                ? <KeyboardArrowUpIcon />
-                : <KeyboardArrowDownIcon />
-            }
-          </IconButton>
-        </TableCell>
+        <Hidden smDown>
+          <TableCell>
+            <IconButton size='small' onClick={handleIsOpenToggle}>
+              {
+                isOpen
+                  ? <KeyboardArrowUpIcon />
+                  : <KeyboardArrowDownIcon />
+              }
+            </IconButton>
+          </TableCell>
+        </Hidden>
 
         {/* CHECKBOX */}
         {
