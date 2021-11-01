@@ -28,13 +28,14 @@ const useStyles = (theme) => {
       border: 'solid transparent',
       borderWidth: '1.5rem 1.75rem 0rem 1.75rem',
       left: `calc(50% - (1.75rem / 2))`,
-      transition: 'left 0.3s ease',
+      transition: 'all 0.3s ease',
     },
     image: {
       marginRight: -theme.spacing(1),
       // width: 'fit-content',
     },
     content: {
+      transition: 'all 0.3s ease',
       padding: theme.spacing(2),
       marginTop: 0,
     },

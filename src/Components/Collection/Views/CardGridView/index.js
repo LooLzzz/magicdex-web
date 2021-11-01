@@ -15,9 +15,6 @@ import CardInfo from '../CardInfo'
 import useStyles from './styles'
 
 
-//TODO: all this
-
-
 const mapStateToProps = (state) => ({})
 
 const mapDispatchToProps = (dispatch) => ({
@@ -40,7 +37,7 @@ const CardGridView = (props) => {
   const [containerWidth,] = useSize(containerRef)
   const [cardsPerRow, setCardsPerRow] = useState(0)
   const [selectedCard, setSelectedCard] = useState({})
-  const [collapseRefs, setCollapseRefs] = useState([])
+  const [refs, setRefs] = useState([])
 
   const [sortedData, setSortedData] = useState([])
 
@@ -72,8 +69,14 @@ const CardGridView = (props) => {
       }
       return state
     })
-    setCollapseRefs(
-      _.times(Math.floor(data.length / n) + 1, () => createRef())
+    setRefs(
+      _.times(
+        Math.floor(data.length / n) + 1,
+        () => ({
+          collapse: createRef(),
+          cardInfo: createRef()
+        })
+      )
     )
 
   }, [containerWidth, cardWidth, data])
@@ -99,6 +102,11 @@ const CardGridView = (props) => {
         targetCollapse: targetCollapseIdx,
         box: e.currentTarget.getBoundingClientRect(),
       })
+      setTimeout(() => {
+        // refs[targetCollapseIdx].cardInfo?.current?.swipeableViewsRef
+        refs[targetCollapseIdx].cardInfo?.current?.setViewIndex(0)
+        refs[targetCollapseIdx].cardInfo?.current?.updateHeight()
+      }, 25)
     }
   }
 
@@ -138,24 +146,25 @@ const CardGridView = (props) => {
                 (((i + 1) % cardsPerRow === 0) || (i === sortedData.length - 1)) &&
                 <Grid item xs={12}>
                   <Collapse unmountOnExit
-                    ref={collapseRefs[targetCollapseIdx]}
+                    ref={refs[targetCollapseIdx]?.collapse}
                     timeout="auto"
                     in={targetCollapseIdx === selectedCard.targetCollapse}
-                    onEntering={() => scrollIntoView(collapseRefs[targetCollapseIdx]?.current, { scrollMode: 'if-needed', behavior: 'smooth', block: 'start' })}
-                    onEntered={() => scrollIntoView(collapseRefs[targetCollapseIdx]?.current, { scrollMode: 'if-needed', behavior: 'smooth', block: 'end' })}
+                    onEntering={() => scrollIntoView(refs[targetCollapseIdx]?.collapse?.current, { scrollMode: 'if-needed', behavior: 'smooth', block: 'start' })}
+                    onEntered={() => scrollIntoView(refs[targetCollapseIdx]?.collapse?.current, { scrollMode: 'if-needed', behavior: 'smooth', block: 'end' })}
                   >
                     {
                       selectedCard?.data &&
                       <CardInfo
-                        rootComponent={Paper}
+                        refs={refs[targetCollapseIdx].cardInfo}
                         card={selectedCard.data}
+                        rootComponent={Paper}
                         rootProps={{
                           elevation: 1,
                         }}
                         topArrowProps={{
                           style: {
                             borderTopColor: theme.palette.background.default,
-                            left: `calc(${selectedCard?.box?.left + (selectedCard?.box?.width * 0.5) - containerRef.current.offsetLeft}px - 2.5rem)`,
+                            left: `calc(${selectedCard?.box?.left + (selectedCard?.box?.width * 0.5) - containerRef.current.offsetLeft}px - 2.25rem)`,
                           },
                         }}
                       />

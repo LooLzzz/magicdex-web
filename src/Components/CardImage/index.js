@@ -52,7 +52,7 @@ const CardImage = (props) => {
         style={{
           transform: flipped && (
             card.is_split
-              ? `rotate(90deg) scale(0.85) translateX(-16.25%) translateY(${md ? '0.8%' : '7%'})`
+              ? `rotate(90deg) scale(0.825) translateX(-35%) translateY(${md ? '2%' : '7%'})`
               : card.is_flip
                 ? 'rotate(180deg)'
                 : ''

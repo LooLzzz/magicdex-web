@@ -25,6 +25,7 @@ const renderCell = ({ card, columnName, ...rest }) => {
 
     case 'signed':
     case 'altered':
+    case 'misprint':
     case 'foil':
       return renders.renderBoolean({ card, columnName, ...rest })
 
@@ -178,9 +179,20 @@ const renders = {
     )
   },
 
-  renderBoolean: ({ card, columnName }) => (
-    card[columnName].toString() === 'true' ? '✔' : '✖'
-  ),
+  renderBoolean: ({ card, columnName, renderStyle = 'row' }) => {
+    const { [columnName]: value } = card
+
+    switch (renderStyle) {
+      default:
+      case 'row':
+        return value.toString() === 'true' ? '✔' : '✖'
+
+      case 'content':
+        return value
+          ? <Chip label='Yes' size='small' color='primary' />
+          : <Chip label='No' size='small' color='secondary' />
+    }
+  },
 
   renderAmount: ({ card }) => (
     <Paper component='span' className='floating'>

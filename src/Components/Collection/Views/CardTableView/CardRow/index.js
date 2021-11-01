@@ -39,6 +39,7 @@ const CardRow = (props) => {
   } = props
   const theme = useTheme()
   const setRef = useRef()
+  const cardInfoRef = useRef()
   // const scrollPosition = useScrollPosition()
   const [isOpen, setIsOpen] = useState(false)
   const [showContent, setShowContent] = useState(false)
@@ -71,6 +72,10 @@ const CardRow = (props) => {
 
   const onCollapseEnter = (isAppearing) => {
     setShowContent(true)
+  }
+
+  const onCollapseEntering = () => {
+    cardInfoRef.current?.updateHeight()
   }
 
 
@@ -147,9 +152,10 @@ const CardRow = (props) => {
 
       <TableRow onMouseEnter={onMouseEnter} className={classes.row} style={{ display: showContent ? 'table-row' : 'none' }}>
         <TableCell colSpan={10} style={{ padding: 0 }}>
-          <Collapse unmountOnExit in={isOpen} timeout="auto" onEnter={onCollapseEnter} onExited={onCollapseExited}>
+          <Collapse unmountOnExit in={isOpen} timeout="auto" onEnter={onCollapseEnter} onExited={onCollapseExited} onEntering={onCollapseEntering}>
             <CardInfo
               card={card}
+              refs={cardInfoRef}
               topArrowProps={{
                 style: {
                   borderTopColor: theme.palette.background.paper,

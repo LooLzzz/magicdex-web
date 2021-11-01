@@ -20,9 +20,13 @@ const Plane3d = (props) => {
     <div
       className={classes.cube}
       style={{
-        transform: flipped ? 'rotate3d(0, 1, 0, 180deg)' : '',
         width: imageProps?.width || '250px',
         height: imageProps?.height || '350px',
+        
+        transform: flipped ? 'rotate3d(0, 1, 0, 180deg)' : '',
+        WebkitTransform: flipped ? 'rotate3d(0, 1, 0, 180deg)' : '',
+        MozTransform: flipped ? 'rotate3d(0, 1, 0, 180deg)' : '',
+        OTransform: flipped ? 'rotate3d(0, 1, 0, 180deg)' : '',
       }}
     >
       <Front
