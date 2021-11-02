@@ -54,11 +54,11 @@ const BaseForm = (props) => {
 
   /** HANDLERS **/
   const handleSubmit = (e) => {
-    // console.log('BaseForm submit started')
     setIsLoading(true)
-    onSubmit(e)
-    setIsLoading(false)
-    // console.log('BaseForm submit ended')
+
+    new Promise((resolve, reject) => onSubmit(e, resolve, reject))
+      .catch((err) => onError(err))
+      .finally(() => setIsLoading(false))
   }
 
 

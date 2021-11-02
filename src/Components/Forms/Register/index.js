@@ -59,7 +59,7 @@ const Register = (props) => {
 
 
   /** HANDLERS **/
-  const handleSubmit = (e) => {
+  const handleSubmit = (e, resolve, reject) => {
     setErrorMessages([])
     setPasswordInput('')
     setPasswordRepeatInput('')
@@ -70,6 +70,7 @@ const Register = (props) => {
       .then(res => {
         dispatch.setActiveUser(res)
         enqueueSnackbar('Successfully registered', { variant: 'success' })
+        resolve(res)
       })
       .catch(err => {
         const { msg } = err.response.data
@@ -77,6 +78,7 @@ const Register = (props) => {
 
         setErrorMessages(msgs)
         enqueueSnackbar('Error registering', { variant: 'error' })
+        reject(err)
       })
       .finally(() => {
         setIsLoading(false)

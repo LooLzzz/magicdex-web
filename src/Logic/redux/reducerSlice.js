@@ -20,6 +20,7 @@ export const {
   toggleCurrentThemeType,
   setCurrentCollection,
   updateCurrentCollection,
+  removeCardsFromCollection,
 } = reducerSlice.actions;
 
 export default reducerSlice.reducer;

@@ -97,8 +97,7 @@ const CardRow = (props) => {
                   key={i}
                   className={classes.content}
                   align='center'
-                  {
-                  ...( /* renderSet() setup */
+                  {...( /* renderSet() setup */
                     columnName === 'set'
                       ? {
                         ref: setRef,
@@ -106,13 +105,12 @@ const CardRow = (props) => {
                         onMouseLeave: e => setIsMouseOver(false),
                       }
                       : {}
-                  ) /* renderSet() setup */
-                  }
+                  )} /* renderSet() setup */
                 >
                   {renderCell({ card, columnName, theme })}
                   {
                     columnName === 'set' && isMouseOver && (
-                      <Paper elevation={5} className={classes.floating}>
+                      <Paper elevation={5} className={classes.floating} onMouseEnter={e => setIsMouseOver(false)}>
                         {[card.set_name, upperFirst(card.rarity), '#' + card.collector_number].join(' - ')}
                       </Paper>
                     )

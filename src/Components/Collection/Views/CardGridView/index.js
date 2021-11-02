@@ -48,26 +48,35 @@ const CardGridView = (props) => {
       _.sortBy(data, card => card.type_line.replace('Legendary', ''))
     )
 
-    // close the collapse
-    setSelectedCard({
-      ...selectedCard,
-      targetCollapse: undefined,
+    setSelectedCard(selectedCard => {
+      const newCard = data.find(card => card._id === selectedCard?.data?._id)
+
+      return newCard
+        ? {
+          ...selectedCard,
+          data: newCard,
+        }
+        : {
+          data: undefined,
+          targetCollapse: undefined,
+          box: undefined,
+        }
     })
   }, [data])
 
   useEffect(() => {
     const n = Math.floor(containerWidth / (cardWidth + 16))
 
-    setCardsPerRow(state => {
-      if (state !== n) {
+    setCardsPerRow(cardsPerRow => {
+      if (cardsPerRow !== n) {
         //close the collapse
-        setSelectedCard(state => ({
-          ...state,
+        setSelectedCard(selectedCard => ({
+          ...selectedCard,
           targetCollapse: undefined,
         }))
         return n
       }
-      return state
+      return cardsPerRow
     })
     setRefs(
       _.times(
@@ -88,7 +97,8 @@ const CardGridView = (props) => {
     const targetCollapseIdx = Math.floor(key / cardsPerRow)
 
     if (targetCollapse !== undefined && selectedCardData?._id === card._id) {
-      // a collapse is open & the same card is clicked -> close the collapse
+      // a collapse is open & the same card is clicked ->
+      //                                               -> close the collapse
       setSelectedCard({
         ...selectedCard,
         targetCollapse: undefined,
@@ -102,11 +112,12 @@ const CardGridView = (props) => {
         targetCollapse: targetCollapseIdx,
         box: e.currentTarget.getBoundingClientRect(),
       })
+      
       setTimeout(() => {
-        // refs[targetCollapseIdx].cardInfo?.current?.swipeableViewsRef
         refs[targetCollapseIdx]?.cardInfo?.current?.setViewIndex(0)
         refs[targetCollapseIdx]?.cardInfo?.current?.updateHeight()
-      }, 25)
+        // refs[targetCollapseIdx].cardInfo?.current?.swipeableViewsRef
+      }, 10)
     }
   }
 

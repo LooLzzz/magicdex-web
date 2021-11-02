@@ -67,6 +67,7 @@ const CardInfo = (props) => {
         <Hidden smDown>
           <Grid item className={classes.image}>
             <CardImage
+              showPrice
               tiltEnabled
               transform3dEnabled={transform3dEnabled}
               card={card}
@@ -76,6 +77,7 @@ const CardInfo = (props) => {
         <Hidden mdUp xsDown>
           <Grid item style={{ marginBottom: 16 }}>
             <CardImage
+              showPrice
               tiltEnabled
               transform3dEnabled={transform3dEnabled}
               card={card}
@@ -99,69 +101,56 @@ const CardInfo = (props) => {
 
             {/* VIEW 1 */}
             <Grid container justifyContent='center' alignItems='center' wrap='nowrap' style={{ paddingRight: 1 }}>
-              {
-                card.is_transform || card.is_split || card.is_flip
-                  ?
-                  <Grid item container justifyContent='center' alignItems='stretch' spacing={mdDown ? 0 : 2}>
-                    {/* Front Face */}
-                    <Grid item container justifyContent='center' xs={12} sm={11} lg style={{ marginLeft: 1 }}>
-                      <FieldsPanel
-                        card={card}
-                        cardFace={0}
-                      />
-                    </Grid>
+              <Grid item xs={12}>
+                {
+                  card.is_transform || card.is_split || card.is_flip
+                    ?
+                    <Grid item container justifyContent='center' alignItems='stretch' spacing={mdDown ? 0 : 2}>
+                      {/* Front Face */}
+                      <Grid item container justifyContent='center' xs={12} sm={11} lg style={{ marginLeft: 1 }}>
+                        <FieldsPanel
+                          card={card}
+                          cardFace={0}
+                        />
+                      </Grid>
 
-                    <Hidden lgUp>
-                      <Grid container wrap='nowrap' alignItems='center' style={{ alignSelf: 'center' }}>
-                        <Grid item xs component={Divider} />
-                        <Grid item style={{ paddingLeft: 4 }}>
-                          <IconButton size='small' onClick={handleViewIndexChange(1)}>
-                            <ChevronRightIcon />
-                          </IconButton>
+                      <Hidden lgUp>
+                        <Grid container wrap='nowrap' alignItems='center' style={{ alignSelf: 'center' }}>
+                          <Grid item xs component={Divider} style={{ marginBottom: 8 }} />
                         </Grid>
-                      </Grid>
-                    </Hidden>
-                    <Hidden mdDown>
-                      <Divider flexItem orientation='vertical' />
-                    </Hidden>
+                      </Hidden>
+                      <Hidden mdDown>
+                        <Divider flexItem orientation='vertical' />
+                      </Hidden>
 
-                    {/* Back Face */}
-                    <Grid item container justifyContent='center' xs={12} sm={11} lg style={{ marginLeft: 1 }}>
-                      <FieldsPanel
-                        card={card}
-                        cardFace={1}
-                      />
+                      {/* Back Face */}
+                      <Grid item container justifyContent='center' xs={12} sm={11} lg style={{ marginLeft: 1 }}>
+                        <FieldsPanel
+                          card={card}
+                          cardFace={1}
+                        />
+                      </Grid>
                     </Grid>
 
-                    <Hidden mdDown>
-                      <Grid item style={{ alignSelf: 'center', paddingLeft: 0 }}>
-                        <IconButton size='small' onClick={handleViewIndexChange(1)}>
-                          <ChevronRightIcon />
-                        </IconButton>
-                      </Grid>
-                    </Hidden>
-                  </Grid>
-
-                  : /* Single faced card */
-                  <>
-                    <Grid item style={{ marginRight: 'auto' }} />
+                    : /* Single faced card */
                     <Grid item container justifyContent='center' xs={12} md={10} lg={9} xl={8}>
                       <FieldsPanel
                         card={card}
                       />
                     </Grid>
-                    <Grid item style={{ marginLeft: 'auto' }}>
-                      <IconButton size='small' onClick={handleViewIndexChange(1)}>
-                        <ChevronRightIcon />
-                      </IconButton>
-                    </Grid>
-                  </>
-              }
+                }
+              </Grid>
+
+              <Grid item style={{ alignSelf: 'flex-start' }}>
+                <IconButton size='small' onClick={handleViewIndexChange(1)}>
+                  <ChevronRightIcon />
+                </IconButton>
+              </Grid>
             </Grid>
 
             {/* VIEW 2 */}
             <Grid container justifyContent='center' alignItems='center' wrap='nowrap'>
-              <Grid item>
+              <Grid item style={{ alignSelf: 'flex-start' }}>
                 <IconButton size='small' onClick={handleViewIndexChange(0)}>
                   <ChevronLeftIcon />
                 </IconButton>
@@ -170,8 +159,10 @@ const CardInfo = (props) => {
               <Grid item container xs>
                 <EditPanel
                   card={card}
+                  updateHeight={swipeableViewsRef.current?.updateHeight}
                 />
               </Grid>
+
             </Grid>
 
           </SwipeableViews>

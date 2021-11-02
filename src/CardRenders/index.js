@@ -9,6 +9,8 @@ import styles from './styles'
 
 /** Card render delegation helper function **/
 const renderCell = ({ card, columnName, ...rest }) => {
+  columnName = columnName.replace(/[ ]+/g, '_')
+
   switch (columnName) {
     case 'name':
       return renders.renderName({ card, columnName, ...rest })
@@ -190,7 +192,7 @@ const renders = {
       case 'content':
         return value
           ? <Chip label='Yes' size='small' color='primary' />
-          : <Chip label='No' size='small' color='secondary' />
+          : ''
     }
   },
 
@@ -211,21 +213,19 @@ const renders = {
     )
   },
 
-  renderTag: ({ card, columnName = 'tags' }) => {
+  renderTag: ({ card, columnName = 'tags', renderStyle = 'row' }) => {
     let { [columnName]: tags } = card
 
     return (
       tags.length > 0
-        ? //tags.join('; ')
-        tags.map((tag, i) =>
+        ? tags.map((tag, i) =>
           <Chip
-            // onDelete={() => {/*TODO: add delete functionality to tag chips */ }}
+            key={i}
             label={tag}
             size='small'
-            key={i}
           />
         )
-        : '-'
+        : ''
     )
   },
 
@@ -248,7 +248,7 @@ const renders = {
       manaCost.splice(1, 0, ' // ') // add a separator between the two mana costs
     return (
       cmc
-        ? <span title={`cmc: ${cmc}`}>
+        ? <span title={`${cmc} Cmc`}>
           {manaCost}
         </span>
         : manaCost

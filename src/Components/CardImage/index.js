@@ -1,11 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
 import { useState, useEffect } from 'react'
-import { Button, Grid, useMediaQuery } from '@material-ui/core'
+import { Button, Grid, useMediaQuery, Typography } from '@material-ui/core'
 import { withStyles } from '@material-ui/styles'
 import Tilt from 'react-parallax-tilt'
 import clsx from 'clsx'
 
+import renderCell from '@/CardRenders'
 import ImageOverlay from './ImageOverlay'
 import TransformableCard from './TransformableCard'
 import useStyles from './styles'
@@ -23,6 +24,7 @@ const CardImage = (props) => {
     buttonProps,
     tiltProps,
     tiltEnabled = false,
+    showPrice = false,
     packTransformButton,
     transform3dEnabled,
   } = props
@@ -49,6 +51,8 @@ const CardImage = (props) => {
   /** RENDER **/
   return (
     <Grid container direction="column" {...rootProps} onClick={handleRootClick}>
+
+      {/** IMAGE PREVIEW **/}
       <Grid item
         className={classes.imageContainer}
         style={{
@@ -127,9 +131,29 @@ const CardImage = (props) => {
           />
         </Tilt>
       </Grid>
+
+      {/** PRICE **/}
+      {
+        showPrice &&
+        <Grid item align='center' wrap='nowrap' className={classes.priceContainer}>
+          {
+            card.price > 0
+              ? card.amount > 1
+                ? [
+                  <span title='Price for x1'>{renderCell({ card, columnName: 'price' })}</span>,
+                  ' / ',
+                  <span title={`Price for x${card.amount}`}>{renderCell({ card, columnName: 'total_price' })}</span>,
+                ]
+                : <span title='Price for x1'>{renderCell({ card, columnName: 'price' })}</span>
+              : <span title='No Price Available'>{'-'}</span>
+          }
+        </Grid>
+      }
+
+      {/** TRANSFORM BUTTON **/}
       {
         (card?.is_transform || card?.is_split || card?.is_flip) && !packTransformButton && (
-          <Grid item align='center' className={classes.button}>
+          <Grid item align='center' className={classes.buttonContainer}>
             <Button
               className={classes.buttonThridly}
               variant='contained'

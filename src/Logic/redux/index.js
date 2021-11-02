@@ -5,6 +5,7 @@ import reducer, {
   toggleCurrentThemeType,
   setCurrentCollection,
   updateCurrentCollection,
+  removeCardsFromCollection,
 } from './reducerSlice'
 
 export {
@@ -13,6 +14,7 @@ export {
   setActiveUser,
   setCurrentCollection,
   updateCurrentCollection,
+  removeCardsFromCollection,
   setCurrentTab,
   toggleCurrentThemeType,
 }

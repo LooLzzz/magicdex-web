@@ -2,7 +2,7 @@
 
 import { useEffect, useState, createRef } from 'react'
 import { Grid, ListItemText, MenuItem, ListItem, ListSubheader, Divider, ButtonGroup, IconButton, Fab, useMediaQuery } from '@material-ui/core'
-import { Skeleton } from '@material-ui/lab'
+import { Skeleton, ToggleButton, ToggleButtonGroup } from '@material-ui/lab'
 import { withStyles } from '@material-ui/styles'
 import { connect } from 'react-redux'
 import { useHistory } from 'react-router'
@@ -17,10 +17,10 @@ import {
 import upperFirst from 'lodash/upperFirst'
 
 import { setCurrentTab, setCurrentCollection } from '@/Logic/redux'
+import { CardPriceDataProvider, FilteredDataProvider } from '@/Providers'
 import { MenuPopover } from '@/Components'
 import { MagicdexApi } from '@/Api'
 import { CardTableView, CardGridView } from './Views'
-import { CardPriceDataProvider, FilteredDataProvider } from './Providers'
 import FilterFields from './FilterFields'
 import useStyles from './styles'
 
@@ -206,18 +206,22 @@ const Collection = (props) => {
                       icon={<MoreVertIcon />}
                       listProps={{ dense: true }}
                     >
-                      <ListItem>
-                        <ButtonGroup variant='text' size='small'>
-                          <IconButton onClick={() => setView('table')} color={view === 'table' && 'secondary'}>
-                            <ViewListIcon />
-                          </IconButton>
-                          <IconButton onClick={() => setView('grid')} color={view === 'grid' && 'secondary'}>
-                            <ViewModuleIcon />
-                          </IconButton>
-                          <IconButton onClick={() => setView('compact')} color={view === 'compact' && 'secondary'}>
-                            <ViewCompactIcon />
-                          </IconButton>
-                        </ButtonGroup>
+                      <ListItem style={{ justifyContent: 'center', marginBottom: 8 }}>
+                        <ToggleButtonGroup exclusive
+                          size='small'
+                          value={view}
+                          onChange={(e, v) => setView(v)}
+                        >
+                          <ToggleButton value='table'>
+                            <ViewListIcon color={view === 'table' ? 'secondary' : 'inherit'} />
+                          </ToggleButton>
+                          <ToggleButton value='grid'>
+                            <ViewModuleIcon color={view === 'grid' ? 'secondary' : 'inherit'} />
+                          </ToggleButton>
+                          <ToggleButton value='compact'>
+                            <ViewCompactIcon color={view === 'compact' ? 'secondary' : 'inherit'} />
+                          </ToggleButton>
+                        </ToggleButtonGroup>
                       </ListItem>
 
                       <Divider />

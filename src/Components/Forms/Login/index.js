@@ -1,13 +1,13 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
-import { useEffect, useState, useRef } from 'react';
-import { Box, Button, Grid } from '@material-ui/core';
+import { useEffect, useState, useRef } from 'react'
+import { Box, Button, Grid } from '@material-ui/core'
 // import { AccountCircle as AccountCircleIcon } from '@material-ui/icons';
 import { withStyles } from "@material-ui/styles"
-import { connect } from 'react-redux';
-import { useHistory } from 'react-router';
-import { TextValidator } from 'react-material-ui-form-validator';
-import { useSnackbar } from 'notistack';
+import { connect } from 'react-redux'
+import { useHistory } from 'react-router'
+import { TextValidator } from 'react-material-ui-form-validator'
+import { useSnackbar } from 'notistack'
 
 import { MagicdexApi } from '@/Api'
 import { setActiveUser, setCurrentTab } from '@/Logic/redux'
@@ -29,7 +29,7 @@ const mapDispatchToProps = (dispatch) => ({
 const Login = (props) => {
   /** VARS **/
   const history = useHistory()
-  const { enqueueSnackbar } = useSnackbar();
+  const { enqueueSnackbar } = useSnackbar()
   const [isLoading, setIsLoading] = useState(false)
   const [errorMessages, setErrorMessages] = useState([])
   const [usernameInput, setUsernameInput] = useState('')
@@ -45,7 +45,7 @@ const Login = (props) => {
   /** EFFECTS **/
   useEffect(() => {
     //onMount
-    dispatch.setCurrentTab({tab:'login'})
+    dispatch.setCurrentTab({ tab: 'login' })
   }, [])
 
   useEffect(() => {
@@ -55,7 +55,7 @@ const Login = (props) => {
 
 
   /** HANDLERS **/
-  const handleSubmit = (e) => {
+  const handleSubmit = (e, resolve, reject) => {
     setIsLoading(true)
     setPasswordInput('')
     setErrorMessages([])
@@ -65,6 +65,7 @@ const Login = (props) => {
       .then(res => {
         dispatch.setActiveUser(res)
         enqueueSnackbar('Login successful', { variant: 'success' })
+        resolve(res)
       })
       .catch(err => {
         const msg = err.response.data.msg ?? err.response.data.message
@@ -79,6 +80,7 @@ const Login = (props) => {
 
         setErrorMessages(msgs)
         enqueueSnackbar('Login failed', { variant: 'error' })
+        reject(err)
       })
       .finally(() => {
         setIsLoading(false)

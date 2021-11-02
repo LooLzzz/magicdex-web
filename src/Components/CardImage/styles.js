@@ -15,7 +15,10 @@ const useStyles = (theme) => {
       top: '2.5%',
       left: '2.5%',
     },
-    button: {
+    priceContainer: {
+      marginTop: theme.spacing(1),
+    },
+    buttonContainer: {
       marginTop: theme.spacing(1),
     },
     buttonThridly: {

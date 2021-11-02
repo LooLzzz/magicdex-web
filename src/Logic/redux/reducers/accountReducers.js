@@ -34,16 +34,27 @@ const accountReducers = {
     const { cards } = action.payload
     let { collection } = state.activeUser
 
-    for (const card in cards) {
+    cards.forEach(card => {
       const idx = collection.findIndex(item => item._id === card._id)
-      if (idx !== -1)
-        collection[idx] = {
-          ...collection[idx],
-          ...card,
-        }
+      
+      if (idx > -1)
+        Object.assign(collection[idx], card)  
       else
         collection.push(card)
-    }
+    })
+
+    state.activeUser.collection = collection
+  },
+
+  removeCardsFromCollection: (state, action) => {
+    const { cards } = action.payload
+    let { collection } = state.activeUser
+
+    cards.forEach(card => {
+      const idx = collection.findIndex(item => item._id === card._id)
+      if (idx !== -1)
+        collection.splice(idx, 1)
+    })
 
     state.activeUser.collection = collection
   },

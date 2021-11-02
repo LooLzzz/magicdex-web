@@ -1,5 +1,3 @@
-/* eslint-disable no-lone-blocks */
-
 // import { useState } from 'react'
 import { Box, Grid, Typography } from '@material-ui/core'
 import { useTheme } from '@material-ui/styles'
