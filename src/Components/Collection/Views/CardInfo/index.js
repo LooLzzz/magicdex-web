@@ -67,6 +67,7 @@ const CardInfo = (props) => {
         <Hidden smDown>
           <Grid item className={classes.image}>
             <CardImage
+              tiltEnabled
               transform3dEnabled={transform3dEnabled}
               card={card}
             />
@@ -75,6 +76,7 @@ const CardInfo = (props) => {
         <Hidden mdUp xsDown>
           <Grid item style={{ marginBottom: 16 }}>
             <CardImage
+              tiltEnabled
               transform3dEnabled={transform3dEnabled}
               card={card}
             />

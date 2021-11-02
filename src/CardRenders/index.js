@@ -230,7 +230,7 @@ const renders = {
   },
 
   renderManaCost: ({ card, columnName = 'mana_cost', cardFace, renderStyle = 'row' }) => {
-    let { [columnName]: manaCost } = cardFace !== undefined ? card.card_faces[cardFace] : card
+    let { [columnName]: manaCost, cmc } = cardFace !== undefined ? card.card_faces[cardFace] : card
     manaCost = manaCost || []
 
     if (!(manaCost instanceof Array))
@@ -246,7 +246,13 @@ const renders = {
     manaCost = manaCost.map(cost => utils.toManaFont(cost))
     if (manaCost.length > 1)
       manaCost.splice(1, 0, ' // ') // add a separator between the two mana costs
-    return manaCost
+    return (
+      cmc
+        ? <span title={`cmc: ${cmc}`}>
+          {manaCost}
+        </span>
+        : manaCost
+    )
   },
 
   renderType: ({ card, columnName = 'type_line', cardFace, renderStyle = 'row' }) => {

@@ -104,8 +104,8 @@ const CardGridView = (props) => {
       })
       setTimeout(() => {
         // refs[targetCollapseIdx].cardInfo?.current?.swipeableViewsRef
-        refs[targetCollapseIdx].cardInfo?.current?.setViewIndex(0)
-        refs[targetCollapseIdx].cardInfo?.current?.updateHeight()
+        refs[targetCollapseIdx]?.cardInfo?.current?.setViewIndex(0)
+        refs[targetCollapseIdx]?.cardInfo?.current?.updateHeight()
       }, 25)
     }
   }
@@ -126,6 +126,9 @@ const CardGridView = (props) => {
                   <CardImage packTransformButton
                     transform3dEnabled={transform3dEnabled}
                     tiltEnabled={tiltEnabled}
+                    card={card}
+                    width={cardWidth}
+                    height={cardWidth * 1.4}
                     tiltProps={{
                       tiltMaxAngleX: 12.5,
                       tiltMaxAngleY: 12.5,
@@ -138,7 +141,6 @@ const CardGridView = (props) => {
                       className: 'cursor-pointer',
                       onClick: handleCardClick({ card, key: i }),
                     }}
-                    card={card}
                   />
                 </Grid>
               }
@@ -155,7 +157,7 @@ const CardGridView = (props) => {
                     {
                       selectedCard?.data &&
                       <CardInfo
-                        refs={refs[targetCollapseIdx].cardInfo}
+                        refs={refs[targetCollapseIdx]?.cardInfo}
                         card={selectedCard.data}
                         rootComponent={Paper}
                         rootProps={{
@@ -164,7 +166,7 @@ const CardGridView = (props) => {
                         topArrowProps={{
                           style: {
                             borderTopColor: theme.palette.background.default,
-                            left: `calc(${selectedCard?.box?.left + (selectedCard?.box?.width * 0.5) - containerRef.current.offsetLeft}px - 2.25rem)`,
+                            left: `calc(${selectedCard?.box?.left + (selectedCard?.box?.width * 0.5) - containerRef?.current?.offsetLeft}px - 2.25rem)`,
                           },
                         }}
                       />

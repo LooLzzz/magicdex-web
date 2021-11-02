@@ -6,8 +6,8 @@ import { withStyles } from '@material-ui/styles'
 import Tilt from 'react-parallax-tilt'
 import clsx from 'clsx'
 
-import Plane3d from './Plane3d'
 import ImageOverlay from './ImageOverlay'
+import TransformableCard from './TransformableCard'
 import useStyles from './styles'
 
 
@@ -16,11 +16,13 @@ const CardImage = (props) => {
   const {
     classes,
     card,
+    width = 250,
+    height = 350,
     rootProps,
     imageProps,
     buttonProps,
     tiltProps,
-    tiltEnabled,
+    tiltEnabled = false,
     packTransformButton,
     transform3dEnabled,
   } = props
@@ -60,8 +62,8 @@ const CardImage = (props) => {
         }}
       >
         <Tilt
-          tiltEnable={tiltEnabled ?? false}
-          glareEnable={tiltEnabled ?? false}
+          tiltEnable={tiltEnabled}
+          glareEnable={tiltEnabled}
           tiltMaxAngleX={10}
           tiltMaxAngleY={10}
           glareBorderRadius='4.75% / 3.5%'
@@ -75,31 +77,12 @@ const CardImage = (props) => {
             card?.is_transform
               // double faced card
               ? transform3dEnabled
-                ? <Plane3d
+                ? <TransformableCard
                   flipped={flipped}
+                  width={width}
+                  height={height}
+                  card={card}
                   imageProps={imageProps}
-                  front={props =>
-                    <ImageOverlay
-                      overlayEnabled={card.foil}
-                      baseSrc={card.card_faces[0].image_uris.png}
-                      overlaySrc='/foil-overlay.png'
-                      overlayProps={{ style: { opacity: 0.65 } }}
-                      width={250}
-                      height={350}
-                      {...props}
-                    />
-                  }
-                  back={props =>
-                    <ImageOverlay
-                      overlayEnabled={card.foil}
-                      baseSrc={card.card_faces[1].image_uris.png}
-                      overlaySrc='/foil-overlay.png'
-                      overlayProps={{ style: { opacity: 0.65 } }}
-                      width={250}
-                      height={350}
-                      {...props}
-                    />
-                  }
                 />
                 : <ImageOverlay
                   overlayEnabled={card?.foil}
@@ -110,8 +93,8 @@ const CardImage = (props) => {
                   }
                   overlaySrc='/foil-overlay.png'
                   overlayProps={{ style: { opacity: 0.65 } }}
-                  width={250}
-                  height={350}
+                  width={width}
+                  height={height}
                   {...imageProps}
                 />
               :
@@ -125,8 +108,8 @@ const CardImage = (props) => {
                 }
                 overlaySrc='/foil-overlay.png'
                 overlayProps={{ style: { opacity: 0.65 } }}
-                width={250}
-                height={350}
+                width={width}
+                height={height}
                 {...imageProps}
               />
           }
