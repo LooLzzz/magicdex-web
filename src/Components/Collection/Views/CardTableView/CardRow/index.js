@@ -11,7 +11,7 @@ import {
   KeyboardArrowUp as KeyboardArrowUpIcon
 } from '@material-ui/icons'
 
-import renderCell from '@/CardRenders'
+import RenderCell from '@/CardRenders'
 import CardInfo from '../../CardInfo'
 import useStyles from './styles'
 
@@ -107,7 +107,7 @@ const CardRow = (props) => {
                       : {}
                   )} /* renderSet() setup */
                 >
-                  {renderCell({ card, columnName, theme })}
+                  {RenderCell({ card: card, columnName })}
                   {
                     columnName === 'set' && isMouseOver && (
                       <Paper elevation={5} className={classes.floating} onMouseEnter={e => setIsMouseOver(false)}>
@@ -150,7 +150,7 @@ const CardRow = (props) => {
 
       <TableRow onMouseEnter={onMouseEnter} className={classes.row} style={{ display: showContent ? 'table-row' : 'none' }}>
         <TableCell colSpan={10} style={{ padding: 0 }}>
-          <Collapse unmountOnExit in={isOpen} timeout="auto" onEnter={onCollapseEnter} onExited={onCollapseExited} onEntering={onCollapseEntering}>
+          <Collapse mountOnEnter in={isOpen} timeout="auto" onEnter={onCollapseEnter} onExited={onCollapseExited} onEntering={onCollapseEntering}>
             <CardInfo
               card={card}
               refs={cardInfoRef}

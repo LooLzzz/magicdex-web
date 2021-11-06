@@ -1,12 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
 import { useState, useEffect } from 'react'
-import { Button, Grid, useMediaQuery, Typography } from '@material-ui/core'
+import { Button, Grid, useMediaQuery } from '@material-ui/core'
 import { withStyles } from '@material-ui/styles'
 import Tilt from 'react-parallax-tilt'
 import clsx from 'clsx'
 
-import renderCell from '@/CardRenders'
+import RenderCell from '@/CardRenders'
 import ImageOverlay from './ImageOverlay'
 import TransformableCard from './TransformableCard'
 import useStyles from './styles'
@@ -73,12 +73,12 @@ const CardImage = (props) => {
           glareBorderRadius='4.75% / 3.5%'
           glarePosition='all'
           glareMaxOpacity={0.13}
-          onEnter={card?.is_transform && packTransformButton && handleTransform(true)}
-          onLeave={card?.is_transform && packTransformButton && handleTransform(false)}
+          onEnter={(card?.is_transform || card?._isDoublesided) && packTransformButton && handleTransform(true)}
+          onLeave={(card?.is_transform || card?._isDoublesided) && packTransformButton && handleTransform(false)}
           {...tiltProps}
         >
           {
-            card?.is_transform
+            (card?.is_transform || card?._isDoublesided)
               // double faced card
               ? transform3dEnabled
                 ? <TransformableCard
@@ -90,9 +90,10 @@ const CardImage = (props) => {
                 />
                 : <ImageOverlay
                   overlayEnabled={card?.foil}
+                  baseProps={{ alt: card?.name }}
                   baseSrc={
                     card
-                      ? card.card_faces[flipped ? 1 : 0].image_uris.png
+                      ? card.card_faces[flipped ? 1 : 0].image_uris?.png ?? card.card_faces[flipped ? 1 : 0].image_uris?.large ?? card.card_faces[flipped ? 1 : 0].image_uris?.normal
                       : '/cardback.png'
                   }
                   overlaySrc='/foil-overlay.png'
@@ -105,9 +106,10 @@ const CardImage = (props) => {
               // single faced card
               <ImageOverlay
                 overlayEnabled={card?.foil}
+                baseProps={{ alt: card?.name }}
                 baseSrc={
                   card
-                    ? card.image_uris.png
+                    ? card.image_uris?.png ?? card.image_uris?.large ?? card.image_uris?.normal
                     : '/cardback.png'
                 }
                 overlaySrc='/foil-overlay.png'
@@ -126,7 +128,7 @@ const CardImage = (props) => {
               { 'ms-dfc-modal-back': flipped },
             )}
             style={{
-              display: (packTransformButton && card?.is_transform) ? 'unset' : 'none',
+              display: (packTransformButton && (card?.is_transform || card?._isDoublesided)) ? 'unset' : 'none',
             }}
           />
         </Tilt>
@@ -135,16 +137,16 @@ const CardImage = (props) => {
       {/** PRICE **/}
       {
         showPrice &&
-        <Grid item align='center' wrap='nowrap' className={classes.priceContainer}>
+        <Grid item align='center' className={classes.priceContainer}>
           {
             card.price > 0
               ? card.amount > 1
                 ? [
-                  <span title='Price for x1'>{renderCell({ card, columnName: 'price' })}</span>,
+                  <span key='one' title='Price for x1'>{RenderCell({ card, columnName: 'price' })}</span>,
                   ' / ',
-                  <span title={`Price for x${card.amount}`}>{renderCell({ card, columnName: 'total_price' })}</span>,
+                  <span key='multiple' title={`Price for x${card.amount}`}>{RenderCell({ card, columnName: 'total_price' })}</span>,
                 ]
-                : <span title='Price for x1'>{renderCell({ card, columnName: 'price' })}</span>
+                : <span title='Price for x1'>{RenderCell({ card, columnName: 'price' })}</span>
               : <span title='No Price Available'>{'-'}</span>
           }
         </Grid>
@@ -152,7 +154,7 @@ const CardImage = (props) => {
 
       {/** TRANSFORM BUTTON **/}
       {
-        (card?.is_transform || card?.is_split || card?.is_flip) && !packTransformButton && (
+        ((card?.is_transform || card?._isDoublesided) || card?.is_split || card?.is_flip) && !packTransformButton && (
           <Grid item align='center' className={classes.buttonContainer}>
             <Button
               className={classes.buttonThridly}
@@ -163,7 +165,7 @@ const CardImage = (props) => {
             >
               {
                 (
-                  card.is_transform
+                  (card?.is_transform || card?._isDoublesided)
                     ? 'Transform'
                     : card.is_split
                       ? 'Rotate'

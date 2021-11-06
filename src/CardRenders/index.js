@@ -1,5 +1,5 @@
-import { Fragment } from 'react'
-import { Paper, Chip, Hidden } from '@material-ui/core'
+import { Fragment, useEffect } from 'react'
+import { useTheme, Paper, Chip, Hidden } from '@material-ui/core'
 import _ from 'lodash'
 
 import { EllipsisText } from '@/Components'
@@ -8,64 +8,72 @@ import styles from './styles'
 
 
 /** Card render delegation helper function **/
-const renderCell = ({ card, columnName, ...rest }) => {
+const RenderCell = ({ card, columnName, ...rest }) => {
   columnName = columnName.replace(/[ ]+/g, '_')
 
   switch (columnName) {
     case 'name':
-      return renders.renderName({ card, columnName, ...rest })
+      return renders.RenderName({ card, columnName, ...rest })
 
     case 'set':
-      return renders.renderSet({ card, columnName, ...rest })
+      return renders.RenderSet({ card, columnName, ...rest })
 
     case 'power_toughness':
-      return renders.renderPowerToughness({ card, columnName, ...rest })
+      return renders.RenderPowerToughness({ card, columnName, ...rest })
 
     case 'oracle':
     case 'oracle_text':
-      return renders.renderOracleText({ card, columnName, ...rest })
+      return renders.RenderOracleText({ card, columnName, ...rest })
 
     case 'signed':
     case 'altered':
     case 'misprint':
     case 'foil':
-      return renders.renderBoolean({ card, columnName, ...rest })
+      return renders.RenderBoolean({ card, columnName, ...rest })
 
     case 'amount':
-      return renders.renderAmount({ card, columnName, ...rest })
+      return renders.RenderAmount({ card, columnName, ...rest })
 
     case 'total_price':
     case 'price':
-      return renders.renderPrice({ card, columnName, ...rest })
+      return renders.RenderPrice({ card, columnName, ...rest })
 
     case 'tag':
-      return renders.renderTag({ card, columnName, ...rest })
+      return renders.RenderTag({ card, columnName, ...rest })
 
     case 'mana_cost':
-      return renders.renderManaCost({ card, columnName, ...rest })
+      return renders.RenderManaCost({ card, columnName, ...rest })
 
     case 'type_line':
     case 'type':
-      return renders.renderType({ card, columnName, ...rest })
+      return renders.RenderType({ card, columnName, ...rest })
 
     case 'date':
     case 'date_created':
     case 'date_added':
-      return renders.renderDate({ card, columnName, ...rest })
+      return renders.RenderDate({ card, columnName, ...rest })
 
     case 'flavor':
     case 'flavor_text':
-      return renders.renderFlavorText({ card, columnName, ...rest })
+      return renders.RenderFlavorText({ card, columnName, ...rest })
 
     default:
-      return renders.defaultRender({ card, columnName, ...rest })
+      return renders.DefaultRender({ card, columnName, ...rest })
   }
+}
+
+
+/** UTILS **/
+const limitPrecision = (num, precision = 2) => {
+  precision = 10 ** precision
+
+  return Math.round(Number(num) * precision) / precision
 }
 
 
 /** RENDERS **/
 const renders = {
-  defaultRender: ({ card, columnName, cardFace }) => {
+  DefaultRender: ({ card, columnName, cardFace }) => {
     let { [columnName]: value } = cardFace !== undefined ? card.card_faces[cardFace] : card
     value = value || card[columnName]
 
@@ -77,7 +85,7 @@ const renders = {
     )
   },
 
-  renderName: ({ card, cardFace, renderStyle = 'row' }) => {
+  RenderName: ({ card, cardFace, renderStyle = 'row' }) => {
     let { name } = cardFace !== undefined ? card.card_faces[cardFace] : card
 
     switch (renderStyle) {
@@ -106,7 +114,7 @@ const renders = {
     }
   },
 
-  renderOracleText: ({ card, columnName = 'oracle_text', cardFace }) => {
+  RenderOracleText: ({ card, columnName = 'oracle_text', cardFace }) => {
     let { [columnName]: oracleText } = cardFace !== undefined ? card.card_faces[cardFace] : card
     let align = _.words(oracleText).length > 2 ? 'left' : 'center'
 
@@ -155,7 +163,7 @@ const renders = {
     )
   },
 
-  renderPowerToughness: ({ card, cardFace }) => {
+  RenderPowerToughness: ({ card, cardFace }) => {
     const { power, toughness } = cardFace !== undefined ? card.card_faces[cardFace] : card
 
     return power && toughness
@@ -166,7 +174,8 @@ const renders = {
       : ''
   },
 
-  renderSet: ({ card, theme, renderStyle = 'row' }) => {
+  RenderSet: ({ card, renderStyle = 'row' }) => {
+    const theme = useTheme()
     const { set_data, rarity, foil } = card
     const set = set_data?.parent_set_code ? set_data.parent_set_code : set_data.code
     return (
@@ -181,7 +190,7 @@ const renders = {
     )
   },
 
-  renderBoolean: ({ card, columnName, renderStyle = 'row' }) => {
+  RenderBoolean: ({ card, columnName, renderStyle = 'row' }) => {
     const { [columnName]: value } = card
 
     switch (renderStyle) {
@@ -196,14 +205,15 @@ const renders = {
     }
   },
 
-  renderAmount: ({ card }) => (
+  RenderAmount: ({ card }) => (
     <Paper component='span' className='floating'>
       {'x' + card.amount}
     </Paper>
   ),
 
-  renderPrice: ({ card, columnName = 'price' }) => {
-    const { [columnName]: price, currency } = card
+  RenderPrice: ({ card, columnName = 'price' }) => {
+    let { [columnName]: price, currency } = card
+    price = limitPrecision(price, 2)
     return (
       price > 0
         ? currency === 'usd'
@@ -213,7 +223,7 @@ const renders = {
     )
   },
 
-  renderTag: ({ card, columnName = 'tags', renderStyle = 'row' }) => {
+  RenderTag: ({ card, columnName = 'tags', renderStyle = 'row' }) => {
     let { [columnName]: tags } = card
 
     return (
@@ -229,7 +239,7 @@ const renders = {
     )
   },
 
-  renderManaCost: ({ card, columnName = 'mana_cost', cardFace, renderStyle = 'row' }) => {
+  RenderManaCost: ({ card, columnName = 'mana_cost', cardFace, renderStyle = 'row' }) => {
     let { [columnName]: manaCost, cmc } = cardFace !== undefined ? card.card_faces[cardFace] : card
     manaCost = manaCost || []
 
@@ -255,7 +265,7 @@ const renders = {
     )
   },
 
-  renderType: ({ card, columnName = 'type_line', cardFace, renderStyle = 'row' }) => {
+  RenderType: ({ card, columnName = 'type_line', cardFace, renderStyle = 'row' }) => {
     let { [columnName]: typeLine, color_indicator: colorIndicator } = cardFace !== undefined ? card.card_faces[cardFace] : card
 
     switch (renderStyle) {
@@ -288,7 +298,7 @@ const renders = {
     }
   },
 
-  renderDate: ({ card, columnName = 'date_added' }) => {
+  RenderDate: ({ card, columnName = 'date_added' }) => {
     const date = new Date(card[columnName])
     let [year, month, day] = [date.getFullYear(), date.getMonth() + 1, date.getDate()]
 
@@ -297,7 +307,7 @@ const renders = {
     )
   },
 
-  renderFlavorText: ({ card, cardFace }) => {
+  RenderFlavorText: ({ card, cardFace }) => {
     const { flavor_text } = cardFace !== undefined ? card.card_faces[cardFace] : card
     let align = _.words(flavor_text).length > 2 ? 'left' : 'center'
 
@@ -311,20 +321,20 @@ const renders = {
 }
 
 /** EXPORTS **/
-export default renderCell
+export default RenderCell
 
 export const {
-  defaultRender,
-  renderName,
-  renderOracleText,
-  renderPowerToughness,
-  renderSet,
-  renderBoolean,
-  renderAmount,
-  renderPrice,
-  renderTag,
-  renderManaCost,
-  renderType,
-  renderDate,
-  renderFlavorText,
+  DefaultRender,
+  RenderName,
+  RenderOracleText,
+  RenderPowerToughness,
+  RenderSet,
+  RenderBoolean,
+  RenderAmount,
+  RenderPrice,
+  RenderTag,
+  RenderManaCost,
+  RenderType,
+  RenderDate,
+  RenderFlavorText,
 } = renders

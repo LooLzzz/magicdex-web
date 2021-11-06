@@ -1,5 +1,18 @@
 import React, { useState, useEffect } from 'react'
-// import _ from 'lodash'
+
+
+const addCardPrice = (card, currency) => {
+  const { prices, foil, amount } = card
+  const price = Number(foil ? prices?.[`${currency}_foil`] : prices?.[currency])
+
+  return {
+    ...card,
+    currency,
+    price: price,
+    total_price: price * amount,
+  }
+}
+
 
 const CardPriceDataProvider = (props) => {
   /** VARS **/
@@ -43,3 +56,7 @@ const CardPriceDataProvider = (props) => {
 
 /** EXPORT **/
 export default CardPriceDataProvider
+
+export {
+  addCardPrice,
+}

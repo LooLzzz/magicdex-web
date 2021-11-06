@@ -163,13 +163,8 @@ const FilterProvider = (props) => {
                     }}
                     helperText={
                       <>
-                        Separate tags with
-                        <code style={{
-                          padding: '2px',
-                          marginLeft: '0.25em',
-                          backgroundColor: 'rgba(255,255,255,0.1)',
-                          borderRadius: '12.5%',
-                        }}>
+                        {'Separate tags with '}
+                        <code>
                           [;, ]+
                         </code>
                       </>

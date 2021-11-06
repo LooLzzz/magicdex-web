@@ -158,7 +158,7 @@ const CardGridView = (props) => {
               {
                 (((i + 1) % cardsPerRow === 0) || (i === sortedData.length - 1)) &&
                 <Grid item xs={12}>
-                  <Collapse unmountOnExit
+                  <Collapse mountOnEnter
                     ref={refs[targetCollapseIdx]?.collapse}
                     timeout="auto"
                     in={targetCollapseIdx === selectedCard.targetCollapse}

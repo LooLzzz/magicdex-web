@@ -5,6 +5,7 @@ import { withStyles } from '@material-ui/styles'
 import SwipeableViews from 'react-swipeable-views'
 
 import { CardImage } from '@/Components'
+import { addCardPrice, addLayoutKeywords } from '@/Providers'
 import FieldsPanel from './FieldsPanel'
 import EditPanel from './EditPanel'
 import useStyles from './styles'
@@ -25,6 +26,7 @@ const CardInfo = (props) => {
   const smDown = useMediaQuery(theme => theme.breakpoints.down('sm'))
   const mdDown = useMediaQuery(theme => theme.breakpoints.down('md'))
   const [currentViewIndex, setCurrentViewIndex] = useState(0)
+  const [menuHoverItem, setMenuHoverItem] = useState()
 
 
   /** EFFECTS **/
@@ -42,6 +44,17 @@ const CardInfo = (props) => {
   /** HANDLERS **/
   const handleViewIndexChange = value => e => {
     setCurrentViewIndex(value)
+  }
+
+  const onMenuHover = hoverItem => {
+    if (hoverItem) {
+      // hoverItem.foil = card.foil
+      hoverItem = addCardPrice(hoverItem, card.currency)
+      hoverItem = addLayoutKeywords(hoverItem)
+      setMenuHoverItem(hoverItem)
+    }
+    else
+      setMenuHoverItem(null)
   }
 
 
@@ -70,7 +83,7 @@ const CardInfo = (props) => {
               showPrice
               tiltEnabled
               transform3dEnabled={transform3dEnabled}
-              card={card}
+              card={menuHoverItem || card}
             />
           </Grid>
         </Hidden>
@@ -80,7 +93,7 @@ const CardInfo = (props) => {
               showPrice
               tiltEnabled
               transform3dEnabled={transform3dEnabled}
-              card={card}
+              card={menuHoverItem || card}
             />
           </Grid>
         </Hidden>
@@ -160,6 +173,7 @@ const CardInfo = (props) => {
                 <EditPanel
                   card={card}
                   updateHeight={swipeableViewsRef.current?.updateHeight}
+                  onMenuHover={onMenuHover}
                 />
               </Grid>
 

@@ -1,8 +1,8 @@
-// import { useState } from 'react'
+// import { useEffect } from 'react'
 import { Box, Grid, Typography } from '@material-ui/core'
 import { useTheme } from '@material-ui/styles'
 
-import renderCell from '@/CardRenders'
+import RenderCell from '@/CardRenders'
 
 
 const FieldsPanel = (props) => {
@@ -13,16 +13,16 @@ const FieldsPanel = (props) => {
   } = props
   const theme = useTheme()
 
-  let [name, manaCost, typeLine, set, oracleText, flavorText, artist, collectorNumber, powerToughness] = [
-    renderCell({ card, columnName: 'name', renderStyle, theme, ...rest }),
-    renderCell({ card, columnName: 'mana_cost', renderStyle, theme, ...rest }),
-    renderCell({ card, columnName: 'type_line', renderStyle, theme, ...rest }),
-    renderCell({ card, columnName: 'set', renderStyle, theme, ...rest }),
-    renderCell({ card, columnName: 'oracle_text', renderStyle, theme, ...rest }),
-    renderCell({ card, columnName: 'flavor_text', renderStyle, theme, ...rest }),
-    renderCell({ card, columnName: 'artist', renderStyle, theme, ...rest }),
-    renderCell({ card, columnName: 'collector_number', renderStyle, theme, ...rest }),
-    renderCell({ card, columnName: 'power_toughness', renderStyle, theme, ...rest }),
+  const [name, manaCost, typeLine, set, oracleText, flavorText, artist, collectorNumber, powerToughness] = [
+    card && RenderCell({ card, columnName: 'name', renderStyle, theme, ...rest }),
+    card && RenderCell({ card, columnName: 'mana_cost', renderStyle, theme, ...rest }),
+    card && RenderCell({ card, columnName: 'type_line', renderStyle, theme, ...rest }),
+    card && RenderCell({ card, columnName: 'set', renderStyle, theme, ...rest }),
+    card && RenderCell({ card, columnName: 'oracle_text', renderStyle, theme, ...rest }),
+    card && RenderCell({ card, columnName: 'flavor_text', renderStyle, theme, ...rest }),
+    card && RenderCell({ card, columnName: 'artist', renderStyle, theme, ...rest }),
+    card && RenderCell({ card, columnName: 'collector_number', renderStyle, theme, ...rest }),
+    card && RenderCell({ card, columnName: 'power_toughness', renderStyle, theme, ...rest }),
   ]
 
   return (

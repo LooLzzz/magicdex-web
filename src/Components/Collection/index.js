@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
 import { useEffect, useState, createRef } from 'react'
-import { Grid, ListItemText, MenuItem, ListItem, ListSubheader, Divider, ButtonGroup, IconButton, Fab, useMediaQuery } from '@material-ui/core'
+import { Grid, ListItemText, MenuItem, ListItem, ListSubheader, Divider, Fab, useMediaQuery } from '@material-ui/core'
 import { Skeleton, ToggleButton, ToggleButtonGroup } from '@material-ui/lab'
 import { withStyles } from '@material-ui/styles'
 import { connect } from 'react-redux'
@@ -206,25 +206,26 @@ const Collection = (props) => {
                       icon={<MoreVertIcon />}
                       listProps={{ dense: true }}
                     >
-                      <ListItem style={{ justifyContent: 'center', marginBottom: 8 }}>
+                      <ListItem style={{ justifyContent: 'center' }}>
                         <ToggleButtonGroup exclusive
+                          style={{ height: '2.4em' }}
                           size='small'
                           value={view}
-                          onChange={(e, v) => setView(v)}
+                          onChange={(e, v) => setView(state => v || state)}
                         >
                           <ToggleButton value='table'>
-                            <ViewListIcon color={view === 'table' ? 'secondary' : 'inherit'} />
+                            <ViewListIcon />
                           </ToggleButton>
                           <ToggleButton value='grid'>
-                            <ViewModuleIcon color={view === 'grid' ? 'secondary' : 'inherit'} />
+                            <ViewModuleIcon />
                           </ToggleButton>
                           <ToggleButton value='compact'>
-                            <ViewCompactIcon color={view === 'compact' ? 'secondary' : 'inherit'} />
+                            <ViewCompactIcon />
                           </ToggleButton>
                         </ToggleButtonGroup>
                       </ListItem>
 
-                      <Divider />
+                      <Divider style={{ marginTop: 8 }} />
 
                       <ListSubheader className={classes.subheader}>
                         {`${upperFirst(view)} View`}

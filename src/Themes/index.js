@@ -8,6 +8,12 @@ const getContrastText = baseTheme.palette.getContrastText
 const sharedOverrides = {
   MuiCssBaseline: {
     "@global": {
+      "code": {
+        padding: '2px',
+        // marginLeft: '0.25em',
+        // backgroundColor: 'rgba(255,255,255,0.1)',
+        borderRadius: '12.5%',
+      },
       ".alignLeft": {
         textAlign: "left",
       },
@@ -120,6 +126,10 @@ const getDarkTheme = () =>
       MuiCssBaseline: {
         '@global': {
           ...sharedOverrides.MuiCssBaseline,
+          code: {
+            ...sharedOverrides.MuiCssBaseline.code,
+            backgroundColor: 'rgba(255,255,255,0.1)',
+          },
           a: {
             color: darkSecondary.main,
           },
@@ -179,6 +189,10 @@ const getLightTheme = () =>
       MuiCssBaseline: {
         '@global': {
           ...sharedOverrides.MuiCssBaseline,
+          code: {
+            ...sharedOverrides.MuiCssBaseline.code,
+            backgroundColor: 'rgba(0,0,0,0.1)',
+          },
           '.floating': {
             ...sharedOverrides.MuiCssBaseline['.floating'],
             backgroundColor: colors.grey['A100'],
