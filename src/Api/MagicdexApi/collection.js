@@ -17,25 +17,27 @@ const populateCardData = async (cards) => {
 
   const scryfallData = await fetchScryfallCardData(cardInfo)
 
-  const populatedCards = cards.map((card, i) => {
-    const { is_transform, is_split, is_flip } = {
-      is_transform: arrayContains(scryfallData[i].layout, ['modal', 'transform']),
-      is_split: arrayContains(scryfallData[i].layout, ['split', 'fuse']),
-      is_flip: arrayContains(scryfallData[i].layout, ['flip']),
-    }
+  const populatedCards = await Promise.all(
+    cards.map(async (card, i) => {
+      const { is_transform, is_split, is_flip } = {
+        is_transform: arrayContains(scryfallData[i].layout, ['modal', 'transform']),
+        is_split: arrayContains(scryfallData[i].layout, ['split', 'fuse']),
+        is_flip: arrayContains(scryfallData[i].layout, ['flip']),
+      }
 
-    return {
-      ...scryfallData[i],
-      ...card,
-      date_created: new Date(card.date_created),
-      is_transform,
-      is_split,
-      is_flip,
-      mana_cost: is_transform
-        ? [scryfallData[i].card_faces[0].mana_cost, scryfallData[i].card_faces[1].mana_cost]
-        : scryfallData[i].mana_cost,
-    }
-  })
+      return Object.assign(scryfallData[i], {
+        ...card,
+        is_transform,
+        is_split,
+        is_flip,
+        // rulings: await scryfallData[i].getRulings(),
+        date_created: new Date(card.date_created),
+        mana_cost: is_transform
+          ? [scryfallData[i].card_faces[0].mana_cost, scryfallData[i].card_faces[1].mana_cost]
+          : scryfallData[i].mana_cost,
+      })
+    })
+  )
 
   return (cards instanceof Array)
     ? populatedCards

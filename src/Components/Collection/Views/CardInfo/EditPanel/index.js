@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
 import { Fragment, useState, useEffect } from 'react'
-import { InputAdornment, Typography, Paper, Modal, Backdrop, CircularProgress, Grid, IconButton, Button, Fade, Zoom, FormControlLabel, TextField, Checkbox, MenuItem } from '@material-ui/core'
+import { Chip, InputAdornment, Divider, Typography, Paper, Modal, Backdrop, CircularProgress, Grid, IconButton, Button, Fade, Zoom, FormControlLabel, TextField, Checkbox, MenuItem } from '@material-ui/core'
 import { Autocomplete } from '@material-ui/lab'
 import { withStyles } from '@material-ui/styles'
 import { Delete as DeleteIcon } from '@material-ui/icons'
@@ -34,8 +34,6 @@ const mapDispatchToProps = (dispatch) => ({
 
 const EditPanel = (props) => {
   /** VARS **/
-  const { enqueueSnackbar } = useSnackbar()
-  const fields = ['tag', 'amount', 'foil', 'condition', 'signed', 'altered', 'misprint', 'lang']
   const {
     classes,
     dispatch,
@@ -43,6 +41,7 @@ const EditPanel = (props) => {
     updateHeight: _updateHeight,
     onMenuHover,
   } = props
+  const { enqueueSnackbar } = useSnackbar()
   const updateHeight = () => setTimeout(() => _updateHeight(), 150)
   const [editEnabled, setEditEnabled] = useState(false)
   const [modalOpen, setModalOpen] = useState(false)
@@ -50,6 +49,7 @@ const EditPanel = (props) => {
   const [newCard, setNewCard] = useState({})
   const [printsSet, setPrintsSet] = useState([])
   const [printsLang, setPrintsLang] = useState([])
+  const [rulings, setRulings] = useState(undefined)
 
 
   /** FUNCTIONS **/
@@ -88,10 +88,21 @@ const EditPanel = (props) => {
 
   /** EFFECTS **/
   useEffect(() => {
-    //onMount
     resetNewCard()
-  }, [card])
 
+    if (rulings === undefined)
+      fetch(card.rulings_uri)
+        .then(res => res.json())
+        .then(data => {
+          setRulings(lodash
+            .chain(data['data'])
+            .reverse()
+            .map(item => Object.assign(item, { published_at: new Date(item.published_at) }))
+            .sortBy('published_at')
+            .value()
+          )
+        })
+  }, [card])
 
 
   /** HANDLERS **/
@@ -99,7 +110,6 @@ const EditPanel = (props) => {
     if (editEnabled) {
       // save changes
       let clone = Object.assign(lodash.cloneDeep(card), newCard)
-
 
       dispatch.updateCurrentCollection({ cards: [clone] })
       onMenuHover(null)
@@ -391,7 +401,7 @@ const EditPanel = (props) => {
                       value={newCard.tag}
                       onChange={(e, newValue) => { handleCardInfoChange('tag', newValue) }}
                       onInputChange={(e, newInputValue) => {
-                        if (newInputValue?.match(/[;,.]$/))
+                        if (newInputValue?.match(/[;,]$/))
                           handleCardInfoChange('tag', newCard.tag.concat(newInputValue.slice(0, -1)))
                       }}
                       renderInput={(props) => (
@@ -401,7 +411,7 @@ const EditPanel = (props) => {
                           variant='outlined'
                           label='Tags'
                           helperText={
-                            ['Tags are seperated by ', <code>Enter</code>, ' or ', <code>[;,.]</code>]
+                            ['Tags are seperated by ', <code>{'Enter'}</code>, ' or ', <code>{'[;,]'}</code>]
                               .map((item, i) =>
                                 <Fragment key={i}>{item}</Fragment>
                               )
@@ -414,28 +424,94 @@ const EditPanel = (props) => {
               </Grid>
             )
             : (
-              <Grid item container spacing={1} justifyContent='center'>
+              <Grid item container spacing={2}>
+                <Grid item xs={4} component='table' style={{ borderSpacing: 8, height: 'fit-content' }}>
+                  <tbody>
+                    {
+                      ['amount', 'condition', '', 'foil', 'signed', 'altered', 'misprint']
+                        .map((columnName, i) =>
+                          <tr key={i} style={{ verticalAlign: columnName === 'condition' ? 'baseline' : 'middle' }}>
+                            {
+                              columnName
+                                ? <>
+                                  <td style={{ width: 0 }}>
+                                    <Typography>
+                                      {lodash.upperFirst(columnName)}
+                                    </Typography>
+                                  </td>
+                                  <td align='center'>
+                                    <RenderCell
+                                      card={card}
+                                      columnName={columnName}
+                                      renderStyle='content'
+                                    />
+                                  </td>
+                                </>
+                                : <td colSpan={2}>
+                                  <Divider />
+                                </td>
+                            }
+                          </tr>
+                        )
+                    }
+                  </tbody>
+                </Grid>
+
+                <Grid item container xs justifyContent='flex-start' alignItems='flex-start'>
+                  <Grid item container xs={12} spacing={1}>
+                    <Grid item xs={12} component={Typography} variant='h6' align='left'>
+                      Tags
+                    </Grid>
+                    <Grid item container spacing={1} style={{ paddingLeft: 32 }}>
+                      {
+                        card.tag.length > 0
+                          ? card.tag.map((tag, i) =>
+                            <Grid item key={i}>
+                              <Chip
+                                label={tag}
+                                size='small'
+                                variant='outlined'
+                              />
+                            </Grid>
+                          )
+                          : <Typography variant='body2'>
+                            No tags are present.
+                          </Typography>
+                      }
+                    </Grid>
+                  </Grid>
+                </Grid>
+
                 {
-                  lodash.chain(fields)
-                    .map(columnName => {
-                      const render = RenderCell({ card, columnName, renderStyle: 'content' })
-                      return render && [columnName, render]
-                    })
-                    .compact() // remove undefined values
-                    .map(([columnName, render]) =>
-                      <Grid item xs={2} key={columnName} name={columnName}>
-                        {[
-                          <Fragment key='colname'>{`${columnName}: `}</Fragment>,
-                          <Fragment key='render'>{render}</Fragment>,
-                        ]}
+                  rulings?.length > 0 &&
+                  <>
+                    <Grid item xs={12}>
+                      <Divider />
+                    </Grid>
+                    <Grid item container style={{ paddingTop: 12 }}>
+
+                      <Grid item component={Typography} variant='h6'>
+                        {'Notes & Rules Information'}
                       </Grid>
-                    )
-                    .value()
+                      <Grid item container component='ul' spacing={1}>
+                        {
+                          rulings.map((rule, i) =>
+                            <Grid item key={i} component='li'>
+                              <RenderCell
+                                card={{ oracle_text: rule.comment }}
+                                columnName='oracle_text'
+                              />
+                            </Grid>
+                          )
+                        }
+                      </Grid>
+                    </Grid>
+                  </>
                 }
               </Grid>
             )
         }
-      </Grid >
+      </Grid>
 
       <Grid container component={Modal}
         spacing={5}

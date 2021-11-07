@@ -1,8 +1,6 @@
 import clsx from 'clsx'
 import compact from 'lodash/compact'
 
-import styles from './styles'
-
 
 const utils = {
   addLeadingZero: (date) => (
@@ -31,11 +29,8 @@ const utils = {
         <span
           key={i}
           {...props}
-          style={{
-            ...styles.mana,
-            ...props?.style,
-          }}
-          className={clsx('ms', 'ms-cost', 'ms-shadow', 'ms-fw', cost)} />
+          style={props?.style}
+          className={clsx('ms', 'ms-cost', 'ms-shadow', 'ms-fw', cost, ...props?.className)} />
       ))
   },
 
@@ -51,10 +46,7 @@ const utils = {
         <span
           key={i}
           {...props}
-          style={{
-            ...styles.colorIndicator,
-            ...props?.style,
-          }}
+          style={props?.style}
           className={clsx('ms', 'ms-ci', `ms-ci-${ci.length}`, `ms-ci-${ci.toLowerCase()}`)} />
       ))
   },
@@ -82,6 +74,12 @@ const utils = {
       )
     }
     return compact(arr) // remove any empty strings
+  },
+
+  limitPrecision: (num, precision = 2) => {
+    precision = 10 ** precision
+  
+    return Math.round(Number(num) * precision) / precision
   }
 }
 
@@ -92,4 +90,5 @@ export const {
   toManaFont,
   toColorIndicator,
   transformStringArray,
+  limitPrecision,
 } = utils

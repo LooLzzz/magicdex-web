@@ -1,6 +1,5 @@
 // import { useEffect } from 'react'
 import { Box, Grid, Typography } from '@material-ui/core'
-import { useTheme } from '@material-ui/styles'
 
 import RenderCell from '@/CardRenders'
 
@@ -11,18 +10,17 @@ const FieldsPanel = (props) => {
     renderStyle = 'content',
     ...rest
   } = props
-  const theme = useTheme()
 
   const [name, manaCost, typeLine, set, oracleText, flavorText, artist, collectorNumber, powerToughness] = [
-    card && RenderCell({ card, columnName: 'name', renderStyle, theme, ...rest }),
-    card && RenderCell({ card, columnName: 'mana_cost', renderStyle, theme, ...rest }),
-    card && RenderCell({ card, columnName: 'type_line', renderStyle, theme, ...rest }),
-    card && RenderCell({ card, columnName: 'set', renderStyle, theme, ...rest }),
-    card && RenderCell({ card, columnName: 'oracle_text', renderStyle, theme, ...rest }),
-    card && RenderCell({ card, columnName: 'flavor_text', renderStyle, theme, ...rest }),
-    card && RenderCell({ card, columnName: 'artist', renderStyle, theme, ...rest }),
-    card && RenderCell({ card, columnName: 'collector_number', renderStyle, theme, ...rest }),
-    card && RenderCell({ card, columnName: 'power_toughness', renderStyle, theme, ...rest }),
+    card && RenderCell({ card, columnName: 'name', renderStyle, ...rest }),
+    card && RenderCell({ card, columnName: 'mana_cost', renderStyle, ...rest }),
+    card && RenderCell({ card, columnName: 'type_line', renderStyle, ...rest }),
+    card && RenderCell({ card, columnName: 'set', renderStyle, ...rest }),
+    card && RenderCell({ card, columnName: 'oracle_text', renderStyle, ...rest }),
+    card && RenderCell({ card, columnName: 'flavor_text', renderStyle, ...rest }),
+    card && RenderCell({ card, columnName: 'artist', renderStyle, ...rest }),
+    card && RenderCell({ card, columnName: 'collector_number', renderStyle, ...rest }),
+    card && RenderCell({ card, columnName: 'power_toughness', renderStyle, ...rest }),
   ]
 
   return (

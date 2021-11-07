@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
 import { useEffect, useState, createRef } from 'react'
-import { Grid, ListItemText, MenuItem, ListItem, ListSubheader, Divider, Fab, useMediaQuery } from '@material-ui/core'
+import { Grid, ListItemText, MenuItem, ListItem, ListSubheader, Divider, Fab, Tooltip, useMediaQuery } from '@material-ui/core'
 import { Skeleton, ToggleButton, ToggleButtonGroup } from '@material-ui/lab'
 import { withStyles } from '@material-ui/styles'
 import { connect } from 'react-redux'
@@ -321,24 +321,34 @@ const Collection = (props) => {
               <div className={classes.fab}>
                 <Grid container spacing={1} direction="column-reverse">
                   <Grid item>
-                    <Fab
-                      title='Add a Card'
-                      size='small'
-                      color='primary'
-                      onClick={handleFabClick('add')}
+                    <Tooltip arrow
+                      placement='left'
+                      title='Add cards'
+                      enterDelay={250}
                     >
-                      <AddIcon />
-                    </Fab>
+                      <Fab
+                        size='small'
+                        color='primary'
+                        onClick={handleFabClick('add')}
+                      >
+                        <AddIcon />
+                      </Fab>
+                    </Tooltip>
                   </Grid>
                   <Grid item>
-                    <Fab
-                      title='Import/Export'
-                      size='small'
-                      color='primary'
-                      onClick={handleFabClick('import-export')}
+                    <Tooltip arrow
+                      placement='left'
+                      title='Export Cards'
+                      enterDelay={250}
                     >
-                      <CloudUploadIcon />
-                    </Fab>
+                      <Fab
+                        size='small'
+                        color='primary'
+                        onClick={handleFabClick('import-export')}
+                      >
+                        <CloudUploadIcon />
+                      </Fab>
+                    </Tooltip>
                   </Grid>
                 </Grid>
               </div>

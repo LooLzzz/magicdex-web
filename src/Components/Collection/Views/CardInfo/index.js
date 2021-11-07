@@ -1,4 +1,4 @@
-import { useState, useRef, useImperativeHandle } from 'react'
+import { useState, useEffect, useRef, useImperativeHandle } from 'react'
 import { IconButton, Grid, Paper, Hidden, Divider, useMediaQuery } from '@material-ui/core'
 import { ChevronRight as ChevronRightIcon, ChevronLeft as ChevronLeftIcon } from '@material-ui/icons'
 import { withStyles } from '@material-ui/styles'
@@ -23,8 +23,11 @@ const CardInfo = (props) => {
     transform3dEnabled = true,
   } = props
   const swipeableViewsRef = useRef()
+  const xsDown = useMediaQuery(theme => theme.breakpoints.down('xm'))
   const smDown = useMediaQuery(theme => theme.breakpoints.down('sm'))
   const mdDown = useMediaQuery(theme => theme.breakpoints.down('md'))
+  const lgDown = useMediaQuery(theme => theme.breakpoints.down('lg'))
+  const xlDown = useMediaQuery(theme => theme.breakpoints.down('xl'))
   const [currentViewIndex, setCurrentViewIndex] = useState(0)
   const [menuHoverItem, setMenuHoverItem] = useState()
 
@@ -37,8 +40,8 @@ const CardInfo = (props) => {
 
   // useEffect(() => {
   //   // onMount
-  //   swipeableViewsRef?.current?.updateHeight()
-  // }, [])
+  //   console.log({ xsDown, smDown, mdDown, lgDown, xlDown })
+  // }, [xsDown, smDown, mdDown, lgDown, xlDown])
 
 
   /** HANDLERS **/
@@ -98,11 +101,21 @@ const CardInfo = (props) => {
           </Grid>
         </Hidden>
 
-        <Grid item xs={12} md={10} lg={8} xl={6}
+        <Grid item xs={12} md={9} lg={8} xl={7}
           align='center'
           component={Paper}
           elevation={3}
           className={classes.content}
+          style={{
+            maxWidth:
+              xsDown
+                ? 200
+                : smDown
+                  ? 500
+                  : mdDown
+                    ? 475
+                    : '' //<- lgDown || xlDown
+          }}
         >
           <SwipeableViews
             ref={swipeableViewsRef}

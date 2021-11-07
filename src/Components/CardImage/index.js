@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
 import { useState, useEffect } from 'react'
-import { Button, Grid, useMediaQuery } from '@material-ui/core'
+import { Button, Grid, useMediaQuery, Tooltip } from '@material-ui/core'
 import { withStyles } from '@material-ui/styles'
 import Tilt from 'react-parallax-tilt'
 import clsx from 'clsx'
@@ -10,6 +10,26 @@ import RenderCell from '@/CardRenders'
 import ImageOverlay from './ImageOverlay'
 import TransformableCard from './TransformableCard'
 import useStyles from './styles'
+
+
+/** CUSTOM TOOLTIP **/
+const MyTooltip = withStyles((theme) => ({
+  tooltip: {
+    backgroundColor: theme.palette.type === 'dark' ? '#787878' : '#909090',
+    fontSize: theme.typography.pxToRem(12.25),
+    boxShadow: theme.shadows[2],
+  },
+  arrow: {
+    color: theme.palette.type === 'dark' ? '#787878' : '#909090',
+  }
+}))(({
+  arrow = true,
+  enterDelay = 500,
+  placement = 'right',
+  ...props
+}) =>
+  <Tooltip placement={placement} arrow={arrow} enterDelay={enterDelay} {...props} />
+)
 
 
 const CardImage = (props) => {
@@ -142,12 +162,37 @@ const CardImage = (props) => {
             card.price > 0
               ? card.amount > 1
                 ? [
-                  <span key='one' title='Price for x1'>{RenderCell({ card, columnName: 'price' })}</span>,
+                  <MyTooltip key='one' title='Price for x1' placement='left'>
+                    <span>
+                      <RenderCell
+                        card={card}
+                        columnName='price'
+                      />
+                    </span>
+                  </MyTooltip>,
                   ' / ',
-                  <span key='multiple' title={`Price for x${card.amount}`}>{RenderCell({ card, columnName: 'total_price' })}</span>,
+                  <MyTooltip key='multiple' title={`Price for x${card.amount}`}>
+                    <span>
+                      <RenderCell
+                        card={card}
+                        columnName='total_price'
+                      />
+                    </span>
+                  </MyTooltip>,
                 ]
-                : <span title='Price for x1'>{RenderCell({ card, columnName: 'price' })}</span>
-              : <span title='No Price Available'>{'-'}</span>
+                : <MyTooltip title='Price for x1'>
+                  <span>
+                    <RenderCell
+                      card={card}
+                      columnName='price'
+                    />
+                  </span>
+                </MyTooltip>
+              : <MyTooltip title='No Price Available'>
+                <span>
+                  {'-'}
+                </span>
+              </MyTooltip>
           }
         </Grid>
       }

@@ -21,12 +21,11 @@ const addLayoutKeywords = (card) => {
     }
   }
 
-  return {
-    ...card,
+  return Object.assign(card, {
     is_transform: arrayContains(card.layout, ['modal', 'transform']),
     is_split: arrayContains(card.layout, ['split', 'fuse']),
     is_flip: arrayContains(card.layout, ['flip']),
-  }
+  })
 }
 
 export {

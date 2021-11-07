@@ -29,17 +29,7 @@ const CardPriceDataProvider = (props) => {
   /** EFFECTS **/
   useEffect(() => {
     setCardPriceData(
-      data instanceof Array && data.map(card => {
-        const { prices, foil, amount } = card
-        const price = Number(foil ? prices?.[`${currency}_foil`] : prices?.[currency])
-
-        return {
-          ...card,
-          currency,
-          price: price,
-          total_price: price * amount,
-        }
-      }))
+      data instanceof Array && data.map(card => addCardPrice(card, currency)))
   }, [data, currency])
 
 

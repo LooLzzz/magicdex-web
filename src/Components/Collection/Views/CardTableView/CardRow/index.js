@@ -107,7 +107,10 @@ const CardRow = (props) => {
                       : {}
                   )} /* renderSet() setup */
                 >
-                  {RenderCell({ card: card, columnName })}
+                  <RenderCell
+                    card={card}
+                    columnName={columnName}
+                  />
                   {
                     columnName === 'set' && isMouseOver && (
                       <Paper elevation={5} className={classes.floating} onMouseEnter={e => setIsMouseOver(false)}>

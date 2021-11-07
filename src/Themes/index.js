@@ -193,6 +193,9 @@ const getLightTheme = () =>
             ...sharedOverrides.MuiCssBaseline.code,
             backgroundColor: 'rgba(0,0,0,0.1)',
           },
+          a: {
+            color: '#2d3a82',
+          },
           '.floating': {
             ...sharedOverrides.MuiCssBaseline['.floating'],
             backgroundColor: colors.grey['A100'],
@@ -205,6 +208,11 @@ const getLightTheme = () =>
               backgroundColor: colors.purple[700],
             },
           },
+        },
+      },
+      MuiCircularProgress: {
+        circle: {
+          color: 'currentColor',
         },
       },
     },

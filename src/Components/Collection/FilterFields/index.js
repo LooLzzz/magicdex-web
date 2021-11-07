@@ -155,7 +155,7 @@ const FilterProvider = (props) => {
                       setTags(e.target.value)
                       setTagArray(
                         _.chain(e.target.value)
-                          .split(/[ ,;]+/g)
+                          .split(/[;,]+/g)
                           .uniq()
                           .compact()
                           .value()
@@ -165,7 +165,7 @@ const FilterProvider = (props) => {
                       <>
                         {'Separate tags with '}
                         <code>
-                          [;, ]+
+                          [;,]+
                         </code>
                       </>
                     }
