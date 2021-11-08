@@ -1,9 +1,12 @@
-import { useState, useEffect, useRef, useImperativeHandle } from 'react'
+/* eslint-disable react-hooks/exhaustive-deps */
+
+import { useState, useRef, useImperativeHandle } from 'react'
 import { IconButton, Grid, Paper, Hidden, Divider, useMediaQuery } from '@material-ui/core'
 import { ChevronRight as ChevronRightIcon, ChevronLeft as ChevronLeftIcon } from '@material-ui/icons'
 import { withStyles } from '@material-ui/styles'
 import SwipeableViews from 'react-swipeable-views'
 
+// import { xs, sm, md, lg, xl } from '@/Config'
 import { CardImage } from '@/Components'
 import { addCardPrice, addLayoutKeywords } from '@/Providers'
 import FieldsPanel from './FieldsPanel'
@@ -23,11 +26,11 @@ const CardInfo = (props) => {
     transform3dEnabled = true,
   } = props
   const swipeableViewsRef = useRef()
-  const xsDown = useMediaQuery(theme => theme.breakpoints.down('xm'))
+  // const xsDown = useMediaQuery(theme => theme.breakpoints.down('xm'))
   const smDown = useMediaQuery(theme => theme.breakpoints.down('sm'))
   const mdDown = useMediaQuery(theme => theme.breakpoints.down('md'))
-  const lgDown = useMediaQuery(theme => theme.breakpoints.down('lg'))
-  const xlDown = useMediaQuery(theme => theme.breakpoints.down('xl'))
+  // const lgDown = useMediaQuery(theme => theme.breakpoints.down('lg'))
+  // const xlDown = useMediaQuery(theme => theme.breakpoints.down('xl'))
   const [currentViewIndex, setCurrentViewIndex] = useState(0)
   const [menuHoverItem, setMenuHoverItem] = useState()
 
@@ -40,8 +43,21 @@ const CardInfo = (props) => {
 
   // useEffect(() => {
   //   // onMount
-  //   console.log({ xsDown, smDown, mdDown, lgDown, xlDown })
-  // }, [xsDown, smDown, mdDown, lgDown, xlDown])
+  //   const params = new URLSearchParams(location.search)
+  //   params.set('card_id', card._id)
+  //   history.push({
+  //     search: params.toString()
+  //   })
+
+  //   // onUnmount
+  //   return () => {
+  //     const params = new URLSearchParams(location.search)
+  //     params.delete('card_id')
+  //     history.push({
+  //       search: params.toString()
+  //     })
+  //   }
+  // }, [card])
 
 
   /** HANDLERS **/
@@ -63,7 +79,7 @@ const CardInfo = (props) => {
 
   /** RENDER **/
   return (
-    <div style={{ position: 'relative' }}>
+    <div className={classes.baseContainer}>
       <div
         className={classes.topArrow}
         {...topArrowProps}
@@ -90,7 +106,7 @@ const CardInfo = (props) => {
             />
           </Grid>
         </Hidden>
-        <Hidden mdUp xsDown>
+        <Hidden mdUp>
           <Grid item style={{ marginBottom: 16 }}>
             <CardImage
               showPrice
@@ -106,16 +122,6 @@ const CardInfo = (props) => {
           component={Paper}
           elevation={3}
           className={classes.content}
-          style={{
-            maxWidth:
-              xsDown
-                ? 200
-                : smDown
-                  ? 500
-                  : mdDown
-                    ? 475
-                    : '' //<- lgDown || xlDown
-          }}
         >
           <SwipeableViews
             ref={swipeableViewsRef}
@@ -126,14 +132,14 @@ const CardInfo = (props) => {
           >
 
             {/* VIEW 1 */}
-            <Grid container justifyContent='center' alignItems='center' wrap='nowrap' style={{ paddingRight: 1 }}>
+            <Grid container justifyContent='center' alignItems='center' wrap='nowrap' style={{ padding: 1.5 }}>
               <Grid item xs={12}>
                 {
                   card.is_transform || card.is_split || card.is_flip
                     ?
                     <Grid item container justifyContent='center' alignItems='stretch' spacing={mdDown ? 0 : 2}>
                       {/* Front Face */}
-                      <Grid item container justifyContent='center' xs={12} sm={11} lg style={{ marginLeft: 1 }}>
+                      <Grid item container justifyContent='center' xs={12} sm={11} lg>
                         <FieldsPanel
                           card={card}
                           cardFace={0}
@@ -150,7 +156,7 @@ const CardInfo = (props) => {
                       </Hidden>
 
                       {/* Back Face */}
-                      <Grid item container justifyContent='center' xs={12} sm={11} lg style={{ marginLeft: 1 }}>
+                      <Grid item container justifyContent='center' xs={12} sm={11} lg>
                         <FieldsPanel
                           card={card}
                           cardFace={1}
@@ -175,7 +181,7 @@ const CardInfo = (props) => {
             </Grid>
 
             {/* VIEW 2 */}
-            <Grid container justifyContent='center' alignItems='center' wrap='nowrap'>
+            <Grid container justifyContent='center' alignItems='center' wrap='nowrap' style={{ padding: 1.5 }}>
               <Grid item style={{ alignSelf: 'flex-start' }}>
                 <IconButton size='small' onClick={handleViewIndexChange(0)}>
                   <ChevronLeftIcon />

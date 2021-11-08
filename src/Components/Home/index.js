@@ -5,15 +5,16 @@ import { Typography, Paper, Grid } from "@material-ui/core"
 import { withStyles } from "@material-ui/styles"
 import { connect } from "react-redux"
 // import useSize from '@react-hook/size'
-// import { useHistory } from "react-router";
+// import { useHistory } from 'react-router-dom';
 
 // import { MagicdexApi } from "@/Api"
 import { setCurrentTab } from "@/Logic/redux"
 import useStyles from "./styles"
 
 
+/** REDUX **/
 const mapStateToProps = (state) => ({
-  currentTab: state.actions.topMenu.currentTab,
+  currentTab: state.actions.app.topMenu.currentTab,
 })
 
 const mapDispatchToProps = (dispatch) => ({
@@ -21,6 +22,7 @@ const mapDispatchToProps = (dispatch) => ({
     setCurrentTab: (payload) => dispatch(setCurrentTab(payload)),
   }
 })
+
 
 const Home = (props) => {
   //VARS

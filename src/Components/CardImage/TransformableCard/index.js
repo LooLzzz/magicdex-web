@@ -45,10 +45,11 @@ const TransformableCard = (props) => {
       <div className={clsx(classes.face, classes.front)} style={{ display: flipped ? 'none' : 'unset' }}>
         <ImageOverlay
           overlayEnabled={card.foil}
-          baseProps={{ alt: card?.name }}
+          baseProps={{ alt: card?.card_faces[0]?.name }}
           baseSrc={card.card_faces[0].image_uris.png}
           overlaySrc='/foil-overlay.png'
           overlayProps={{ style: { opacity: 0.65 } }}
+          name={card?.card_faces[0]?.name}
           width={250}
           height={350}
           {...imageProps}
@@ -58,10 +59,11 @@ const TransformableCard = (props) => {
       <div className={clsx(classes.face, classes.back)} style={{ display: !flipped ? 'none' : 'unset' }}>
         <ImageOverlay
           overlayEnabled={card.foil}
-          baseProps={{ alt: card?.name }}
+          baseProps={{ alt: card?.card_faces[0]?.name }}
           baseSrc={card.card_faces[1].image_uris.png}
           overlaySrc='/foil-overlay.png'
           overlayProps={{ style: { opacity: 0.65 } }}
+          name={card?.card_faces[0]?.name}
           width={250}
           height={350}
           {...imageProps}

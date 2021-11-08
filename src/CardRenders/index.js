@@ -143,7 +143,7 @@ const renders = {
         match => {
           match = match.slice(1, -1)
           return (
-            <span style={{ fontStyle: 'italic', fontSize: '0.88em' }}>
+            <span style={{ fontStyle: 'italic', fontSize: '0.88em', lineBreak: 'anywhere' }}>
               {'('}
               <a href={match}>{match}</a>
               {')'}
@@ -220,11 +220,32 @@ const renders = {
     }
   }),
 
-  RenderCondition: withStyles(useStyles)(({ classes, card }) => (
-    <code className={`${classes.condition}`}>
-      {card.condition}
-    </code>
-  )),
+  RenderCondition: withStyles(useStyles)(({ classes, card }) => {
+    const theme = useTheme()
+    const cond = card.condition.toUpperCase()
+
+    const condStyles = (cond) => {
+      const toStyle = (rgb) => ({
+        backgroundColor: rgb,
+        color: theme.palette.getContrastText(rgb),
+      })
+      const colors = {
+        NM: '#ffce10',
+        LP: '#ff9f10',
+        MP: '#ff9010',
+        HP: '#e84c10',
+        DAMAGED: '#c41313',
+      }
+
+      return toStyle(colors[cond])
+    }
+
+    return (
+      <code className={`${classes.condition}`} style={condStyles(cond)}>
+        {cond}
+      </code>
+    )
+  }),
 
   RenderAmount: withStyles(useStyles)(({ classes, card }) => (
     <Chip

@@ -16,11 +16,13 @@ import CardInfo from '../../CardInfo'
 import useStyles from './styles'
 
 
+/** REDUX **/
 const mapStateToProps = (state) => ({})
 
 const mapDispatchToProps = (dispatch) => ({
   // dispatch: {}
 })
+
 
 const CardRow = (props) => {
   /** VARS **/
@@ -62,6 +64,8 @@ const CardRow = (props) => {
   const handleIsOpenToggle = () => {
     if (!isOpen)
       closeAllRows(card._id)
+    else
+      closeAllRows(null)
 
     setIsOpen(!isOpen)
   }
@@ -153,7 +157,7 @@ const CardRow = (props) => {
 
       <TableRow onMouseEnter={onMouseEnter} className={classes.row} style={{ display: showContent ? 'table-row' : 'none' }}>
         <TableCell colSpan={10} style={{ padding: 0 }}>
-          <Collapse mountOnEnter in={isOpen} timeout="auto" onEnter={onCollapseEnter} onExited={onCollapseExited} onEntering={onCollapseEntering}>
+          <Collapse mountOnEnter unmountOnExit in={isOpen} timeout="auto" onEnter={onCollapseEnter} onExited={onCollapseExited} onEntering={onCollapseEntering}>
             <CardInfo
               card={card}
               refs={cardInfoRef}

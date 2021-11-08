@@ -4,16 +4,16 @@ import { API_URL } from "@/Config"
 import { authHeadersDecorator, catchErrors, populateCardData } from "./utils"
 
 
-const ROUTE_URL = `${API_URL}/collections`
+const ROUTE_URL = `${API_URL}/users`
 
 
-const Collections = {
+const Users = {
   /**
-   * Retrieve cards from active user's collection.
+   * Retrieve basic user info.
    */
-  getCards: ({ page, per_page, cards, headers }) => {
+  getInfo: ({ headers }) => {
     // const headers = { ...getAuthHeaders() };
-    const params = { page, per_page, cards }
+    const params = {}
 
     return axios
       .get(ROUTE_URL, { params, headers })
@@ -22,13 +22,38 @@ const Collections = {
   },
 
   /**
-   * Insert or update cards from active user's collection.
+   * Update user's info.
    */
-  updateCards: ({ cards, headers }) => {
+  updateInfo: ({ headers, ...data }) => {
     // const headers = { ...getAuthHeaders() };
 
     return axios
-      .post(ROUTE_URL, { cards }, { headers })
+      .post(ROUTE_URL, { ...data }, { headers })
+      .then(response => response)
+      .catch(err => catchErrors(err))
+  },
+
+  /**
+   * Retrieve cards from active user's collection.
+   */
+  getCards: ({ username, page, per_page, cards, headers }) => {
+    // const headers = { ...getAuthHeaders() };
+    const params = { page, per_page, cards }
+
+    return axios
+      .get(`${ROUTE_URL}/collections/${username}`, { params, headers })
+      .then(response => populateCardData(response.data.data))
+      .catch(err => catchErrors(err))
+  },
+
+  /**
+   * Insert or update cards from active user's collection.
+   */
+  updateCards: ({ username, cards, headers }) => {
+    // const headers = { ...getAuthHeaders() };
+
+    return axios
+      .post(`${ROUTE_URL}/collections/${username}`, { cards }, { headers })
       .then(response => response)
       .catch(err => catchErrors(err))
   },
@@ -36,11 +61,11 @@ const Collections = {
   /**
    * Delete cards from active user's collection.
    */
-  deleteCards: ({ cards, headers }) => {
+  deleteCards: ({ username, cards, headers }) => {
     // const headers = { ...getAuthHeaders() };
 
     return axios
-      .delete(ROUTE_URL, { cards }, { headers })
+      .delete(`${ROUTE_URL}/collections/${username}`, { cards }, { headers })
       .then(response => response)
       .catch(err => catchErrors(err))
   },
@@ -49,12 +74,12 @@ const Collections = {
   /**
    * Retrieve all cards from active user's collection.
    */
-  getAllCards: ({ cards, headers }) => {
+  getAllCards: ({ username, cards, headers }) => {
     // const headers = { ...getAuthHeaders() };
     const params = { cards }
 
     return axios
-      .get(`${ROUTE_URL}/all`, { params, headers })
+      .get(`${ROUTE_URL}/${username}/collections/all`, { params, headers })
       .then(response => populateCardData(response.data.data))
       .catch(err => catchErrors(err))
   },
@@ -62,11 +87,11 @@ const Collections = {
   /**
    * Clear active user's collection.
    */
-  deleteAllCards: ({ headers }) => {
+  deleteAllCards: ({ username, headers }) => {
     // const headers = { ...getAuthHeaders() };
 
     return axios
-      .delete(`${ROUTE_URL}/all`, { headers })
+      .delete(`${ROUTE_URL}/${username}/collections/all`, { headers })
       .then(response => response)
       .catch(err => catchErrors(err))
   },
@@ -74,11 +99,11 @@ const Collections = {
   /**
    * Retrieve a specific card from active user's collection.
    */
-  getCardById: ({ card_id, headers }) => {
+  getCardById: ({ username, card_id, headers }) => {
     // const headers = { ...getAuthHeaders() };
 
     return axios
-      .get(`${ROUTE_URL}/${card_id}`, { headers })
+      .get(`${ROUTE_URL}/${username}/collections/${card_id}`, { headers })
       .then(response => populateCardData(response.data))
       .catch(err => catchErrors(err))
   },
@@ -86,11 +111,11 @@ const Collections = {
   /**
    * Update a specific card from active user's collection.
    */
-  updateCardById: ({ card_id, data, headers }) => {
+  updateCardById: ({ username, card_id, data, headers }) => {
     // const headers = { ...getAuthHeaders() };
 
     return axios
-      .post(`${ROUTE_URL}/${card_id}`, data, { headers })
+      .post(`${ROUTE_URL}/${username}/collections/${card_id}`, data, { headers })
       .then(response => response)
       .catch(err => catchErrors(err))
   },
@@ -98,11 +123,11 @@ const Collections = {
   /**
    * Delete a specific card from active user's collection.
    */
-  deleteCardById: ({ card_id, headers }) => {
+  deleteCardById: ({ username, card_id, headers }) => {
     // const headers = { ...getAuthHeaders() };
 
     return axios
-      .delete(`${ROUTE_URL}/${card_id}`, { headers })
+      .delete(`${ROUTE_URL}/${username}/collections/${card_id}`, { headers })
       .then(response => response)
       .catch(err => catchErrors(err))
   },
@@ -110,17 +135,19 @@ const Collections = {
 
 
 /** EXPORTS **/
-const decoratedCollections =
+const decoratedUsers =
   Object.fromEntries(
     Object
-      .entries(Collections)
+      .entries(Users)
       .map(([k, v]) => [k, authHeadersDecorator(v)])
   )
 
-export default decoratedCollections
-// export default Collections;
+export default decoratedUsers
+// export default Users
 
 export const {
+  getInfo,
+  updateInfo,
   getCards,
   updateCards,
   deleteCards,
@@ -129,5 +156,5 @@ export const {
   getCardById,
   updateCardById,
   deleteCardById,
-} = decoratedCollections
-// } = Collections
+} = decoratedUsers
+// } = Users

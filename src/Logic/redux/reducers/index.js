@@ -1,17 +1,17 @@
-import accountReducers from './accountReducers';
-import themeReducers from './themeReducers';
-import topMenuReducers from './topMenuReducers';
+import appReducers from './appReducers'
+import accountReducers from './accountReducers'
+import themeReducers from './themeReducers'
 
-import { combineReducers } from "redux";
+import { combineReducers } from "redux"
 
 export default combineReducers({
-    account: accountReducers,
-    theme: themeReducers,
-    topMenu: topMenuReducers
-});
+  app: appReducers,
+  account: accountReducers,
+  theme: themeReducers,
+})
 
 export {
-    accountReducers,
-    themeReducers,
-    topMenuReducers,
+  appReducers,
+  accountReducers,
+  themeReducers,
 }

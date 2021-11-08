@@ -36,9 +36,9 @@ const accountReducers = {
 
     cards.forEach(card => {
       const idx = collection.findIndex(item => item._id === card._id)
-      
+
       if (idx > -1)
-        Object.assign(collection[idx], card)  
+        Object.assign(collection[idx], card)
       else
         collection.push(card)
     })

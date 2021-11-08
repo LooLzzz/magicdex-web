@@ -13,11 +13,13 @@ import FilterPopover from "./FilterPopover"
 import useStyles from "./styles"
 
 
+/** REDUX **/
 const mapStateToProps = (state) => ({})
 
 const mapDispatchToProps = (dispatch) => ({
   dispatch: {},
 })
+
 
 const FilterProvider = (props) => {
   /** VARS **/

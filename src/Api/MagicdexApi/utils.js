@@ -63,6 +63,41 @@ const Utils = {
         return false
     }
   },
+
+  populateCardData: async (cards) => {
+    const cardInfo =
+      cards instanceof Array
+        ? cards.map(card => ({ id: card.scryfall_id, set_id: card.set }))
+        : [cards.scryfall_id, cards.set]
+
+    const scryfallData = await fetchScryfallCardData(cardInfo)
+
+    const populatedCards = await Promise.all(
+      cards.map(async (card, i) => {
+        const { is_transform, is_split, is_flip } = {
+          is_transform: arrayContains(scryfallData[i].layout, ['modal', 'transform']),
+          is_split: arrayContains(scryfallData[i].layout, ['split', 'fuse']),
+          is_flip: arrayContains(scryfallData[i].layout, ['flip']),
+        }
+
+        return Object.assign(scryfallData[i], {
+          ...card,
+          is_transform,
+          is_split,
+          is_flip,
+          // rulings: await scryfallData[i].getRulings(),
+          date_created: new Date(card.date_created),
+          mana_cost: is_transform
+            ? [scryfallData[i].card_faces[0].mana_cost, scryfallData[i].card_faces[1].mana_cost]
+            : scryfallData[i].mana_cost,
+        })
+      })
+    )
+
+    return (cards instanceof Array)
+      ? populatedCards
+      : populatedCards[0]
+  },
 }
 
 export default Utils
@@ -73,4 +108,5 @@ export const {
   catchErrors,
   fetchScryfallCardData,
   arrayContains,
+  populateCardData,
 } = Utils

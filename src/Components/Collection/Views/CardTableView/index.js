@@ -4,20 +4,23 @@ import { withStyles } from '@material-ui/styles'
 import { connect } from 'react-redux'
 import _ from 'lodash'
 
+import { setCurrentCardId } from '@/Logic/redux'
 import { CardImage } from '@/Components'
 import CardRow from './CardRow'
 import useStyles from './styles'
 
 
+/** REDUX **/
 const mapStateToProps = (state) => ({
-
+  currentCardId: state.actions.app.collection.currentCardId,
 })
 
 const mapDispatchToProps = (dispatch) => ({
   dispatch: {
-
+    setCurrentCardId: (id) => dispatch(setCurrentCardId(id)),
   }
 })
+
 
 const CardTableView = (props) => {
   /** VARS **/
@@ -26,6 +29,9 @@ const CardTableView = (props) => {
     data,
     columns,
     isEditable,
+    handleCardSelected,
+    selectedCardIds,
+    // currentCardId, // current *open* card info window, falsy if nothing is open
     // dispatch,
   } = props
   const [currentHoveringCard, setCurrentHoveringCard] = useState()
@@ -33,7 +39,6 @@ const CardTableView = (props) => {
   const [sortOrder, setSortOrder] = useState('desc')
   const [sortedData, setSortedData] = useState(data)
   const [closeSignal, setCloseSignal] = useState(false)
-  const [selectedCardIds, setSelectedCardIds] = useState([]) //will contain mongodb ids (`card._id`) of selected rows
 
 
   /** EFFECTS **/
@@ -96,21 +101,8 @@ const CardTableView = (props) => {
     )
   }, [data, sortOrder, sortBy])
 
-  useEffect(() => {
-    if (!isEditable)
-      setSelectedCardIds([])
-  }, [isEditable])
-
 
   /** HANDLERS **/
-  const handleRowSelected = (id, checked) => {
-    setSelectedCardIds(
-      checked
-        ? [...selectedCardIds, id]
-        : selectedCardIds.filter(cardId => cardId !== id)
-    )
-  }
-
   const closeAllRows = (origin) => {
     setCloseSignal(origin)
   }
@@ -207,7 +199,7 @@ const CardTableView = (props) => {
                     columns={columns}
                     card={card}
                     selectable={isEditable}
-                    onSelected={handleRowSelected}
+                    onSelected={handleCardSelected}
                     selectedCardIds={selectedCardIds}
 
                     closeAllRows={closeAllRows}

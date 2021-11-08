@@ -11,7 +11,7 @@ import {
   BrightnessHigh as LightmodeIcon,
 } from '@material-ui/icons'
 import { connect } from "react-redux"
-import { useHistory } from "react-router"
+import { useHistory } from 'react-router-dom'
 import { useSnackbar } from "notistack"
 
 import { MenuPopover } from '@/Components'
@@ -19,10 +19,11 @@ import { setActiveUser, toggleCurrentThemeType } from "@/Logic/redux"
 import useStyles from "./styles"
 
 
+/** REDUX **/
 const mapStateToProps = (state) => ({
   themeType: state.actions.theme.currentThemeType,
   username: state.actions.activeUser.username,
-  currentTab: state.actions.topMenu.currentTab,
+  currentTab: state.actions.app.topMenu.currentTab,
 })
 
 const mapDispatchToProps = (dispatch) => ({
@@ -31,6 +32,7 @@ const mapDispatchToProps = (dispatch) => ({
     setActiveUser: (payload) => dispatch(setActiveUser(payload)),
   }
 })
+
 
 const TopMenu = (props) => {
   //VARS

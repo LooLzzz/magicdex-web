@@ -1,13 +1,13 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
 import { useEffect, createRef } from 'react'
-import { Button, CssBaseline, ThemeProvider } from "@material-ui/core"
+import { Grid, Button, CssBaseline, ThemeProvider } from "@material-ui/core"
 import { Close as CloseIcon } from '@material-ui/icons'
 import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-dom"
 import { connect } from "react-redux"
 import { makeStyles } from "@material-ui/styles"
 import { SnackbarProvider } from 'notistack'
-// import { useHistory } from 'react-router';
+// import { useHistory } from 'react-router-dom'
 
 import { Collection, TopMenu, Login, Register, Home } from "@/Components"
 import { MagicdexApi } from "@/Api"
@@ -15,6 +15,7 @@ import { setActiveUser } from "@/Logic/redux"
 import useStyles from "./styles"
 
 
+/** REDUX **/
 const mapStateToProps = (state) => ({
   theme: state.actions.theme.currentTheme,
 })
@@ -112,23 +113,28 @@ const App = (props) => {
           </Button>
         )}
       >
-        <div className={classes.root}>
-          <Router>
+        <Grid container component={Router} justifyContent='center' alignItems='flex-start'>
+          <Grid item xs={12}>
             <TopMenu />
-            <div className={classes.content}>
-              <Switch>
-                {
-                  routes.map((item, i) => (
-                    <item.component
-                      key={i}
-                      {...item.props}
-                    />
-                  ))
-                }
-              </Switch>
-            </div>
-          </Router>
-        </div>
+          </Grid>
+
+          <Grid item xs={12} align='center' className={classes.content}>
+            <Switch>
+              {
+                routes.map((item, i) => (
+                  <item.component
+                    key={i}
+                    {...item.props}
+                  />
+                ))
+              }
+            </Switch>
+          </Grid>
+
+          <Grid item xs={12} className={`${classes.bottomBar} MuiPaper-elevation8`}>
+            no bottom bar yet 🤷‍♂️
+          </Grid>
+        </Grid>
       </SnackbarProvider>
     </ThemeProvider>
   )

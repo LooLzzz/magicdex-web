@@ -1,10 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
 import { Fragment, useState, useEffect } from 'react'
-import { Chip, InputAdornment, Divider, Typography, Paper, Modal, Backdrop, CircularProgress, Grid, IconButton, Button, Fade, Zoom, FormControlLabel, TextField, Checkbox, MenuItem } from '@material-ui/core'
+import { Chip, useMediaQuery, Accordion, AccordionDetails, AccordionSummary, InputAdornment, Divider, Typography, Paper, Modal, Backdrop, CircularProgress, Grid, IconButton, Button, Fade, Zoom, FormControlLabel, TextField, Checkbox, MenuItem } from '@material-ui/core'
 import { Autocomplete } from '@material-ui/lab'
 import { withStyles } from '@material-ui/styles'
-import { Delete as DeleteIcon } from '@material-ui/icons'
+import { Delete as DeleteIcon, ExpandMore as ExpandMoreIcon } from '@material-ui/icons'
 import { useSnackbar } from 'notistack'
 import { connect } from 'react-redux'
 import lodash from 'lodash'
@@ -15,7 +15,7 @@ import RenderCell from '@/CardRenders'
 import useStyles from './styles'
 
 
-/** UTILS **/
+/** REDUX **/
 const mapStateToProps = (state) => ({})
 const mapDispatchToProps = (dispatch) => ({
   dispatch: {
@@ -42,6 +42,7 @@ const EditPanel = (props) => {
     onMenuHover,
   } = props
   const { enqueueSnackbar } = useSnackbar()
+  const smDown = useMediaQuery(theme => theme.breakpoints.down('sm'))
   const updateHeight = () => setTimeout(() => _updateHeight(), 150)
   const [editEnabled, setEditEnabled] = useState(false)
   const [modalOpen, setModalOpen] = useState(false)
@@ -90,18 +91,17 @@ const EditPanel = (props) => {
   useEffect(() => {
     resetNewCard()
 
-    if (rulings === undefined)
-      fetch(card.rulings_uri)
-        .then(res => res.json())
-        .then(data => {
-          setRulings(lodash
-            .chain(data['data'])
-            .reverse()
-            .map(item => Object.assign(item, { published_at: new Date(item.published_at) }))
-            .sortBy('published_at')
-            .value()
-          )
-        })
+    fetch(card.rulings_uri)
+      .then(res => res.json())
+      .then(data => {
+        setRulings(lodash
+          .chain(data['data'])
+          .reverse()
+          .map(item => Object.assign(item, { published_at: new Date(item.published_at) }))
+          .sortBy('published_at')
+          .value()
+        )
+      })
   }, [card])
 
 
@@ -225,7 +225,7 @@ const EditPanel = (props) => {
         {
           editEnabled
             ? (
-              <Grid item container justifyContent='center' alignItems='flex-start' wrap='nowrap' spacing={1}>
+              <Grid item container justifyContent='center' alignItems='flex-start' spacing={1}>
                 <Grid item container direction='column' justifyContent='center' alignItems='flex-start' style={{ maxWidth: 'min-content' }}>
                   <Grid item>
                     <TextField
@@ -309,7 +309,7 @@ const EditPanel = (props) => {
                   </Grid>
                 </Grid>
 
-                <Grid item container direction='column' spacing={1}>
+                <Grid item container direction='column' spacing={1} xs={12} sm={10} md>
                   <Grid item container wrap='nowrap' spacing={1}>
                     <Grid item xs style={{ width: '1px' }}>
                       <TextField select
@@ -462,7 +462,7 @@ const EditPanel = (props) => {
                     <Grid item xs={12} component={Typography} variant='h6' align='left'>
                       Tags
                     </Grid>
-                    <Grid item container spacing={1} style={{ paddingLeft: 32 }}>
+                    <Grid item container spacing={1} style={{ paddingLeft: 16 }}>
                       {
                         card.tag.length > 0
                           ? card.tag.map((tag, i) =>
@@ -474,8 +474,8 @@ const EditPanel = (props) => {
                               />
                             </Grid>
                           )
-                          : <Typography variant='body2'>
-                            No tags are present.
+                          : <Typography style={{ fontFamily: 'Determination Mono' }}>
+                            * But nobody came.
                           </Typography>
                       }
                     </Grid>
@@ -489,9 +489,39 @@ const EditPanel = (props) => {
                       <Divider />
                     </Grid>
                     <Grid item container style={{ paddingTop: 12 }}>
+                      <Accordion
+                        className={classes.accordion}
+                        classes={{ expanded: classes['accordion-expanded'] }}
+                        TransitionProps={{
+                          onEntering: updateHeight,
+                          onEntered: updateHeight,
+                          onExiting: updateHeight,
+                          onExited: updateHeight,
+                        }}
+                      >
+                        <AccordionSummary expandIcon={<ExpandMoreIcon />} >
+                          <Typography variant='h6'>
+                            {smDown ? 'Rulings' : 'Additional Rulings'}
+                          </Typography>
+                        </AccordionSummary>
+                        <AccordionDetails style={{ padding: 0 }}>
+                          <ul className={classes.listing}>
+                            {
+                              rulings.map((rule, i) =>
+                                <li key={i}>
+                                  <RenderCell
+                                    card={{ oracle_text: rule.comment }}
+                                    columnName='oracle_text'
+                                  />
+                                </li>
+                              )
+                            }
+                          </ul>
+                        </AccordionDetails>
+                      </Accordion>
 
-                      <Grid item component={Typography} variant='h6'>
-                        {'Notes & Rules Information'}
+                      {/* <Grid item component={Typography} variant='h6'>
+                        {'Additional Rulings'}
                       </Grid>
                       <Grid item container component='ul' spacing={1}>
                         {
@@ -504,7 +534,7 @@ const EditPanel = (props) => {
                             </Grid>
                           )
                         }
-                      </Grid>
+                      </Grid> */}
                     </Grid>
                   </>
                 }

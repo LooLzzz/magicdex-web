@@ -2,3 +2,8 @@
   height: 100%;
   width: 100%;
 }
+
+@font-face {
+  font-family: 'Determination Mono';
+  src: local('Determination Mono'), url(./Fonts/DTM-Mono.otf) format('opentype');
+}

@@ -1,18 +1,18 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit"
 
-import initialState from "./initialState";
-import { accountReducers, themeReducers, topMenuReducers } from "./reducers"
+import initialState from "./initialState"
+import { appReducers, accountReducers, themeReducers } from "./reducers"
 
 
 export const reducerSlice = createSlice({
   name: "actions",
   initialState: initialState,
   reducers: {
+    ...appReducers,
     ...accountReducers,
     ...themeReducers,
-    ...topMenuReducers
   },
-});
+})
 
 export const {
   setActiveUser,
@@ -21,6 +21,10 @@ export const {
   setCurrentCollection,
   updateCurrentCollection,
   removeCardsFromCollection,
-} = reducerSlice.actions;
+  setCurrentCardId,
+  setSelectedCardIds,
+  removeSelectedCardIds,
+  addSelectedCardIds,
+} = reducerSlice.actions
 
-export default reducerSlice.reducer;
+export default reducerSlice.reducer

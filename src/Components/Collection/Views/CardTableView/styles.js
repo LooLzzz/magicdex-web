@@ -4,7 +4,8 @@ const useStyles = (theme) => {
   // const mainSidesPadding = theme.spacing(10)
 
   return {
-    root: {},
+    root: {
+    },
     'card-image': {
       zIndex: 1,
       position: 'sticky',
@@ -12,7 +13,8 @@ const useStyles = (theme) => {
       marginRight: theme.spacing(2),
     },
     tableContainer: {
-      overflow: 'visible',
+      maxWidth: '90vw',
+      // overflow: 'visible',
     },
   }
 }

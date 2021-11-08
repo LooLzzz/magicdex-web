@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { CircularProgress } from '@material-ui/core'
+import { CircularProgress, FormControlLabel } from '@material-ui/core'
 import { withStyles } from '@material-ui/styles'
 import clsx from 'clsx'
 
@@ -10,6 +10,7 @@ const ImageOverlay = (props) => {
   /** VARS **/
   const {
     classes,
+    name = 'Loading..',
     rootProps,
     baseSrc,
     baseProps,
@@ -42,16 +43,18 @@ const ImageOverlay = (props) => {
         <div
           className={classes.loading}
           style={{
-            background: 'url(cardback.png) 0 0 / cover',
-            // background: 'linear-gradient(rgba(60,60,60,0.7),rgba(60,60,60,0.7)), url(cardback.png) 0 0 / cover',
-            opacity: 0.65,
-            backgroundSize: 'cover',
-            borderRadius: '4.75% / 3.5%',
             width: width,
             height: height,
           }}
         >
-          <CircularProgress />
+          <FormControlLabel
+            control={<CircularProgress />}
+            label={name}
+            labelPlacement={'bottom'}
+            style={{
+              color: 'white',
+            }}
+          />
         </div>
       }
 

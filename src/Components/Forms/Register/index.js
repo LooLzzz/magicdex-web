@@ -6,7 +6,7 @@ import { Box, Button, Grid, Typography } from '@material-ui/core'
 import { AccountCircle as AccountCircleIcon } from '@material-ui/icons'
 import { withStyles } from "@material-ui/styles"
 import { connect } from 'react-redux'
-import { useHistory } from 'react-router'
+import { useHistory } from 'react-router-dom'
 import { TextValidator } from 'react-material-ui-form-validator'
 import { useSnackbar } from 'notistack'
 import _ from 'lodash'
@@ -17,6 +17,7 @@ import { BaseForm } from './..'
 import useStyles from './styles'
 
 
+/** REDUX **/
 const mapStateToProps = (state) => ({
   username: state.actions.activeUser.username,
 })
@@ -27,6 +28,7 @@ const mapDispatchToProps = (dispatch) => ({
     setCurrentTab: (payload) => dispatch(setCurrentTab(payload)),
   }
 })
+
 
 const Register = (props) => {
   /** VARS **/

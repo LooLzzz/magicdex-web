@@ -4,8 +4,6 @@ import { useEffect, useState, createRef } from 'react'
 import { Grid, ListItemText, MenuItem, ListItem, ListSubheader, Divider, Fab, Tooltip, useMediaQuery } from '@material-ui/core'
 import { Skeleton, ToggleButton, ToggleButtonGroup } from '@material-ui/lab'
 import { withStyles } from '@material-ui/styles'
-import { connect } from 'react-redux'
-import { useHistory } from 'react-router'
 import {
   Add as AddIcon,
   CloudUpload as CloudUploadIcon,
@@ -14,6 +12,8 @@ import {
   ViewModule as ViewModuleIcon,
   ViewCompact as ViewCompactIcon,
 } from '@material-ui/icons'
+import { connect } from 'react-redux'
+import { useHistory, useLocation } from 'react-router-dom'
 import upperFirst from 'lodash/upperFirst'
 
 import { setCurrentTab, setCurrentCollection } from '@/Logic/redux'
@@ -25,6 +25,7 @@ import FilterFields from './FilterFields'
 import useStyles from './styles'
 
 
+/** REDUX **/
 const mapStateToProps = (state) => ({
   username: state.actions.activeUser.username,
   collection: state.actions.activeUser.collection,
@@ -37,6 +38,7 @@ const mapDispatchToProps = (dispatch) => ({
   }
 })
 
+
 const Collection = (props) => {
   /** VARS **/
   const {
@@ -47,13 +49,15 @@ const Collection = (props) => {
     currency: _currency,
   } = props
   const history = useHistory()
+  const location = useLocation()
   const menuRef = createRef()
   const [view, setView] = useState('table') // one of ['table', 'grid', 'compact']
   const [filters, setFilters] = useState()
   const [currency, setCurrency] = useState(_currency ?? 'usd') // one of ['usd', 'eur']
-  const [tableEditable, setTableEditable] = useState(false)
+  const [isEditable, setEditable] = useState(false)
   const [tiltEnabled, setTiltEnabled] = useState(false)
   const [transform3dEnabled, setTransform3dEnabled] = useState(false)
+  const [selectedCardIds, setSelectedCardIds] = useState([]) // will contain mongodb ids (`card._id`) of selected rows
 
   const smDown = useMediaQuery((theme) => theme.breakpoints.down('sm'))
   const mdDown = useMediaQuery((theme) => theme.breakpoints.down('md'))
@@ -74,6 +78,16 @@ const Collection = (props) => {
     //onMount
     dispatch.setCurrentTab({ tab: 'collection' })
   }, [])
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search)
+    const {
+      view: viewParam,
+    } = Object.fromEntries(params)
+
+    if (viewParam && viewParam !== view)
+      handleViewChange(viewParam)
+  }, [location])
 
   useEffect(() => {
     if (smDown) {
@@ -112,6 +126,11 @@ const Collection = (props) => {
   }, [smDown, mdDown, currency])
 
   useEffect(() => {
+    if (!isEditable)
+      setSelectedCardIds([])
+  }, [isEditable])
+
+  useEffect(() => {
     if (!username)
       return history.push('/login')
 
@@ -123,6 +142,27 @@ const Collection = (props) => {
 
 
   /** HANDLERS **/
+  const handleCardSelected = (id, checked) => {
+    setSelectedCardIds(
+      checked
+        ? [...selectedCardIds, id]
+        : selectedCardIds.filter(cardId => cardId !== id)
+    )
+  }
+
+  const handleViewChange = (value) => {
+    setView(state => {
+      if (value && value !== state) {
+        const params = new URLSearchParams(location.search)
+        params.set('view', value)
+
+        history.push({ search: params.toString() })
+        return value
+      }
+      return state
+    })
+  }
+
   const handleFabClick = fabType => e => {
     switch (fabType) {
       case 'add':
@@ -150,7 +190,7 @@ const Collection = (props) => {
   }
 
   const toggleTableEditable = () => {
-    setTableEditable(!tableEditable)
+    setEditable(!isEditable)
   }
 
   const toggleCurrency = () => {
@@ -211,7 +251,7 @@ const Collection = (props) => {
                           style={{ height: '2.4em' }}
                           size='small'
                           value={view}
-                          onChange={(e, v) => setView(state => v || state)}
+                          onChange={(e, v) => handleViewChange(v)}
                         >
                           <ToggleButton value='table'>
                             <ViewListIcon />
@@ -244,7 +284,7 @@ const Collection = (props) => {
                                 </MenuItem>
                                 <MenuItem onClick={toggleTableEditable}>
                                   {
-                                    tableEditable
+                                    isEditable
                                       ? 'Disable Edit'
                                       : 'Enable Edit'
                                   }
@@ -289,24 +329,23 @@ const Collection = (props) => {
                     >
                       {
                         (() => {
+                          const props = {
+                            columns,
+                            setCurrency,
+                            currency,
+                            isEditable,
+                            tiltEnabled,
+                            transform3dEnabled,
+                            handleCardSelected,
+                            selectedCardIds,
+                            // data is passed to children from the `DataProvider`s
+                          }
                           switch (view) {
                             default:
                             case 'table':
-                              return <CardTableView
-                                columns={columns}
-                                setCurrency={setCurrency}
-                                currency={currency}
-                                isEditable={tableEditable}
-                                tiltEnabled={tiltEnabled}
-                                transform3dEnabled={transform3dEnabled}
-                              // data = {passed from parent}
-                              />
+                              return <CardTableView {...props} />
                             case 'grid':
-                              return <CardGridView
-                                tiltEnabled={tiltEnabled}
-                                transform3dEnabled={transform3dEnabled}
-                              // data = {passed from parent}
-                              />
+                              return <CardGridView {...props} />
                             case 'compact':
                               return <div>TBD</div>
                           }

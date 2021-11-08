@@ -21,9 +21,15 @@ const INITIAL_STATE = {
     currentTheme: themeType === 'dark' ? getDarkTheme() : getLightTheme(),
     currentThemeType: themeType,
   },
-  topMenu: {
-    currentTab: 'home',
-  }
+  app: {
+    topMenu: {
+      currentTab: 'home',
+    },
+    collection: {
+      currentCardId: undefined,
+      selectedCardIds: [],
+    },
+  },
 }
 
 export default INITIAL_STATE

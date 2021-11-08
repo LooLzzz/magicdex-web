@@ -6,6 +6,10 @@ import reducer, {
   setCurrentCollection,
   updateCurrentCollection,
   removeCardsFromCollection,
+  setCurrentCardId,
+  setSelectedCardIds,
+  removeSelectedCardIds,
+  addSelectedCardIds,
 } from './reducerSlice'
 
 export {
@@ -17,4 +21,8 @@ export {
   removeCardsFromCollection,
   setCurrentTab,
   toggleCurrentThemeType,
+  setCurrentCardId,
+  setSelectedCardIds,
+  removeSelectedCardIds,
+  addSelectedCardIds,
 }

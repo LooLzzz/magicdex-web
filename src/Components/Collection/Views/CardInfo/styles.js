@@ -1,11 +1,13 @@
 
 const useStyles = (theme) => {
-  // const bottomBarHeight = '50px'
-  // const mainSidesPadding = theme.spacing(10)
+  const smDown = theme.breakpoints.down('sm')
 
   return {
+    baseContainer: {
+      position: 'relative',
+    },
     root: {
-      width: '100%',
+      // width: '100%',
       backgroundColor: theme.palette.background.secondary,
       position: 'relative',
       marginTop: theme.spacing(1),
@@ -38,6 +40,10 @@ const useStyles = (theme) => {
       transition: 'all 0.3s ease',
       padding: theme.spacing(2),
       marginTop: 0,
+      maxWidth: '42.5vw',
+      [smDown]: {
+        maxWidth: '70vw',
+      },
     },
   }
 }

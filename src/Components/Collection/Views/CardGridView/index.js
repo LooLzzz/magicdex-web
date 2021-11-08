@@ -5,7 +5,7 @@ import { Fragment, useEffect, useState, useRef, createRef } from 'react'
 import { Paper, Grid, Collapse } from '@material-ui/core'
 import { withStyles, useTheme } from '@material-ui/styles'
 import { connect } from 'react-redux'
-import scrollIntoView from 'scroll-into-view-if-needed'
+// import scrollIntoView from 'scroll-into-view-if-needed'
 import useSize from '@react-hook/size'
 import _ from 'lodash'
 
@@ -15,11 +15,13 @@ import CardInfo from '../CardInfo'
 import useStyles from './styles'
 
 
+/** REDUX **/
 const mapStateToProps = (state) => ({})
 
 const mapDispatchToProps = (dispatch) => ({
-  // dispatch: {}
+  dispatch: {}
 })
+
 
 const CardGridView = (props) => {
   /** VARS **/
@@ -35,7 +37,7 @@ const CardGridView = (props) => {
 
   const containerRef = useRef()
   const [containerWidth,] = useSize(containerRef)
-  const [cardsPerRow, setCardsPerRow] = useState(0)
+  const [cardsPerRow, setCardsPerRow] = useState()
   const [selectedCard, setSelectedCard] = useState({})
   const [refs, setRefs] = useState([])
 
@@ -65,19 +67,10 @@ const CardGridView = (props) => {
   }, [data])
 
   useEffect(() => {
-    const n = Math.floor(containerWidth / (cardWidth + 16))
+    let n = Math.floor(containerWidth / (cardWidth + 16))
+    n = n > 0 ? n : 1
+    setCardsPerRow(n)
 
-    setCardsPerRow(cardsPerRow => {
-      if (cardsPerRow !== n) {
-        //close the collapse
-        setSelectedCard(selectedCard => ({
-          ...selectedCard,
-          targetCollapse: undefined,
-        }))
-        return n
-      }
-      return cardsPerRow
-    })
     setRefs(
       _.times(
         Math.floor(data.length / n) + 1,
@@ -94,7 +87,7 @@ const CardGridView = (props) => {
   /** HANDLERS **/
   const handleCardClick = ({ card, key }) => (e) => {
     const { data: selectedCardData, targetCollapse } = selectedCard
-    const targetCollapseIdx = Math.floor(key / cardsPerRow)
+    const targetCollapseIdx = Math.floor(key / cardsPerRow) || 0
 
     if (targetCollapse !== undefined && selectedCardData?._id === card._id) {
       // a collapse is open & the same card is clicked ->
@@ -112,7 +105,7 @@ const CardGridView = (props) => {
         targetCollapse: targetCollapseIdx,
         box: e.currentTarget.getBoundingClientRect(),
       })
-      
+
       setTimeout(() => {
         refs[targetCollapseIdx]?.cardInfo?.current?.setViewIndex(0)
         refs[targetCollapseIdx]?.cardInfo?.current?.updateHeight()
@@ -158,12 +151,12 @@ const CardGridView = (props) => {
               {
                 (((i + 1) % cardsPerRow === 0) || (i === sortedData.length - 1)) &&
                 <Grid item xs={12}>
-                  <Collapse mountOnEnter
+                  <Collapse mountOnEnter unmountOnExit
                     ref={refs[targetCollapseIdx]?.collapse}
                     timeout="auto"
                     in={targetCollapseIdx === selectedCard.targetCollapse}
-                    onEntering={() => scrollIntoView(refs[targetCollapseIdx]?.collapse?.current, { scrollMode: 'if-needed', behavior: 'smooth', block: 'start' })}
-                    onEntered={() => scrollIntoView(refs[targetCollapseIdx]?.collapse?.current, { scrollMode: 'if-needed', behavior: 'smooth', block: 'end' })}
+                  // onEntering={() => scrollIntoView(refs[targetCollapseIdx]?.collapse?.current, { scrollMode: 'if-needed', behavior: 'smooth', block: 'start' })}
+                  // onEntered={() => scrollIntoView(refs[targetCollapseIdx]?.collapse?.current, { scrollMode: 'if-needed', behavior: 'smooth', block: 'end' })}
                   >
                     {
                       selectedCard?.data &&

@@ -118,6 +118,7 @@ const CardImage = (props) => {
                   }
                   overlaySrc='/foil-overlay.png'
                   overlayProps={{ style: { opacity: 0.65 } }}
+                  name={card?.card_faces[flipped ? 1 : 0]?.name}
                   width={width}
                   height={height}
                   {...imageProps}
@@ -134,6 +135,7 @@ const CardImage = (props) => {
                 }
                 overlaySrc='/foil-overlay.png'
                 overlayProps={{ style: { opacity: 0.65 } }}
+                name={card?.name}
                 width={width}
                 height={height}
                 {...imageProps}
