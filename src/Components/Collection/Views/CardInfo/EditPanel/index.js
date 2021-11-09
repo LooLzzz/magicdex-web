@@ -113,7 +113,7 @@ const EditPanel = (props) => {
 
       dispatch.updateCurrentCollection({ cards: [clone] })
       onMenuHover(null)
-      enqueueSnackbar(`Updated "${card.name} [${card.set.toUpperCase()}]"`, { variant: 'info' })
+      enqueueSnackbar(`Updated ${card.name} [${card.set.toUpperCase()}]`, { variant: 'info' })
     }
 
     setEditEnabled(editEnabled => !editEnabled)
@@ -130,7 +130,7 @@ const EditPanel = (props) => {
   const handleDeleteButtonClick = (confirm) => (e) => {
     if (confirm) {
       dispatch.removeCardsFromCollection({ cards: [card] })
-      enqueueSnackbar(`Deleted "${card.name} [${card.set.toUpperCase()}]"`, { variant: 'success' })
+      enqueueSnackbar(`Deleted ${card.name} [${card.set.toUpperCase()}]`, { variant: 'success' })
     }
     else
       setModalOpen(true)

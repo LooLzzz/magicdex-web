@@ -194,7 +194,8 @@ const getLightTheme = () =>
             backgroundColor: 'rgba(0,0,0,0.1)',
           },
           a: {
-            color: '#2d3a82',
+            // color: '#4f6ce2',
+            color: '#bf9eee',
           },
           '.floating': {
             ...sharedOverrides.MuiCssBaseline['.floating'],

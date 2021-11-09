@@ -123,7 +123,7 @@ const CardInfo = (props) => {
           elevation={3}
           className={classes.content}
         >
-          <SwipeableViews
+          <SwipeableViews ignoreNativeScroll
             ref={swipeableViewsRef}
             animateHeight
             index={currentViewIndex}

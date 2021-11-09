@@ -2,7 +2,7 @@ const useStyles = (theme) => {
   // const bottomBarHeight = '50px'
   const leftRightPadding = theme.spacing(10)
   const topBottomPadding = theme.spacing(8)
-  const contrast = theme.palette.type === 'dark' ? '255,255,255' : '0,0,0'
+  // const contrast = theme.palette.type === 'dark' ? '255,255,255' : '0,0,0'
   // console.log(theme.palette)
 
   return {
@@ -60,12 +60,13 @@ const useStyles = (theme) => {
       // boxShadow: theme.shadows[4]
     },
     bottomBar: {
+      height: topBottomPadding,
       minHeight: topBottomPadding,
       maxHeight: topBottomPadding,
-      padding: theme.spacing(1),
+      // padding: theme.spacing(1),
 
-      backgroundColor: theme.palette.primary[theme.palette.type],
-      color: theme.palette.getContrastText(theme.palette.primary[theme.palette.type]),
+      backgroundColor: theme.palette.primary.dark,
+      color: theme.palette.getContrastText(theme.palette.primary.dark),
       // background: `linear-gradient(rgba(${contrast}, 0.17),rgba(${contrast}, 0.17)), ${theme.palette.background.default}`,
       // boxShadow: 'rgba(17, 17, 26, 0.05) 0px 1px 0px, rgba(17, 17, 26, 0.1) 0px 0px 8px',
       // boxShadow: `rgba(${contrast}, 0.5) 0px 2px 4px, rgba(${contrast}, 0.4) 0px 7px 13px -3px, rgba(${contrast}, 0.3) 0px -3px 0px inset`,

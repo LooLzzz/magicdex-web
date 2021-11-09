@@ -9,7 +9,7 @@ import { makeStyles } from "@material-ui/styles"
 import { SnackbarProvider } from 'notistack'
 // import { useHistory } from 'react-router-dom'
 
-import { Collection, TopMenu, Login, Register, Home } from "@/Components"
+import { Collection, TopMenu, BottomBar, Login, Register, Home } from "@/Components"
 import { MagicdexApi } from "@/Api"
 import { setActiveUser } from "@/Logic/redux"
 import useStyles from "./styles"
@@ -114,9 +114,9 @@ const App = (props) => {
         )}
       >
         <Grid container component={Router} justifyContent='center' alignItems='flex-start'>
-          <Grid item xs={12}>
-            <TopMenu />
-          </Grid>
+          <Grid item xs={12}
+            component={TopMenu}
+          />
 
           <Grid item xs={12} align='center' className={classes.content}>
             <Switch>
@@ -132,7 +132,7 @@ const App = (props) => {
           </Grid>
 
           <Grid item xs={12} className={`${classes.bottomBar} MuiPaper-elevation8`}>
-            no bottom bar yet 🤷‍♂️
+            <BottomBar />
           </Grid>
         </Grid>
       </SnackbarProvider>

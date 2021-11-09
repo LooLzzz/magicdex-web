@@ -43,17 +43,19 @@ const ImageOverlay = (props) => {
         <div
           className={classes.loading}
           style={{
+            // zIndex: 69, // nice
             width: width,
             height: height,
           }}
         >
           <FormControlLabel
             control={<CircularProgress />}
-            label={name}
             labelPlacement={'bottom'}
-            style={{
-              color: 'white',
-            }}
+            label={(
+              <span style={{ fontSize: '0.9rem' }}>
+                {name}
+              </span>
+            )}
           />
         </div>
       }
