@@ -1,7 +1,0 @@
-.TopMenuComponent {
-    display: flex;
-    align-items: center;
-    min-height: 7vh;
-    background-color: rgb(155, 182, 218);
-    border-bottom: 2px lightsteelblue solid;
-}
