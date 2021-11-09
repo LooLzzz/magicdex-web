@@ -38,7 +38,7 @@ const useStyles = (theme) => {
       // background: `linear-gradient(35deg, ${theme.palette.background.paper} 10%, ${theme.palette.background.default} 225%)`,
     },
     content: {
-      overflow: 'auto',
+      overflow: 'visible', // !important
       paddingTop: topBottomPadding,
       // paddingBottom: topBottomPadding,
       paddingLeft: leftRightPadding,
