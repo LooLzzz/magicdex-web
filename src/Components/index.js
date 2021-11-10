@@ -6,6 +6,8 @@ import TopMenu from "./TopMenu"
 import CardImage from './CardImage'
 import EllipsisText from './EllipsisText'
 import BottomBar from "./BottomBar"
+import Decks from "./Decks"
+import Profile from "./Profile"
 import { BaseForm, Login, Register } from "./Forms"
 
 export {
@@ -20,4 +22,6 @@ export {
     CardImage,
     EllipsisText,
     BottomBar,
+    Decks,
+    Profile,
 }

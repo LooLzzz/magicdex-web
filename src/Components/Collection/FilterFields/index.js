@@ -8,25 +8,30 @@ import { connect } from "react-redux"
 import Scryfall from "scryfall-client"
 import _ from "lodash"
 
-import { RadioOptions, TextOption, RangeOptions, AutocompleteOptions } from "./utils"
+import { setFilters } from '@/Logic/redux'
+import { TextOption, AutocompleteOptions } from "./utils"
 import FilterPopover from "./FilterPopover"
 import useStyles from "./styles"
 
 
 /** REDUX **/
-const mapStateToProps = (state) => ({})
+const mapStateToProps = (state) => ({
+  filters: state.actions.app.collection.filters,
+})
 
 const mapDispatchToProps = (dispatch) => ({
-  dispatch: {},
+  dispatch: {
+    setFilters: (filters) => dispatch(setFilters(filters)),
+  },
 })
 
 
 const FilterProvider = (props) => {
   /** VARS **/
   const {
-    // dispatch,
+    dispatch,
     classes,
-    setFilters,
+    filters,
   } = props
   const filtersMenuRef = createRef()
 
@@ -74,30 +79,29 @@ const FilterProvider = (props) => {
   }, [])
 
   useEffect(() => {
-    setFilters({
-      name: v => v.toLowerCase().includes(cardName.toLowerCase()),
-      oracle_text: v => v ? v.toLowerCase().includes(oracleText) : true,
-      type_line: v => v.toLowerCase().includes(typeLine),
-      tag: v => (
-        tagArray.length > 0
-          ? _.intersection(v, tagArray).length > 0
-          : true
-      ),
-      set: v => (
-        selectedSets.length > 0
-          ? _.includes(selectedSets.map(set => set.code), v)
-          : true
-      ),
-      // colors: selectedColors,
-      // mana_cost: selectedManaCosts,
-      // amount: (v) => v >= amountMin && v <= amountMax,
-      // price: (v, item) => item.amount * item.prices.usd >= priceMin && item.amount * item.prices.usd <= priceMax,
-      // foil: (v) => getRadioAsBoolean(v, foil),
-      // signed: (v) => getRadioAsBoolean(v, signed),
-      // altered: (v) => getRadioAsBoolean(v, altered),
+    dispatch.setFilters({
+      filters: {
+        name: v => v.toLowerCase().includes(cardName.toLowerCase()),
+        oracle_text: v => v ? v.toLowerCase().includes(oracleText) : true,
+        type_line: v => v.toLowerCase().includes(typeLine),
+        tag: tagArray.length > 0 ? tagArray : true,
+        set: selectedSets.length > 0 ? selectedSets : true,
+        // colors: selectedColors,
+        // mana_cost: selectedManaCosts,
+        // amount: (v) => v >= amountMin && v <= amountMax,
+        // price: (v, item) => item.amount * item.prices.usd >= priceMin && item.amount * item.prices.usd <= priceMax,
+        // foil: (v) => getRadioAsBoolean(v, foil),
+        // signed: (v) => getRadioAsBoolean(v, signed),
+        // altered: (v) => getRadioAsBoolean(v, altered),
+      }
     })
   }, [cardName, oracleText, typeLine, tags, selectedSets])
   // }, [cardName, oracleText, type, selectedColors, selectedManaCosts, selectedSets, amountMin, amountMax, priceMin, priceMax, foil, signed, altered])
+
+  useEffect(() => {
+    if (Array.isArray(filters.tag))
+      setTagArray(filters.tag)
+  }, [filters])
 
 
   /** HANDLERS **/

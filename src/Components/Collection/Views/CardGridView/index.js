@@ -1,5 +1,4 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable no-lone-blocks */
 
 import { Fragment, useEffect, useState, useRef, createRef } from 'react'
 import { Paper, Grid, Collapse } from '@material-ui/core'
@@ -9,17 +8,24 @@ import { connect } from 'react-redux'
 import useSize from '@react-hook/size'
 import _ from 'lodash'
 
+import { addSelectedCardIds, removeSelectedCardIds } from '@/Logic/redux'
 import { CardImage } from '@/Components'
-// import { getCardPrints } from '@/Api'
 import CardInfo from '../CardInfo'
 import useStyles from './styles'
 
 
 /** REDUX **/
-const mapStateToProps = (state) => ({})
+const mapStateToProps = (state) => ({
+  tiltEnabled: state.actions.app.collection.gridView.tiltEnabled,
+  transform3dEnabled: state.actions.app.collection.gridView.transform3dEnabled,
+  cardsSelectableEnabled: state.actions.app.collection.cardsSelectableEnabled,
+})
 
 const mapDispatchToProps = (dispatch) => ({
-  dispatch: {}
+  dispatch: {
+    addSelectedCardIds: (payload) => dispatch(addSelectedCardIds(payload)),
+    removeSelectedCardIds: (payload) => dispatch(removeSelectedCardIds(payload)),
+  }
 })
 
 
@@ -27,12 +33,13 @@ const CardGridView = (props) => {
   /** VARS **/
   const {
     // classes,
+    // dispatch,
     data,
     tiltEnabled,
     transform3dEnabled,
-    // dispatch,
+    // cardsSelectableEnabled,
+    cardWidth = 209,
   } = props
-  const cardWidth = 209
   const theme = useTheme()
 
   const containerRef = useRef()

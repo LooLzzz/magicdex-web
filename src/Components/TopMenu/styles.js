@@ -19,6 +19,9 @@ const useStyles = (theme) => {
       //   duration: theme.transitions.duration.leavingScreen,
       // }),
     },
+    iconButton: {
+      color: theme.palette.text.secondary,
+    },
   }
 }
 

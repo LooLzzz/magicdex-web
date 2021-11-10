@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
 import { Fragment, useState, useEffect } from 'react'
-import { Chip, useMediaQuery, Accordion, AccordionDetails, AccordionSummary, InputAdornment, Divider, Typography, Paper, Modal, Backdrop, CircularProgress, Grid, IconButton, Button, Fade, Zoom, FormControlLabel, TextField, Checkbox, MenuItem } from '@material-ui/core'
+import { Tooltip, Chip, useMediaQuery, Accordion, AccordionDetails, AccordionSummary, InputAdornment, Divider, Typography, Paper, Modal, Backdrop, CircularProgress, Grid, IconButton, Button, Fade, Zoom, FormControlLabel, TextField, Checkbox, MenuItem } from '@material-ui/core'
 import { Autocomplete } from '@material-ui/lab'
 import { withStyles } from '@material-ui/styles'
 import { Delete as DeleteIcon, ExpandMore as ExpandMoreIcon } from '@material-ui/icons'
@@ -9,25 +9,21 @@ import { useSnackbar } from 'notistack'
 import { connect } from 'react-redux'
 import lodash from 'lodash'
 
-import { updateCurrentCollection, removeCardsFromCollection } from '@/Logic/redux'
+import { updateCollection, removeCardsFromCollection, addFilters } from '@/Logic/redux'
 import { getCardPrints } from '@/Api'
 import RenderCell from '@/CardRenders'
 import useStyles from './styles'
 
 
 /** REDUX **/
-const mapStateToProps = (state) => ({})
+const mapStateToProps = (state) => ({
+  tagFilters: state.actions.app.collection.filters.tag || [],
+})
 const mapDispatchToProps = (dispatch) => ({
   dispatch: {
-    /**
-     * pass a list of card objects to be updated (could be new or existing ids)
-     */
-    updateCurrentCollection: (collection) => dispatch(updateCurrentCollection(collection)),
-
-    /**
-     * pass a list of card objects to be removed
-    */
-    removeCardsFromCollection: (cards) => dispatch(removeCardsFromCollection(cards)),
+    updateCollection: (payload) => dispatch(updateCollection(payload)),
+    removeCardsFromCollection: (payload) => dispatch(removeCardsFromCollection(payload)),
+    addFilters: (payload) => dispatch(addFilters(payload)),
   }
 })
 
@@ -40,6 +36,7 @@ const EditPanel = (props) => {
     card,
     updateHeight: _updateHeight,
     onMenuHover,
+    tagFilters,
   } = props
   const { enqueueSnackbar } = useSnackbar()
   const smDown = useMediaQuery(theme => theme.breakpoints.down('sm'))
@@ -106,12 +103,28 @@ const EditPanel = (props) => {
 
 
   /** HANDLERS **/
+  const handleChipClick = (tag) => (e) => {
+    if (Array.isArray(tagFilters)) {
+      dispatch.addFilters({
+        filters: {
+          tag: tagFilters.includes(tag)
+            ? tagFilters.filter(item => item !== tag)
+            : tagFilters.concat(tag)
+        }
+      })
+    }
+    else
+      dispatch.addFilters({
+        filters: { tag: [tag] }
+      })
+  }
+
   const handleEditButtonClick = async (e) => {
     if (editEnabled) {
       // save changes
       let clone = Object.assign(lodash.cloneDeep(card), newCard)
 
-      dispatch.updateCurrentCollection({ cards: [clone] })
+      dispatch.updateCollection({ cards: [clone] })
       onMenuHover(null)
       enqueueSnackbar(`Updated ${card.name} [${card.set.toUpperCase()}]`, { variant: 'info' })
     }
@@ -322,6 +335,9 @@ const EditPanel = (props) => {
                         label='Set'
                         value={`${newCard.set}:${newCard.collector_number}`}
                         onChange={e => handleCardInfoChange('set', e.target.value)}
+                        SelectProps={{
+                          onClose: e => onMenuHover({ ...card, ...newCard })
+                        }}
                         InputProps={printsSet.length === 0
                           ? {
                             startAdornment: (
@@ -359,8 +375,11 @@ const EditPanel = (props) => {
                         label='Language'
                         disabled={printsLang.length === 0}
                         value={newCard.lang}
-                        onChange={e => handleCardInfoChange('lang', e.target.value)}
                         style={{ width: '6em' }}
+                        onChange={e => handleCardInfoChange('lang', e.target.value)}
+                        SelectProps={{
+                          onClose: e => onMenuHover({ ...card, ...newCard })
+                        }}
                         InputProps={printsLang.length === 0
                           ? {
                             startAdornment: (
@@ -460,15 +479,21 @@ const EditPanel = (props) => {
                 <Grid item container xs justifyContent='flex-start' alignItems='flex-start'>
                   <Grid item container xs={12} spacing={1}>
                     <Grid item xs={12} component={Typography} variant='h6' align='left'>
-                      Tags
+                      <Tooltip arrow placement='right'
+                        title={card.tag.length > 0 ? <>Click a tag's chip to search <br /> for more cards with that tag</> : ''}
+                      >
+                        <span>Tags</span>
+                      </Tooltip>
                     </Grid>
-                    <Grid item container spacing={1} style={{ paddingLeft: 16 }}>
+                    <Grid item container spacing={1} style={{ paddingLeft: 16 }} >
                       {
                         card.tag.length > 0
                           ? card.tag.map((tag, i) =>
                             <Grid item key={i}>
                               <Chip
                                 label={tag}
+                                color={Array.isArray(tagFilters) && tagFilters.includes(tag) ? 'secondary' : ''}
+                                onClick={handleChipClick(tag)}
                                 size='small'
                                 variant='outlined'
                               />
@@ -519,22 +544,6 @@ const EditPanel = (props) => {
                           </ul>
                         </AccordionDetails>
                       </Accordion>
-
-                      {/* <Grid item component={Typography} variant='h6'>
-                        {'Additional Rulings'}
-                      </Grid>
-                      <Grid item container component='ul' spacing={1}>
-                        {
-                          rulings.map((rule, i) =>
-                            <Grid item key={i} component='li'>
-                              <RenderCell
-                                card={{ oracle_text: rule.comment }}
-                                columnName='oracle_text'
-                              />
-                            </Grid>
-                          )
-                        }
-                      </Grid> */}
                     </Grid>
                   </>
                 }

@@ -28,7 +28,7 @@ const BottomBar = (props) => {
       <Grid item xs={12}
         component={Typography} variant='caption'
       >
-        Powered by <Scryfall /> (via <ScryfallClient />)
+        Powered by <Scryfall /> via <ScryfallClient />
       </Grid>
     </Grid>
   )

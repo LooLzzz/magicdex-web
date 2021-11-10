@@ -62,7 +62,7 @@ const useStyles = (theme) => {
     bottomBar: {
       height: topBottomPadding,
       minHeight: topBottomPadding,
-      maxHeight: topBottomPadding,
+      // maxHeight: topBottomPadding,
       // padding: theme.spacing(1),
 
       backgroundColor: theme.palette.primary.dark,

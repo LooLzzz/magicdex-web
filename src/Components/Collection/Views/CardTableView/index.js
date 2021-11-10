@@ -4,7 +4,6 @@ import { withStyles } from '@material-ui/styles'
 import { connect } from 'react-redux'
 import _ from 'lodash'
 
-import { setCurrentCardId } from '@/Logic/redux'
 import { CardImage } from '@/Components'
 import CardRow from './CardRow'
 import useStyles from './styles'
@@ -12,13 +11,8 @@ import useStyles from './styles'
 
 /** REDUX **/
 const mapStateToProps = (state) => ({
-  currentCardId: state.actions.app.collection.currentCardId,
-})
-
-const mapDispatchToProps = (dispatch) => ({
-  dispatch: {
-    setCurrentCardId: (id) => dispatch(setCurrentCardId(id)),
-  }
+  columns: state.actions.app.collection.tableView.columns,
+  cardsSelectableEnabled: state.actions.app.collection.cardsSelectableEnabled,
 })
 
 
@@ -26,19 +20,15 @@ const CardTableView = (props) => {
   /** VARS **/
   const {
     classes,
+    // dispatch,
     data,
     columns,
-    isEditable,
-    handleCardSelected,
-    selectedCardIds,
-    // currentCardId, // current *open* card info window, falsy if nothing is open
-    // dispatch,
+    cardsSelectableEnabled,
   } = props
   const [currentHoveringCard, setCurrentHoveringCard] = useState()
   const [sortBy, setSortByCol] = useState()
   const [sortOrder, setSortOrder] = useState('desc')
   const [sortedData, setSortedData] = useState(data)
-  const [closeSignal, setCloseSignal] = useState(false)
 
 
   /** EFFECTS **/
@@ -103,10 +93,6 @@ const CardTableView = (props) => {
 
 
   /** HANDLERS **/
-  const closeAllRows = (origin) => {
-    setCloseSignal(origin)
-  }
-
   const handleRowHover = (card, i) => {
     setCurrentHoveringCard(card)
   }
@@ -155,7 +141,6 @@ const CardTableView = (props) => {
             <Table size="small">
               <TableHead className={classes.tableHead}>
                 <TableRow>
-
                   {
                     Object
                       .entries(columns)
@@ -184,7 +169,7 @@ const CardTableView = (props) => {
 
                   {/** Checkbox **/}
                   {
-                    isEditable &&
+                    cardsSelectableEnabled &&
                     <TableCell className={classes.iconCell} />
                   }
 
@@ -198,12 +183,6 @@ const CardTableView = (props) => {
                     key={card._id}
                     columns={columns}
                     card={card}
-                    selectable={isEditable}
-                    onSelected={handleCardSelected}
-                    selectedCardIds={selectedCardIds}
-
-                    closeAllRows={closeAllRows}
-                    closeSignal={closeSignal}
                   />
                 ))}
               </TableBody>
@@ -218,7 +197,7 @@ const CardTableView = (props) => {
 /** EXPORT **/
 export default
   withStyles(useStyles)(
-    connect(mapStateToProps, mapDispatchToProps)(
+    connect(mapStateToProps)(
       CardTableView
     )
   )

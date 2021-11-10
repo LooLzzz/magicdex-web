@@ -16,7 +16,10 @@ import { connect } from 'react-redux'
 import { useHistory, useLocation } from 'react-router-dom'
 import upperFirst from 'lodash/upperFirst'
 
-import { setCurrentTab, setCurrentCollection } from '@/Logic/redux'
+import {
+  setCurrentTab, setCurrentCollection, setView, toggleCurrency, setSelectedCardIds, setColumns_TableView,
+  toggleTiltEnabled_GridView, toggleTransform3dEnabled_GridView, toggleCardsSelectableEnabled, setCurrentOpenCardId,
+} from '@/Logic/redux'
 import { CardPriceDataProvider, FilteredDataProvider } from '@/Providers'
 import { MenuPopover } from '@/Components'
 import { MagicdexApi } from '@/Api'
@@ -29,12 +32,26 @@ import useStyles from './styles'
 const mapStateToProps = (state) => ({
   username: state.actions.activeUser.username,
   collection: state.actions.activeUser.collection,
+  view: state.actions.app.collection.view,
+  currency: state.actions.app.currency,
+  tiltEnabled: state.actions.app.collection.gridView.tiltEnabled,
+  transform3dEnabled: state.actions.app.collection.gridView.transform3dEnabled,
+  selectedCardIds: state.actions.app.collection.selectedCardIds,
+  cardsSelectableEnabled: state.actions.app.collection.cardsSelectableEnabled,
 })
 
 const mapDispatchToProps = (dispatch) => ({
   dispatch: {
     setCurrentTab: (payload) => dispatch(setCurrentTab(payload)),
     setCurrentCollection: (payload) => dispatch(setCurrentCollection(payload)),
+    setCurrentOpenCardId: (payload) => dispatch(setCurrentOpenCardId(payload)),
+    setSelectedCardIds: (payload) => dispatch(setSelectedCardIds(payload)),
+    setView: (payload) => dispatch(setView(payload)),
+    setColumns: (payload) => dispatch(setColumns_TableView(payload)),
+    toggleCurrency: () => dispatch(toggleCurrency()),
+    toggleTiltEnabled: () => dispatch(toggleTiltEnabled_GridView()),
+    toggleTransform3dEnabled: () => dispatch(toggleTransform3dEnabled_GridView()),
+    toggleCardsSelectableEnabled: () => dispatch(toggleCardsSelectableEnabled()),
   }
 })
 
@@ -45,90 +62,64 @@ const Collection = (props) => {
     classes,
     dispatch,
     username,
-    collection,
-    currency: _currency,
+    collection, // current user's collection
+    view, // one of ['table', 'grid', 'compact']
+    transform3dEnabled,
+    tiltEnabled,
+    cardsSelectableEnabled,
+    // selectedCardIds, // an array which will contain mongodb ids of selected cards (List[card._id]) //TODO: use this somehow l8r
+    currency,
   } = props
   const history = useHistory()
   const location = useLocation()
   const menuRef = createRef()
-  const [view, setView] = useState('table') // one of ['table', 'grid', 'compact']
-  const [filters, setFilters] = useState()
-  const [currency, setCurrency] = useState(_currency ?? 'usd') // one of ['usd', 'eur']
-  const [isEditable, setEditable] = useState(false)
-  const [tiltEnabled, setTiltEnabled] = useState(false)
-  const [transform3dEnabled, setTransform3dEnabled] = useState(false)
-  const [selectedCardIds, setSelectedCardIds] = useState([]) // will contain mongodb ids (`card._id`) of selected rows
-
-  const smDown = useMediaQuery((theme) => theme.breakpoints.down('sm'))
   const mdDown = useMediaQuery((theme) => theme.breakpoints.down('md'))
-  const [columns, setColumns] = useState({
-    amount: 'amount',
-    name: 'name',
-    set: 'set',
-    mana_cost: 'mana cost',
-    type_line: 'type',
-    foil: 'foil',
-    total_price: `price (${currency})`,
-    date_created: 'date added',
-  })
 
 
   /** EFFECTS **/
   useEffect(() => {
     //onMount
     dispatch.setCurrentTab({ tab: 'collection' })
+    dispatch.setCurrentOpenCardId({ id: null })
   }, [])
 
   useEffect(() => {
     const params = new URLSearchParams(location.search)
-    const {
-      view: viewParam,
-    } = Object.fromEntries(params)
+    const viewParam = params.get('view')
 
     if (viewParam && viewParam !== view)
       handleViewChange(viewParam)
   }, [location])
 
   useEffect(() => {
-    if (smDown) {
-      setColumns({
-        name: 'name',
-        set: 'set',
-        mana_cost: 'mana cost',
-        type_line: 'type',
-        foil: 'foil',
-        total_price: `price (${currency})`,
-      })
-    }
-    else if (mdDown) {
-      setColumns({
-        amount: 'amount',
-        name: 'name',
-        set: 'set',
-        mana_cost: 'mana cost',
-        type_line: 'type',
-        foil: 'foil',
-        total_price: `price (${currency})`,
+    if (mdDown) {
+      dispatch.setColumns({
+        columns: {
+          amount: 'amount',
+          name: 'name',
+          set: 'set',
+          mana_cost: 'cost',
+          type_line: 'type',
+          foil: 'foil',
+          total_price: `price`,
+        }
       })
     }
     else {
-      setColumns({
-        amount: 'amount',
-        name: 'name',
-        set: 'set',
-        mana_cost: 'mana cost',
-        type_line: 'type',
-        foil: 'foil',
-        total_price: `price (${currency})`,
-        date_created: 'date added',
+      dispatch.setColumns({
+        columns: {
+          amount: 'amount',
+          name: 'name',
+          set: 'set',
+          mana_cost: 'mana cost',
+          type_line: 'type',
+          foil: 'foil',
+          total_price: `price (${currency})`,
+          date_created: 'date added',
+        }
       })
     }
-  }, [smDown, mdDown, currency])
-
-  useEffect(() => {
-    if (!isEditable)
-      setSelectedCardIds([])
-  }, [isEditable])
+  }, [mdDown, currency])
 
   useEffect(() => {
     if (!username)
@@ -142,25 +133,14 @@ const Collection = (props) => {
 
 
   /** HANDLERS **/
-  const handleCardSelected = (id, checked) => {
-    setSelectedCardIds(
-      checked
-        ? [...selectedCardIds, id]
-        : selectedCardIds.filter(cardId => cardId !== id)
-    )
-  }
-
   const handleViewChange = (value) => {
-    setView(state => {
-      if (value && value !== state) {
-        const params = new URLSearchParams(location.search)
-        params.set('view', value)
+    if (value && value !== view) {
+      const params = new URLSearchParams(location.search)
+      params.set('view', value)
 
-        history.push({ search: params.toString() })
-        return value
-      }
-      return state
-    })
+      history.push({ search: params.toString() })
+      dispatch.setView({ view: value })
+    }
   }
 
   const handleFabClick = fabType => e => {
@@ -179,22 +159,6 @@ const Collection = (props) => {
 
     //TODO: add a new card to the collection & update the localStorage.
     // user should choose `import from list` or a form to add a new card
-  }
-
-  const toggleTransform3d = () => {
-    setTransform3dEnabled(!transform3dEnabled)
-  }
-
-  const toggleTlit = () => {
-    setTiltEnabled(!tiltEnabled)
-  }
-
-  const toggleTableEditable = () => {
-    setEditable(!isEditable)
-  }
-
-  const toggleCurrency = () => {
-    setCurrency(currency === 'usd' ? 'eur' : 'usd')
   }
 
 
@@ -236,9 +200,7 @@ const Collection = (props) => {
               <Grid container justifyContent='center'>
                 <Grid item container xs={12} lg={10} wrap='nowrap' justifyContent='center' alignItems='center' className={classes.filtersContainer}>
                   <Grid item container xs={11}>
-                    <FilterFields
-                      setFilters={setFilters}
-                    />
+                    <FilterFields />
                   </Grid>
                   <Grid item>
                     <MenuPopover
@@ -276,31 +238,31 @@ const Collection = (props) => {
                           case 'table':
                             return (
                               <>
-                                <MenuItem onClick={toggleCurrency}>
+                                <MenuItem onClick={dispatch.toggleCurrency}>
                                   <ListItemText
                                     primary={'Change Currency'}
                                     secondary={`Viewing ${currency.toUpperCase()}`}
                                   />
                                 </MenuItem>
-                                <MenuItem onClick={toggleTableEditable}>
+                                <MenuItem onClick={dispatch.toggleCardsSelectableEnabled}>
                                   {
-                                    isEditable
+                                    cardsSelectableEnabled
                                       ? 'Disable Edit'
                                       : 'Enable Edit'
                                   }
                                 </MenuItem>
-                                <MenuItem>
+                                {/* <MenuItem>
                                   Reset Changes
-                                </MenuItem>
+                                </MenuItem> */}
                               </>
                             )
                           case 'grid':
                             return (
                               <>
-                                <MenuItem onClick={toggleTlit}>
+                                <MenuItem onClick={dispatch.toggleTiltEnabled}>
                                   {tiltEnabled ? 'Disable Tilt' : 'Enable Tilt'}
                                 </MenuItem>
-                                <MenuItem onClick={toggleTransform3d}>
+                                <MenuItem onClick={dispatch.toggleTransform3dEnabled}>
                                   {transform3dEnabled ? 'Disable 3D Transform' : 'Enable 3D Transform'}
                                 </MenuItem>
                               </>
@@ -319,26 +281,12 @@ const Collection = (props) => {
                   </Grid>
                 </Grid>
                 <Grid item container wrap='nowrap' justifyContent='center' xs={12}>
-                  <CardPriceDataProvider
-                    data={collection}
-                    currency={currency}
-                  >
-                    <FilteredDataProvider
-                      filters={filters}
-                    // data = passed from parent
-                    >
+                  <CardPriceDataProvider data={collection}>
+                    <FilteredDataProvider>
                       {
                         (() => {
                           const props = {
-                            columns,
-                            setCurrency,
-                            currency,
-                            isEditable,
-                            tiltEnabled,
-                            transform3dEnabled,
-                            handleCardSelected,
-                            selectedCardIds,
-                            // data is passed to children from the `DataProvider`s
+                            // {data} is passed to children from the `DataProvider`s
                           }
                           switch (view) {
                             default:

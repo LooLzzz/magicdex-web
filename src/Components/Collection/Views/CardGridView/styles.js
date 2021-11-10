@@ -5,6 +5,9 @@ const useStyles = (theme) => {
 
   return {
     root: {},
+    topArrow: {
+      borderTopColor: theme.palette.background.default
+    },
   }
 }
 

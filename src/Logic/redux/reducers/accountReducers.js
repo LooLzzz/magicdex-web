@@ -30,7 +30,7 @@ const accountReducers = {
     state.activeUser.collection = collection
   },
 
-  updateCurrentCollection: (state, action) => {
+  updateCollection: (state, action) => {
     const { cards } = action.payload
     let { collection } = state.activeUser
 

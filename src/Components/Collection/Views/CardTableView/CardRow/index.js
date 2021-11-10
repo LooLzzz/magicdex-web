@@ -11,16 +11,25 @@ import {
   KeyboardArrowUp as KeyboardArrowUpIcon
 } from '@material-ui/icons'
 
+import { addSelectedCardIds, removeSelectedCardIds, setCurrentOpenCardId } from '@/Logic/redux'
 import RenderCell from '@/CardRenders'
 import CardInfo from '../../CardInfo'
 import useStyles from './styles'
 
 
 /** REDUX **/
-const mapStateToProps = (state) => ({})
+const mapStateToProps = (state) => ({
+  selectedCardIds: state.actions.app.collection.selectedCardIds,
+  cardsSelectableEnabled: state.actions.app.collection.cardsSelectableEnabled,
+  currentOpenCardId: state.actions.app.collection.currentOpenCardId,
+})
 
 const mapDispatchToProps = (dispatch) => ({
-  // dispatch: {}
+  dispatch: {
+    addSelectedCardIds: (payload) => dispatch(addSelectedCardIds(payload)),
+    removeSelectedCardIds: (payload) => dispatch(removeSelectedCardIds(payload)),
+    setCurrentOpenCardId: (payload) => dispatch(setCurrentOpenCardId(payload)),
+  }
 })
 
 
@@ -32,17 +41,14 @@ const CardRow = (props) => {
     key,
     card,
     onMouseEnter,
-    selectable,
-    onSelected,
+    cardsSelectableEnabled: selectable,
     selectedCardIds,
-    closeAllRows,
-    closeSignal,
-    // dispatch,
+    currentOpenCardId,
+    dispatch,
   } = props
   const theme = useTheme()
   const setRef = useRef()
   const cardInfoRef = useRef()
-  // const scrollPosition = useScrollPosition()
   const [isOpen, setIsOpen] = useState(false)
   const [showContent, setShowContent] = useState(false)
 
@@ -51,23 +57,22 @@ const CardRow = (props) => {
 
   /** EFFECTS **/
   useEffect(() => {
-    if (closeSignal !== card._id)
-      setIsOpen(false)
-  }, [closeSignal])
+    setIsOpen(currentOpenCardId === card._id)
+  }, [currentOpenCardId])
 
 
   /** HANDLERS **/
   const handleSelectChange = (e) => {
-    onSelected(card._id, e.target.checked)
+    e.target.checked
+      ? dispatch.addSelectedCardIds({ id: card._id })
+      : dispatch.removeSelectedCardIds({ id: card._id })
   }
 
   const handleIsOpenToggle = () => {
     if (!isOpen)
-      closeAllRows(card._id)
+      dispatch.setCurrentOpenCardId({ id: card._id })
     else
-      closeAllRows(null)
-
-    setIsOpen(!isOpen)
+      dispatch.setCurrentOpenCardId({ id: null })
   }
 
   const onCollapseExited = (isAppearing) => {
@@ -157,7 +162,13 @@ const CardRow = (props) => {
 
       <TableRow onMouseEnter={onMouseEnter} className={classes.row} style={{ display: showContent ? 'table-row' : 'none' }}>
         <TableCell colSpan={10} style={{ padding: 0 }}>
-          <Collapse mountOnEnter unmountOnExit in={isOpen} timeout="auto" onEnter={onCollapseEnter} onExited={onCollapseExited} onEntering={onCollapseEntering}>
+          <Collapse mountOnEnter unmountOnExit
+            timeout='auto'
+            in={isOpen}
+            onEnter={onCollapseEnter}
+            onExited={onCollapseExited}
+            onEntering={onCollapseEntering}
+          >
             <CardInfo
               card={card}
               refs={cardInfoRef}

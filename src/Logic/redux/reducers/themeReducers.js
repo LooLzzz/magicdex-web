@@ -2,13 +2,13 @@ import { getDarkTheme, getLightTheme } from "@/Themes"
 
 
 const themeReducers = {
-  toggleCurrentThemeType: (state, action) => {
-    const type = state.theme.currentThemeType === 'dark' ? 'light' : 'dark' // toggle theme type
+  toggleThemeType: (state, action) => {
+    const type = state.theme.themeType === 'dark' ? 'light' : 'dark' // toggle theme type
     localStorage.setItem("themeType", type)
 
     state.theme = {
       ...state.theme,
-      currentThemeType: type,
+      themeType: type,
       currentTheme: type === 'dark' ? getDarkTheme() : getLightTheme(),
     }
   },

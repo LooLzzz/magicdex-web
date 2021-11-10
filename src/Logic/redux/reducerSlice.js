@@ -14,17 +14,8 @@ export const reducerSlice = createSlice({
   },
 })
 
-export const {
-  setActiveUser,
-  setCurrentTab,
-  toggleCurrentThemeType,
-  setCurrentCollection,
-  updateCurrentCollection,
-  removeCardsFromCollection,
-  setCurrentCardId,
-  setSelectedCardIds,
-  removeSelectedCardIds,
-  addSelectedCardIds,
-} = reducerSlice.actions
-
 export default reducerSlice.reducer
+
+export const {
+  actions
+} = reducerSlice

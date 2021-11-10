@@ -9,7 +9,7 @@ import { makeStyles } from "@material-ui/styles"
 import { SnackbarProvider } from 'notistack'
 // import { useHistory } from 'react-router-dom'
 
-import { Collection, TopMenu, BottomBar, Login, Register, Home } from "@/Components"
+import { Collection, TopMenu, BottomBar, Login, Register, Home, Decks, Profile } from "@/Components"
 import { MagicdexApi } from "@/Api"
 import { setActiveUser } from "@/Logic/redux"
 import useStyles from "./styles"
@@ -59,6 +59,14 @@ const App = (props) => {
     {
       component: Route,
       props: {
+        path: '/decks',
+        component: Decks,
+        exact: true,
+      }
+    },
+    {
+      component: Route,
+      props: {
         path: '/login',
         component: Login,
         exact: true,
@@ -69,6 +77,14 @@ const App = (props) => {
       props: {
         path: '/register',
         component: Register,
+        exact: true,
+      }
+    },
+    {
+      component: Route,
+      props: {
+        path: '/profile',
+        component: Profile,
         exact: true,
       }
     },

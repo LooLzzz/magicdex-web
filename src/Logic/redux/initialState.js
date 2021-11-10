@@ -17,17 +17,34 @@ const INITIAL_STATE = {
     accessToken,
     collection,
   },
+
+
   theme: {
     currentTheme: themeType === 'dark' ? getDarkTheme() : getLightTheme(),
-    currentThemeType: themeType,
+    themeType: themeType,
   },
+
+
   app: {
+    currency: 'usd',
     topMenu: {
       currentTab: 'home',
     },
+
     collection: {
-      currentCardId: undefined,
+      view: 'table',
+      currentOpenCardId: undefined,
+      cardsSelectableEnabled: false,
       selectedCardIds: [],
+      filters: {},
+
+      tableView: {
+        columns: {},
+      },
+      gridView: {
+        tiltEnabled: false,
+        transform3dEnabled: false,
+      },
     },
   },
 }

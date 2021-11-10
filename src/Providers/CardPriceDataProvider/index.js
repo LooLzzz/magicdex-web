@@ -1,6 +1,14 @@
 import React, { useState, useEffect } from 'react'
+import { connect } from 'react-redux'
 
 
+/** REDUX **/
+const mapStateToProps = (state) => ({
+  currency: state.actions.app.currency,
+})
+
+
+/** UTILS **/
 const addCardPrice = (card, currency) => {
   const { prices, foil, amount } = card
   const price = Number(foil ? prices?.[`${currency}_foil`] : prices?.[currency])
@@ -13,7 +21,7 @@ const addCardPrice = (card, currency) => {
   }
 }
 
-
+/** COMPONENT **/
 const CardPriceDataProvider = (props) => {
   /** VARS **/
   const {
@@ -45,8 +53,9 @@ const CardPriceDataProvider = (props) => {
 }
 
 /** EXPORT **/
-export default CardPriceDataProvider
+export default
+  connect(mapStateToProps)(
+    CardPriceDataProvider
+  )
 
-export {
-  addCardPrice,
-}
+export { addCardPrice }
