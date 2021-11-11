@@ -95,6 +95,9 @@ const CardRow = (props) => {
         className={clsx(classes.root, 'cursor-pointer')}
         onClick={handleIsOpenToggle}
         onMouseEnter={onMouseEnter}
+        style={{
+          backgroundColor: selectedCardIds.includes(card._id) && theme.palette.action.selected,
+        }}
       // onContextMenu={e => {console.log(card.name);e.preventDefault()}} //TODO: add context menu
       >
         {
@@ -104,8 +107,8 @@ const CardRow = (props) => {
               ([columnName, columnDisplayName], i) => (
                 <TableCell
                   key={i}
-                  className={classes.content}
                   align='center'
+                  className={classes.content}
                   {...( /* renderSet() setup */
                     columnName === 'set'
                       ? {
@@ -148,15 +151,13 @@ const CardRow = (props) => {
         {/* CHECKBOX */}
         {
           selectable &&
-          <>
-            <TableCell onClick={e => e.stopPropagation()} className={classes.checkbox}>
-              <Checkbox
-                size='small'
-                checked={selectedCardIds.includes(card._id)}
-                onChange={handleSelectChange}
-              />
-            </TableCell>
-          </>
+          <TableCell onClick={e => e.stopPropagation()} className={classes.checkbox}>
+            <Checkbox
+              size='small'
+              checked={selectedCardIds.includes(card._id)}
+              onChange={handleSelectChange}
+            />
+          </TableCell>
         }
       </TableRow>
 

@@ -136,7 +136,10 @@ const Utils = {
   ),
 }
 
-export default Utils
+export {
+  Utils as default,
+  formatCode,
+}
 
 export const {
   RadioOptions,

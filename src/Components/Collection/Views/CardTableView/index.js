@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react'
-import { Grid, Paper, Hidden, Table, TableContainer, TableRow, TableHead, TableBody, TableCell, TableSortLabel } from '@material-ui/core'
+import { Grid, Tooltip, Checkbox, Paper, Hidden, Table, TableContainer, TableRow, TableHead, TableBody, TableCell, TableSortLabel } from '@material-ui/core'
 import { withStyles } from '@material-ui/styles'
 import { connect } from 'react-redux'
 import _ from 'lodash'
 
+import { setSelectedCardIds } from '@/Logic/redux'
 import { CardImage } from '@/Components'
 import CardRow from './CardRow'
 import useStyles from './styles'
@@ -13,6 +14,13 @@ import useStyles from './styles'
 const mapStateToProps = (state) => ({
   columns: state.actions.app.collection.tableView.columns,
   cardsSelectableEnabled: state.actions.app.collection.cardsSelectableEnabled,
+  selectedCardIds: state.actions.app.collection.selectedCardIds,
+})
+
+const mapDispatchToProps = (dispatch) => ({
+  dispatch: {
+    setSelectedCardIds: (payload) => dispatch(setSelectedCardIds(payload)),
+  }
 })
 
 
@@ -20,10 +28,11 @@ const CardTableView = (props) => {
   /** VARS **/
   const {
     classes,
-    // dispatch,
+    dispatch,
     data,
     columns,
     cardsSelectableEnabled,
+    selectedCardIds,
   } = props
   const [currentHoveringCard, setCurrentHoveringCard] = useState()
   const [sortBy, setSortByCol] = useState()
@@ -118,6 +127,12 @@ const CardTableView = (props) => {
     }
   }
 
+  const handleSelectAllChange = (e) => {
+    e.target.checked
+      ? dispatch.setSelectedCardIds({ selectedCardIds: data.map(card => card._id) })
+      : dispatch.setSelectedCardIds({ selectedCardIds: [] })
+  }
+
 
   /** RENDER **/
   return (
@@ -170,7 +185,17 @@ const CardTableView = (props) => {
                   {/** Checkbox **/}
                   {
                     cardsSelectableEnabled &&
-                    <TableCell className={classes.iconCell} />
+                    // <TableCell className={classes.iconCell} />
+                    <TableCell onClick={e => e.stopPropagation()} className={classes.checkbox}>
+                      <Tooltip arrow placement='top' title={selectedCardIds.length === data.length ? 'Clear selection' : 'Select all'}>
+                        <Checkbox
+                          size='small'
+                          checked={selectedCardIds.length === data.length}
+                          indeterminate={selectedCardIds.length > 0 && selectedCardIds.length < data.length}
+                          onChange={handleSelectAllChange}
+                        />
+                      </Tooltip>
+                    </TableCell>
                   }
 
                 </TableRow>
@@ -197,7 +222,7 @@ const CardTableView = (props) => {
 /** EXPORT **/
 export default
   withStyles(useStyles)(
-    connect(mapStateToProps)(
+    connect(mapStateToProps, mapDispatchToProps)(
       CardTableView
     )
   )

@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
-import { useEffect, useState, createRef } from 'react'
+import { useEffect, createRef } from 'react'
 import { Grid, ListItemText, MenuItem, ListItem, ListSubheader, Divider, Fab, Tooltip, useMediaQuery } from '@material-ui/core'
 import { Skeleton, ToggleButton, ToggleButtonGroup } from '@material-ui/lab'
 import { withStyles } from '@material-ui/styles'
@@ -81,6 +81,9 @@ const Collection = (props) => {
     //onMount
     dispatch.setCurrentTab({ tab: 'collection' })
     dispatch.setCurrentOpenCardId({ id: null })
+
+    //onUnmount
+    return () => dispatch.setCurrentOpenCardId({ id: null })
   }, [])
 
   useEffect(() => {

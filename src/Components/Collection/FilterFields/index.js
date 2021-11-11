@@ -3,6 +3,7 @@
 
 import React, { useEffect, useState, createRef } from "react"
 import { Grid, InputAdornment, TextField, ListItem, ListSubheader, Divider } from "@material-ui/core"
+import { Autocomplete } from "@material-ui/lab"
 import { withStyles } from "@material-ui/styles"
 import { connect } from "react-redux"
 import Scryfall from "scryfall-client"
@@ -40,7 +41,7 @@ const FilterProvider = (props) => {
 
   const [oracleText, setOracleText] = useState('')
   const [typeLine, setTypeLine] = useState('')
-  const [tags, setTags] = useState('')
+  // const [tags, setTags] = useState('')
   const [tagArray, setTagArray] = useState([])
 
   // const [selectedColors, setSelectedColors] = useState([])
@@ -95,7 +96,7 @@ const FilterProvider = (props) => {
         // altered: (v) => getRadioAsBoolean(v, altered),
       }
     })
-  }, [cardName, oracleText, typeLine, tags, selectedSets])
+  }, [cardName, oracleText, typeLine, tagArray, selectedSets])
   // }, [cardName, oracleText, type, selectedColors, selectedManaCosts, selectedSets, amountMin, amountMax, priceMin, priceMax, foil, signed, altered])
 
   useEffect(() => {
@@ -105,7 +106,15 @@ const FilterProvider = (props) => {
 
 
   /** HANDLERS **/
-  { }
+  const handleTagChange = (value) => {
+    setTagArray(state => (
+      _.chain(value)
+        .map(v => v.trim())
+        .compact()
+        .uniqBy(v => v.toLowerCase())
+        .value()
+    ))
+  }
 
 
   /** RENDER **/
@@ -144,37 +153,45 @@ const FilterProvider = (props) => {
                 </ListItem>
 
                 <ListItem>
-                  {/* <AutocompleteOptions freesolo
-                    open={false}
-                    popupIcon={null}
+                  <Autocomplete multiple freeSolo //disableClearable autoSelect
+                    limitTags={4}
+                    label='Tags'
+                    variant='outlined'
+                    margin='dense'
+                    size='small'
+                    color='secondary'
                     options={[]}
-                    label="Tags"
-                    value={tags}
-                    onKeyDown={e => console.log(e.key)}
-                    onChange={(e, v) => console.log('onChange', v)}
-                    onInputChange={(e, v) => console.log('onInputChange', v)}
-                  /> */}
-                  <TextOption
-                    label="Tags"
-                    value={tags}
-                    onChange={e => {
-                      setTags(e.target.value)
-                      setTagArray(
-                        _.chain(e.target.value)
-                          .split(/[;,]+/g)
-                          .uniq()
+                    value={tagArray}
+                    onChange={(e, newValue) => { handleTagChange(newValue) }}
+                    onInputChange={(e, newInputValue) => {
+                      if (newInputValue?.match(/[;,]/g)) {
+                        const values = _
+                          .chain(newInputValue)
+                          .split(/[;,]/)
+                          .map(v => v.trim())
                           .compact()
+                          .uniqBy(v => v.toLowerCase())
                           .value()
-                      )
+                        if (values.length > 0)
+                          handleTagChange(tagArray.concat(values))
+                        else
+                          handleTagChange(tagArray)
+                      }
                     }}
-                    helperText={
-                      <>
-                        {'Separate tags with '}
-                        <code>
-                          [;,]+
-                        </code>
-                      </>
-                    }
+                    renderInput={(props) => (
+                      <TextField multiline
+                        {...props}
+                        color='secondary'
+                        variant='outlined'
+                        label='Tags'
+                        helperText={
+                          ['Tags are seperated by ', <code>{'Enter'}</code>, ' or ', <code>{'[;,]'}</code>]
+                            .map((item, i) =>
+                              <React.Fragment key={i}>{item}</React.Fragment>
+                            )
+                        }
+                      />
+                    )}
                   />
                 </ListItem>
 

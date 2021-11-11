@@ -175,7 +175,6 @@ const EditPanel = (props) => {
           .map(v => v.trim())
           .compact()
           .uniqBy(v => v.toLowerCase())
-          .uniq()
           .value()
         setNewCard(card => ({ ...card, tag: value }))
         break
@@ -420,8 +419,19 @@ const EditPanel = (props) => {
                       value={newCard.tag}
                       onChange={(e, newValue) => { handleCardInfoChange('tag', newValue) }}
                       onInputChange={(e, newInputValue) => {
-                        if (newInputValue?.match(/[;,]$/))
-                          handleCardInfoChange('tag', newCard.tag.concat(newInputValue.slice(0, -1)))
+                        if (newInputValue?.match(/[;,]/g)) {
+                          const values = lodash
+                            .chain(newInputValue)
+                            .split(/[;,]/)
+                            .map(v => v.trim())
+                            .compact()
+                            .uniqBy(v => v.toLowerCase())
+                            .value()
+                          if (values.length > 0)
+                            handleCardInfoChange('tag', newCard.tag.concat(values))
+                          else
+                            handleCardInfoChange('tag', newCard.tag)
+                        }
                       }}
                       renderInput={(props) => (
                         <TextField multiline

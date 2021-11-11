@@ -87,9 +87,7 @@ const TopMenu = (props) => {
           <Grid item>
             <Tabs variant='scrollable' value={currentTab} onChange={handleTabChange}>
               <Tab value='home' label='Home' />
-              <Tab value='collection' label='Collection'>
-                test?
-              </Tab>
+              <Tab value='collection' label='Collection' />
               <Tab value='decks' label='Decks' />
 
               <Tab value='profile' style={{ display: 'none' }} />
