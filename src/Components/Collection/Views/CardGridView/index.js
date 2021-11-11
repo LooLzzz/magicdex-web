@@ -18,7 +18,7 @@ import useStyles from './styles'
 const mapStateToProps = (state) => ({
   tiltEnabled: state.actions.app.collection.gridView.tiltEnabled,
   transform3dEnabled: state.actions.app.collection.gridView.transform3dEnabled,
-  cardsSelectableEnabled: state.actions.app.collection.cardsSelectableEnabled,
+  // cardsSelectableEnabled: state.actions.app.collection.cardsSelectableEnabled,
 })
 
 const mapDispatchToProps = (dispatch) => ({
@@ -37,7 +37,6 @@ const CardGridView = (props) => {
     data,
     tiltEnabled,
     transform3dEnabled,
-    // cardsSelectableEnabled,
     cardWidth = 209,
   } = props
   const theme = useTheme()

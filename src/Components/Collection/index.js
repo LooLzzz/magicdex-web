@@ -17,8 +17,9 @@ import { useHistory, useLocation } from 'react-router-dom'
 import upperFirst from 'lodash/upperFirst'
 
 import {
-  setCurrentTab, setCurrentCollection, setView, toggleCurrency, setSelectedCardIds, setColumns_TableView,
-  toggleTiltEnabled_GridView, toggleTransform3dEnabled_GridView, toggleCardsSelectableEnabled, setCurrentOpenCardId,
+  setCurrentTab, setCurrentCollection, setView, toggleCurrency, setColumns_TableView, toggleTiltEnabled_GridView,
+  toggleTransform3dEnabled_GridView, toggleCardsSelectableEnabled, setCurrentOpenCardId, setCardsSelectableEnabled,
+  setPerPage, setPageNumber,
 } from '@/Logic/redux'
 import { CardPriceDataProvider, FilteredDataProvider } from '@/Providers'
 import { MenuPopover } from '@/Components'
@@ -42,16 +43,18 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   dispatch: {
-    setCurrentTab: (payload) => dispatch(setCurrentTab(payload)),
-    setCurrentCollection: (payload) => dispatch(setCurrentCollection(payload)),
-    setCurrentOpenCardId: (payload) => dispatch(setCurrentOpenCardId(payload)),
-    setSelectedCardIds: (payload) => dispatch(setSelectedCardIds(payload)),
-    setView: (payload) => dispatch(setView(payload)),
-    setColumns: (payload) => dispatch(setColumns_TableView(payload)),
+    setCurrentTab: (tab) => dispatch(setCurrentTab({ tab })),
+    setCurrentCollection: (collection) => dispatch(setCurrentCollection({ collection })),
+    setCurrentOpenCardId: (id) => dispatch(setCurrentOpenCardId({ id })),
+    setView: (view) => dispatch(setView({ view })),
+    setColumns: (columns) => dispatch(setColumns_TableView({ columns })),
     toggleCurrency: () => dispatch(toggleCurrency()),
     toggleTiltEnabled: () => dispatch(toggleTiltEnabled_GridView()),
     toggleTransform3dEnabled: () => dispatch(toggleTransform3dEnabled_GridView()),
+    setCardsSelectableEnabled: (enabled) => dispatch(setCardsSelectableEnabled({ enabled })),
     toggleCardsSelectableEnabled: () => dispatch(toggleCardsSelectableEnabled()),
+    setPageNumber: (pageNumber) => dispatch(setPageNumber({ pageNumber })),
+    setPerPage: (perPage) => dispatch(setPerPage({ perPage })),
   }
 })
 
@@ -79,11 +82,16 @@ const Collection = (props) => {
   /** EFFECTS **/
   useEffect(() => {
     //onMount
-    dispatch.setCurrentTab({ tab: 'collection' })
-    dispatch.setCurrentOpenCardId({ id: null })
+    dispatch.setCurrentTab('collection')
+    dispatch.setCurrentOpenCardId(null)
 
     //onUnmount
-    return () => dispatch.setCurrentOpenCardId({ id: null })
+    return () => {
+      dispatch.setCurrentOpenCardId(null)
+      dispatch.setCardsSelectableEnabled(false)
+      // dispatch.setPerPage(PER_PAGE)
+      dispatch.setPageNumber(0)
+    }
   }, [])
 
   useEffect(() => {
@@ -97,29 +105,25 @@ const Collection = (props) => {
   useEffect(() => {
     if (mdDown) {
       dispatch.setColumns({
-        columns: {
-          amount: 'amount',
-          name: 'name',
-          set: 'set',
-          mana_cost: 'cost',
-          type_line: 'type',
-          foil: 'foil',
-          total_price: `price`,
-        }
+        amount: 'amount',
+        name: 'name',
+        set: 'set',
+        mana_cost: 'cost',
+        type_line: 'type',
+        foil: 'foil',
+        total_price: `price`,
       })
     }
     else {
       dispatch.setColumns({
-        columns: {
-          amount: 'amount',
-          name: 'name',
-          set: 'set',
-          mana_cost: 'mana cost',
-          type_line: 'type',
-          foil: 'foil',
-          total_price: `price (${currency})`,
-          date_created: 'date added',
-        }
+        amount: 'amount',
+        name: 'name',
+        set: 'set',
+        mana_cost: 'mana cost',
+        type_line: 'type',
+        foil: 'foil',
+        total_price: `price (${currency})`,
+        date_created: 'date added',
       })
     }
   }, [mdDown, currency])
@@ -128,10 +132,10 @@ const Collection = (props) => {
     if (!username)
       return history.push('/login')
 
-    dispatch.setCurrentCollection({ collection: JSON.parse(localStorage.getItem('collection')) })
+    dispatch.setCurrentCollection(JSON.parse(localStorage.getItem('collection')))
     MagicdexApi
       .getAllCards()
-      .then(res => dispatch.setCurrentCollection({ collection: res }))
+      .then(res => dispatch.setCurrentCollection(res))
   }, [username])
 
 
@@ -142,7 +146,11 @@ const Collection = (props) => {
       params.set('view', value)
 
       history.push({ search: params.toString() })
-      dispatch.setView({ view: value })
+      dispatch.setView(value)
+      dispatch.setCurrentOpenCardId(null)
+      dispatch.setCardsSelectableEnabled(false)
+      // dispatch.setPerPage(PER_PAGE)
+      dispatch.setPageNumber(0)
     }
   }
 

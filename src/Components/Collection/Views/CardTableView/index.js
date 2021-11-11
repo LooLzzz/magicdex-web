@@ -1,10 +1,18 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+
 import { useState, useEffect } from 'react'
-import { Grid, Tooltip, Checkbox, Paper, Hidden, Table, TableContainer, TableRow, TableHead, TableBody, TableCell, TableSortLabel } from '@material-ui/core'
+import { Grid, Tooltip, Checkbox, IconButton, Paper, Hidden, Table, TableContainer, TableRow, TableHead, TableBody, TableFooter, TableCell, TableSortLabel, TablePagination } from '@material-ui/core'
 import { withStyles } from '@material-ui/styles'
+import {
+  ChevronRight as ChevronRightIcon,
+  ChevronLeft as ChevronLeftIcon,
+  FirstPage as FirstPageIcon,
+  LastPage as LastPageIcon,
+} from '@material-ui/icons'
 import { connect } from 'react-redux'
 import _ from 'lodash'
 
-import { setSelectedCardIds } from '@/Logic/redux'
+import { setSelectedCardIds, setPageNumber, setPerPage } from '@/Logic/redux'
 import { CardImage } from '@/Components'
 import CardRow from './CardRow'
 import useStyles from './styles'
@@ -15,11 +23,15 @@ const mapStateToProps = (state) => ({
   columns: state.actions.app.collection.tableView.columns,
   cardsSelectableEnabled: state.actions.app.collection.cardsSelectableEnabled,
   selectedCardIds: state.actions.app.collection.selectedCardIds,
+  pageNumber: state.actions.app.collection.pageNumber,
+  perPage: state.actions.app.collection.perPage,
 })
 
 const mapDispatchToProps = (dispatch) => ({
   dispatch: {
-    setSelectedCardIds: (payload) => dispatch(setSelectedCardIds(payload)),
+    setSelectedCardIds: (selectedCardIds) => dispatch(setSelectedCardIds({ selectedCardIds })),
+    setPageNumber: (pageNumber) => dispatch(setPageNumber({ pageNumber })),
+    setPerPage: (perPage) => dispatch(setPerPage({ perPage })),
   }
 })
 
@@ -31,6 +43,8 @@ const CardTableView = (props) => {
     dispatch,
     data,
     columns,
+    pageNumber,
+    perPage,
     cardsSelectableEnabled,
     selectedCardIds,
   } = props
@@ -38,9 +52,21 @@ const CardTableView = (props) => {
   const [sortBy, setSortByCol] = useState()
   const [sortOrder, setSortOrder] = useState('desc')
   const [sortedData, setSortedData] = useState(data)
+  const [paginatedData, setPaginatedData] = useState(data)
 
 
   /** EFFECTS **/
+  useEffect(() => {
+    setPaginatedData(() =>
+      perPage === -1
+        ? sortedData // show all
+        : sortedData.slice(
+          pageNumber * perPage,
+          pageNumber * perPage + perPage
+        )
+    )
+  }, [sortedData, pageNumber, perPage])
+
   useEffect(() => {
     let _sortBy //= sortBy === 'mana_cost' ? 'cmc' : sortBy
     switch (sortBy) {
@@ -98,6 +124,7 @@ const CardTableView = (props) => {
     setSortedData(
       _.orderBy(data, [..._sortBy, 'name', 'collector_number'], sortOrder)
     )
+    dispatch.setPageNumber(0)
   }, [data, sortOrder, sortBy])
 
 
@@ -129,14 +156,14 @@ const CardTableView = (props) => {
 
   const handleSelectAllChange = (e) => {
     e.target.checked
-      ? dispatch.setSelectedCardIds({ selectedCardIds: data.map(card => card._id) })
-      : dispatch.setSelectedCardIds({ selectedCardIds: [] })
+      ? dispatch.setSelectedCardIds(data.map(card => card._id))
+      : dispatch.setSelectedCardIds([])
   }
 
 
   /** RENDER **/
   return (
-    <Grid item container spacing={1} xs={11}>
+    <Grid item container spacing={1} xs={11} className={classes.root}>
       <Grid item container wrap='nowrap' justifyContent='center'>
 
         {/** CARD PREVIEW **/}
@@ -202,7 +229,7 @@ const CardTableView = (props) => {
               </TableHead>
 
               <TableBody>
-                {sortedData instanceof Array && sortedData.map(card => (
+                {paginatedData instanceof Array && paginatedData.map(card => (
                   <CardRow
                     onMouseEnter={e => handleRowHover(card)}
                     key={card._id}
@@ -211,6 +238,60 @@ const CardTableView = (props) => {
                   />
                 ))}
               </TableBody>
+
+              <TableFooter className={classes.tableFooter}>
+                <TableRow>
+                  <TablePagination
+                    rowsPerPageOptions={[5, 25, 50, 100, { label: 'All', value: -1 }]}
+                    labelRowsPerPage='Cards per page:'
+                    colSpan={9}
+                    count={data.length}
+                    rowsPerPage={perPage}
+                    page={pageNumber}
+                    onPageChange={(e, v) => dispatch.setPageNumber(v)}
+                    onRowsPerPageChange={(e) => dispatch.setPerPage(parseInt(e.target.value))}
+                    SelectProps={{
+                      native: true,
+                    }}
+                    ActionsComponent={({ count, page, rowsPerPage, onPageChange }) => (
+                      <>
+                        <IconButton
+                          size='small'
+                          onClick={e => onPageChange(e, 0)}
+                          disabled={page === 0}
+                          aria-label="first page"
+                        >
+                          <FirstPageIcon />
+                        </IconButton>
+                        <IconButton
+                          size='small'
+                          onClick={e => onPageChange(e, page - 1)}
+                          disabled={page === 0}
+                          aria-label="previous page"
+                        >
+                          <ChevronLeftIcon />
+                        </IconButton>
+                        <IconButton
+                          size='small'
+                          onClick={e => onPageChange(e, page + 1)}
+                          disabled={page >= Math.ceil(count / rowsPerPage) - 1}
+                          aria-label="next page"
+                        >
+                          <ChevronRightIcon />
+                        </IconButton>
+                        <IconButton
+                          size='small'
+                          onClick={e => onPageChange(e, Math.max(0, Math.ceil(count / rowsPerPage) - 1))}
+                          disabled={page >= Math.ceil(count / rowsPerPage) - 1}
+                          aria-label="last page"
+                        >
+                          <LastPageIcon />
+                        </IconButton>
+                      </>
+                    )}
+                  />
+                </TableRow>
+              </TableFooter>
             </Table>
           </TableContainer>
         </Grid>

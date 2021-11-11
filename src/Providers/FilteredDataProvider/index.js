@@ -16,7 +16,7 @@ const FilteredDataProvider = (props) => {
   const {
     classes,
     children,
-    data,
+    data = [],
     filters,
     ...rest
   } = props

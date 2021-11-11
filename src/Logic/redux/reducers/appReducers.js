@@ -88,6 +88,15 @@ const appReducers = {
       state.app.collection.selectedCardIds = []
   },
 
+  setPageNumber: (state, action) => {
+    state.app.collection.pageNumber = action.payload.pageNumber
+  },
+
+  setPerPage: (state, action) => {
+    state.app.collection.perPage = action.payload.perPage
+    state.app.collection.pageNumber = 0
+  },
+
   //collection.tableView
   setColumns_TableView: (state, action) => {
     state.app.collection.tableView.columns = action.payload.columns

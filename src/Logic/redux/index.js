@@ -32,6 +32,8 @@ export const {
   removeFilters,
   setCardsSelectableEnabled,
   toggleCardsSelectableEnabled,
+  setPageNumber,
+  setPerPage,
   
   /** .app.collection.tableView **/
   setColumns_TableView,

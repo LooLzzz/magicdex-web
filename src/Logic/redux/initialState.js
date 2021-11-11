@@ -1,4 +1,5 @@
 import { getDarkTheme, getLightTheme } from "@/Themes"
+import { PER_PAGE } from '@/Config'
 
 
 /** LOCAL STORAGE **/
@@ -33,6 +34,8 @@ const INITIAL_STATE = {
 
     collection: {
       view: 'table',
+      pageNumber: 0,
+      perPage: PER_PAGE,
       currentOpenCardId: undefined,
       cardsSelectableEnabled: false,
       selectedCardIds: [],

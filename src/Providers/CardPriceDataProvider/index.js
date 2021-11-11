@@ -27,7 +27,7 @@ const CardPriceDataProvider = (props) => {
   const {
     classes,
     children,
-    data,
+    data = [],
     currency,
     ...rest
   } = props

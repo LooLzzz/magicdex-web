@@ -5,6 +5,7 @@ const useStyles = (theme) => {
 
   return {
     root: {
+      paddingBottom: theme.spacing(1),
     },
     'card-image': {
       zIndex: 1,
@@ -16,6 +17,9 @@ const useStyles = (theme) => {
       maxWidth: '90vw',
       // overflow: 'visible',
     },
+    tableFooter: {
+      borderTop: `1px solid ${theme.palette.divider}`,
+    }
   }
 }
 
