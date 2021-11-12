@@ -127,6 +127,14 @@ const CardTableView = (props) => {
     dispatch.setPageNumber(0)
   }, [data, sortOrder, sortBy])
 
+  useEffect(() => {
+    setCurrentHoveringCard(null)
+  }, [sortedData, paginatedData])
+
+  useEffect(() => {
+    dispatch.setSelectedCardIds([])
+  }, [data])
+
 
   /** HANDLERS **/
   const handleRowHover = (card, i) => {
@@ -178,7 +186,7 @@ const CardTableView = (props) => {
         </Hidden>
 
         {/** TABLE VIEW **/}
-        <Grid item>
+        <Grid item md>
           <TableContainer component={Paper} className={classes.tableContainer} elevation={5}>
             <Table size="small">
               <TableHead className={classes.tableHead}>
@@ -214,10 +222,10 @@ const CardTableView = (props) => {
                     cardsSelectableEnabled &&
                     // <TableCell className={classes.iconCell} />
                     <TableCell onClick={e => e.stopPropagation()} className={classes.checkbox}>
-                      <Tooltip arrow placement='top' title={selectedCardIds.length === data.length ? 'Clear selection' : 'Select all'}>
+                      <Tooltip arrow placement='top' title={selectedCardIds.length >= data.length ? 'Clear selection' : 'Select all'}>
                         <Checkbox
                           size='small'
-                          checked={selectedCardIds.length === data.length}
+                          checked={selectedCardIds.length >= data.length}
                           indeterminate={selectedCardIds.length > 0 && selectedCardIds.length < data.length}
                           onChange={handleSelectAllChange}
                         />

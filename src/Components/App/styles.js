@@ -60,7 +60,7 @@ const useStyles = (theme) => {
       // boxShadow: theme.shadows[4]
     },
     bottomBar: {
-      height: topBottomPadding,
+      // height: 'fit-content',
       minHeight: topBottomPadding,
       // maxHeight: topBottomPadding,
       // padding: theme.spacing(1),

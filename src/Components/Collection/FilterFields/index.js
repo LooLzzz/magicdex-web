@@ -83,7 +83,7 @@ const FilterProvider = (props) => {
     dispatch.setFilters({
       filters: {
         name: v => v.toLowerCase().includes(cardName.toLowerCase()),
-        oracle_text: v => v ? v.toLowerCase().includes(oracleText) : true,
+        oracle_text: v => v?.toLowerCase().includes(oracleText),
         type_line: v => v.toLowerCase().includes(typeLine),
         tag: tagArray.length > 0 ? tagArray : true,
         set: selectedSets.length > 0 ? selectedSets : true,

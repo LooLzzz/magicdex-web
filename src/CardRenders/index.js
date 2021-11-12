@@ -1,9 +1,9 @@
 import { Fragment } from 'react'
-import { useTheme, Chip, Hidden } from '@material-ui/core'
+import { useTheme, Chip, Typography } from '@material-ui/core'
 import { withStyles } from '@material-ui/styles'
 import _ from 'lodash'
 
-import { EllipsisText } from '@/Components'
+// import { EllipsisText } from '@/Components'
 import utils from './utils'
 import useStyles from './styles'
 
@@ -90,21 +90,24 @@ const renders = {
       default:
       case 'row':
         return (
-          name.includes('//')
-            ? name
-              .split('//')
-              .map((value, i) => {
-                value = value.trim()
-                return i === 0
-                  ?
-                  <EllipsisText key={i}
-                    text={value}
-                  />
-                  : <Hidden lgDown key={i}>
-                    {' // ' + value}
-                  </Hidden>
-              })
-            : name
+          <Typography variant="body2" noWrap>
+            {name}
+          </Typography>
+          // name.includes('//')
+          //   ? name
+          //     .split('//')
+          //     .map((value, i) => {
+          //       value = value.trim()
+          //       return i === 0
+          //         ?
+          //         <EllipsisText key={i}
+          //           text={value}
+          //         />
+          //         : <Hidden lgDown key={i}>
+          //           {' // ' + value}
+          //         </Hidden>
+          //     })
+          //   : name
         )
 
       case 'content':
@@ -301,11 +304,15 @@ const renders = {
     if (manaCost.length > 1)
       manaCost.splice(1, 0, ' // ') // add a separator between the two mana costs
     return (
-      cmc
-        ? <span title={`${cmc} Cmc`}>
-          {manaCost}
-        </span>
-        : manaCost
+      <Typography variant="body2" noWrap>
+        {
+          cmc
+            ? <span title={`${cmc} Cmc`}>
+              {manaCost}
+            </span>
+            : manaCost
+        }
+      </Typography>
     )
   }),
 
@@ -319,16 +326,19 @@ const renders = {
           .replace(/—/g, '-')
           .replace(/Legendary/g, 'Lgd.')
         return (
-          typeLine.includes('//')
-            ? typeLine
-              .split('//')
-              .map((type, i) => {
-                type = type.trim()
-                return i === 0
-                  ? <Fragment key={i}>{type}</Fragment>
-                  : <Hidden lgDown key={i}>{' // ' + type}</Hidden>
-              })
-            : typeLine
+          <Typography variant="body2" noWrap>
+            {typeLine}
+          </Typography>
+          // typeLine.includes('//')
+          //   ? typeLine
+          //     .split('//')
+          //     .map((type, i) => {
+          //       type = type.trim()
+          //       return i === 0
+          //         ? <Fragment key={i}>{type}</Fragment>
+          //         : <Hidden lgDown key={i}>{' // ' + type}</Hidden>
+          //     })
+          //   : typeLine
         )
 
       case 'content':

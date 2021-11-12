@@ -27,6 +27,9 @@ const mapDispatchToProps = (dispatch) => ({
   }
 })
 
+/** UTILS **/
+const clampInt = (value, min, max) => Math.max(Math.min(value, max), min)
+
 
 const EditPanel = (props) => {
   /** VARS **/
@@ -152,10 +155,9 @@ const EditPanel = (props) => {
   const handleCardInfoChange = (field, value) => {
     switch (field) {
       case 'amount':
-        if (value > 0) {
-          setNewCard(card => ({ ...card, amount: value }))
-          onMenuHover({ ...card, ...newCard, amount: value })
-        }
+        value = clampInt(value, 1, 999999)
+        setNewCard(card => ({ ...card, amount: value }))
+        onMenuHover({ ...card, ...newCard, amount: value })
         break
 
       case 'foil':
@@ -247,6 +249,10 @@ const EditPanel = (props) => {
                       label='Amount'
                       color='secondary'
                       value={newCard.amount}
+                      inputProps={{
+                        inputMode: 'numeric',
+                        min: 1,
+                      }}
                       onChange={e => handleCardInfoChange('amount', e.target.value)}
                       style={{ marginLeft: 0 }}
                     />

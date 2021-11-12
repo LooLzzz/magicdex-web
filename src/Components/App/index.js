@@ -147,7 +147,7 @@ const App = (props) => {
             </Switch>
           </Grid>
 
-          <Grid item xs={12} className={`${classes.bottomBar} MuiPaper-elevation8`}>
+          <Grid item container justifyContent='center' alignItems='center' xs={12} className={`${classes.bottomBar} MuiPaper-elevation8`}>
             <BottomBar />
           </Grid>
         </Grid>

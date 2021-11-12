@@ -19,7 +19,7 @@ const BottomBar = (props) => {
 
   /** RENDER **/
   return (
-    <Grid container justifyContent='center' alignContent='center' align='center' className={classes.appBar}>
+    <Grid item container justifyContent='center' alignContent='center' align='center' className={classes.appBar} spacing={1}>
       <Grid item xs={12}
         component={Typography} variant='caption'
       >
