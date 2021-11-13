@@ -1,5 +1,5 @@
 import { Fragment } from 'react'
-import { useTheme, Chip, Typography } from '@material-ui/core'
+import { useTheme, useMediaQuery, Chip, Hidden, Typography } from '@material-ui/core'
 import { withStyles } from '@material-ui/styles'
 import _ from 'lodash'
 
@@ -85,29 +85,25 @@ const renders = {
 
   RenderName: withStyles(useStyles)(({ classes, card, cardFace, renderStyle = 'row' }) => {
     let { name } = cardFace !== undefined ? card.card_faces[cardFace] : card
+    const lgDown = useMediaQuery(theme => theme.breakpoints.down('md'))
 
     switch (renderStyle) {
       default:
       case 'row':
+        name = name
+          .replace(/—/g, '-')
+          .replace(/Legendary/g, 'Lgd.')
+        const arr = name
+          .split('//')
+          .map(v => v.trim())
         return (
-          <Typography variant="body2" noWrap>
-            {name}
+          <Typography noWrap variant='body2' className={classes.widthLimit} title={lgDown ? name : ''}>
+            {arr[0]}
+            {
+              arr.length > 1 &&
+              <Hidden mdDown>{' // ' + arr[1]}</Hidden>
+            }
           </Typography>
-          // name.includes('//')
-          //   ? name
-          //     .split('//')
-          //     .map((value, i) => {
-          //       value = value.trim()
-          //       return i === 0
-          //         ?
-          //         <EllipsisText key={i}
-          //           text={value}
-          //         />
-          //         : <Hidden lgDown key={i}>
-          //           {' // ' + value}
-          //         </Hidden>
-          //     })
-          //   : name
         )
 
       case 'content':
@@ -214,10 +210,12 @@ const renders = {
     switch (renderStyle) {
       default:
       case 'row':
-        return value.toString() === 'true' ? '✔' : '✖'
+        return value.toString() === 'true'
+          ? <Chip className={classes.chip} label='✔' size='small' />
+          : <Chip className={classes.chip} label='✖' size='small' />
 
       case 'content':
-        return value
+        return value.toString() === 'true'
           ? <Chip className={classes.chip} label='Yes' size='small' color='secondary' />
           : <Chip className={classes.chip} label='No' size='small' />
     }
@@ -318,6 +316,7 @@ const renders = {
 
   RenderType: withStyles(useStyles)(({ classes, card, columnName = 'type_line', cardFace, renderStyle = 'row' }) => {
     let { [columnName]: typeLine, color_indicator: colorIndicator } = cardFace !== undefined ? card.card_faces[cardFace] : card
+    const lgDown = useMediaQuery(theme => theme.breakpoints.down('md'))
 
     switch (renderStyle) {
       default:
@@ -325,20 +324,17 @@ const renders = {
         typeLine = typeLine
           .replace(/—/g, '-')
           .replace(/Legendary/g, 'Lgd.')
+        const arr = typeLine
+          .split('//')
+          .map(v => v.trim())
         return (
-          <Typography variant="body2" noWrap>
-            {typeLine}
+          <Typography noWrap variant='body2' className={classes.widthLimit} title={lgDown ? typeLine : ''}>
+            {arr[0]}
+            {
+              arr.length > 1 &&
+              <Hidden mdDown>{' // ' + arr[1]}</Hidden>
+            }
           </Typography>
-          // typeLine.includes('//')
-          //   ? typeLine
-          //     .split('//')
-          //     .map((type, i) => {
-          //       type = type.trim()
-          //       return i === 0
-          //         ? <Fragment key={i}>{type}</Fragment>
-          //         : <Hidden lgDown key={i}>{' // ' + type}</Hidden>
-          //     })
-          //   : typeLine
         )
 
       case 'content':

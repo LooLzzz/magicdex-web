@@ -1,12 +1,13 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
-import { useState, useRef, useImperativeHandle } from 'react'
+import { useState, useEffect, useRef, useImperativeHandle } from 'react'
 import { IconButton, Grid, Paper, Hidden, Divider, useMediaQuery } from '@material-ui/core'
 import { ChevronRight as ChevronRightIcon, ChevronLeft as ChevronLeftIcon } from '@material-ui/icons'
 import { withStyles } from '@material-ui/styles'
+import { connect } from 'react-redux'
 import SwipeableViews from 'react-swipeable-views'
 
-// import { xs, sm, md, lg, xl } from '@/Config'
+import { setViewIndex_CardInfo } from '@/Logic/redux'
 import { CardImage } from '@/Components'
 import { addCardPrice, addLayoutKeywords } from '@/Providers'
 import FieldsPanel from './FieldsPanel'
@@ -14,32 +15,51 @@ import EditPanel from './EditPanel'
 import useStyles from './styles'
 
 
-const CardInfo = (props) => {
+/** REDUX **/
+const mapStateToProps = (state) => ({
+  viewIndex: state.actions.app.collection.cardInfo.viewIndex,
+})
+
+const mapDispatchToProps = (dispatch) => ({
+  dispatch: {
+    setViewIndex: (index) => dispatch(setViewIndex_CardInfo({ index })),
+  }
+})
+
+
+const CardInfo = ({
   /** VARS **/
+  refs,
+  card,
+  rootComponent,
+  rootProps,
+  topArrowProps,
+  ...props
+}) => {
   const {
     classes,
-    refs,
-    card,
-    rootComponent,
-    rootProps,
-    topArrowProps,
-    transform3dEnabled = true,
+    dispatch,
+    viewIndex,
   } = props
   const swipeableViewsRef = useRef()
+  const [menuHoverItem, setMenuHoverItem] = useState()
+
   // const xsDown = useMediaQuery(theme => theme.breakpoints.down('xm'))
   const smDown = useMediaQuery(theme => theme.breakpoints.down('sm'))
   const mdDown = useMediaQuery(theme => theme.breakpoints.down('md'))
   // const lgDown = useMediaQuery(theme => theme.breakpoints.down('lg'))
   // const xlDown = useMediaQuery(theme => theme.breakpoints.down('xl'))
-  const [currentViewIndex, setCurrentViewIndex] = useState(0)
-  const [menuHoverItem, setMenuHoverItem] = useState()
 
 
   /** EFFECTS **/
   useImperativeHandle(refs, () => ({
-    setViewIndex: index => { setCurrentViewIndex(index) },
     updateHeight: swipeableViewsRef.current?.updateHeight || (() => { }),
   }))
+
+  useEffect(() => {
+    //onMount
+    dispatch.setViewIndex(0)
+  }, [])
 
   // useEffect(() => {
   //   // onMount
@@ -62,7 +82,7 @@ const CardInfo = (props) => {
 
   /** HANDLERS **/
   const handleViewIndexChange = value => e => {
-    setCurrentViewIndex(value)
+    dispatch.setViewIndex(value)
   }
 
   const onMenuHover = hoverItem => {
@@ -98,20 +118,14 @@ const CardInfo = (props) => {
         {/* CARD PREVIEW */}
         <Hidden smDown>
           <Grid item className={classes.image}>
-            <CardImage
-              showPrice
-              tiltEnabled
-              transform3dEnabled={transform3dEnabled}
+            <CardImage showPrice tiltEnabled transform3dEnabled
               card={menuHoverItem || card}
             />
           </Grid>
         </Hidden>
         <Hidden mdUp>
           <Grid item style={{ marginBottom: 16 }}>
-            <CardImage
-              showPrice
-              tiltEnabled
-              transform3dEnabled={transform3dEnabled}
+            <CardImage showPrice tiltEnabled transform3dEnabled
               card={menuHoverItem || card}
             />
           </Grid>
@@ -126,8 +140,8 @@ const CardInfo = (props) => {
           <SwipeableViews ignoreNativeScroll
             ref={swipeableViewsRef}
             animateHeight
-            index={currentViewIndex}
-            onChangeIndex={index => handleViewIndexChange(index)}
+            index={viewIndex}
+            onChangeIndex={handleViewIndexChange}
             slideStyle={{ overflow: 'hidden' }}
           >
 
@@ -209,5 +223,7 @@ const CardInfo = (props) => {
 /** EXPORT **/
 export default
   withStyles(useStyles)(
-    CardInfo
+    connect(mapStateToProps, mapDispatchToProps)(
+      CardInfo
+    )
   )

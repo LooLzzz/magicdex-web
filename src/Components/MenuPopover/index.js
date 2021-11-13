@@ -19,10 +19,10 @@ const MenuPopover = forwardRef((props, ref) => {
     listProps,
   } = props
   const classes = makeStyles(useStyles(useTheme()))()
-  
+
   const iconButtonRef = useRef()
   const [Icon, setIcon] = useState(icon)
-  
+
   const [menuAnchor, setMenuAnchor] = useState(null)
   const menuOpen = Boolean(menuAnchor)
 
@@ -66,7 +66,7 @@ const MenuPopover = forwardRef((props, ref) => {
         {Icon}
       </IconButton>
 
-      <Popover
+      <Popover keepMounted
         className={classes.popover}
         open={menuOpen}
         anchorEl={menuAnchor}

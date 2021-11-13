@@ -212,25 +212,25 @@ const CardTableView = (props) => {
                       ))
                   }
 
-                  {/* Dropdown icon */}
-                  <Hidden smDown>
-                    <TableCell className={classes.iconCell} />
-                  </Hidden>
-
-                  {/** Checkbox **/}
+                  {/** Checkbox / DropdownIcon **/}
                   {
-                    cardsSelectableEnabled &&
-                    // <TableCell className={classes.iconCell} />
-                    <TableCell onClick={e => e.stopPropagation()} className={classes.checkbox}>
-                      <Tooltip arrow placement='top' title={selectedCardIds.length >= data.length ? 'Clear selection' : 'Select all'}>
-                        <Checkbox
-                          size='small'
-                          checked={selectedCardIds.length >= data.length}
-                          indeterminate={selectedCardIds.length > 0 && selectedCardIds.length < data.length}
-                          onChange={handleSelectAllChange}
-                        />
-                      </Tooltip>
-                    </TableCell>
+                    cardsSelectableEnabled
+                      ?
+                      // <TableCell className={classes.iconCell} />
+                      <TableCell onClick={e => e.stopPropagation()} className={classes.checkbox}>
+                        <Tooltip arrow placement='top' title={selectedCardIds.length >= data.length ? 'Clear selection' : 'Select all'}>
+                          <Checkbox
+                            size='small'
+                            checked={selectedCardIds.length >= data.length}
+                            indeterminate={selectedCardIds.length > 0 && selectedCardIds.length < data.length}
+                            onChange={handleSelectAllChange}
+                          />
+                        </Tooltip>
+                      </TableCell>
+                      :
+                      <Hidden smDown>
+                        <TableCell className={classes.iconCell} />
+                      </Hidden>
                   }
 
                 </TableRow>
@@ -256,6 +256,8 @@ const CardTableView = (props) => {
                     count={data.length}
                     rowsPerPage={perPage}
                     page={pageNumber}
+                    // labelDisplayedRows={({ from, to, count }) => `${from}-${to === -1 ? count : to} of ${count}`}
+                    labelDisplayedRows={({ from, to, count }) => `${from}-${to !== -1 ? to : count} of ${count !== -1 ? count : `more than ${to}`}`}
                     onPageChange={(e, v) => dispatch.setPageNumber(v)}
                     onRowsPerPageChange={(e) => dispatch.setPerPage(parseInt(e.target.value))}
                     SelectProps={{
@@ -304,7 +306,7 @@ const CardTableView = (props) => {
           </TableContainer>
         </Grid>
       </Grid>
-    </Grid>
+    </Grid >
   )
 }
 

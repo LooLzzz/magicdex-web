@@ -24,9 +24,12 @@ const useStyles = (theme) => {
       backgroundColor: floatingBackgroundColor,
       color: theme.palette.getContrastText(floatingBackgroundColor),
     },
+    checkboxCell: {
+      // borderLeft: `1px solid ${theme.palette.divider}`,
+      // paddingRight: 0,
+    },
     checkbox: {
-      borderLeft: `1px solid ${theme.palette.divider}`,
-      paddingRight: '6px'
+      padding: '5px 0 5px 8px',
     },
   }
 }

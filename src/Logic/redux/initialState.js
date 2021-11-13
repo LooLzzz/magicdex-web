@@ -41,6 +41,10 @@ const INITIAL_STATE = {
       selectedCardIds: [],
       filters: {},
 
+      cardInfo: {
+        viewIndex: 0,
+        editEnabled: false,
+      },
       tableView: {
         columns: {},
       },

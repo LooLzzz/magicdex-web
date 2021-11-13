@@ -97,6 +97,15 @@ const appReducers = {
     state.app.collection.pageNumber = 0
   },
 
+  //collection.cardInfo
+  setViewIndex_CardInfo: (state, action) => {
+    state.app.collection.cardInfo.viewIndex = action.payload.index
+  },
+  
+  setEditEnabled_CardInfo: (state, action) => {
+    state.app.collection.cardInfo.editEnabled = action.payload.enabled
+  },
+
   //collection.tableView
   setColumns_TableView: (state, action) => {
     state.app.collection.tableView.columns = action.payload.columns

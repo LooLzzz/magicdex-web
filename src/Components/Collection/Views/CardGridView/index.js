@@ -1,14 +1,17 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
 import { Fragment, useEffect, useState, useRef, createRef } from 'react'
-import { Paper, Grid, Collapse } from '@material-ui/core'
+import { Portal, MenuItem, ListItemText, Paper, Grid, Collapse } from '@material-ui/core'
 import { withStyles, useTheme } from '@material-ui/styles'
 import { connect } from 'react-redux'
 // import scrollIntoView from 'scroll-into-view-if-needed'
 import useSize from '@react-hook/size'
 import _ from 'lodash'
 
-import { addSelectedCardIds, removeSelectedCardIds } from '@/Logic/redux'
+import {
+  addSelectedCardIds, removeSelectedCardIds, setViewIndex_CardInfo,
+  toggleTiltEnabled_GridView, toggleTransform3dEnabled_GridView
+} from '@/Logic/redux'
 import { CardImage } from '@/Components'
 import CardInfo from '../CardInfo'
 import useStyles from './styles'
@@ -23,18 +26,25 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   dispatch: {
+    toggleTiltEnabled: () => dispatch(toggleTiltEnabled_GridView()),
+    toggleTransform3dEnabled: () => dispatch(toggleTransform3dEnabled_GridView()),
     addSelectedCardIds: (payload) => dispatch(addSelectedCardIds(payload)),
     removeSelectedCardIds: (payload) => dispatch(removeSelectedCardIds(payload)),
+    setViewIndex: (index) => dispatch(setViewIndex_CardInfo({ index })),
   }
 })
+
+
+// TODO: add context menu support for this component
 
 
 const CardGridView = (props) => {
   /** VARS **/
   const {
     // classes,
-    // dispatch,
+    dispatch,
     data,
+    menuItemRef,
     tiltEnabled,
     transform3dEnabled,
     cardWidth = 209,
@@ -113,9 +123,8 @@ const CardGridView = (props) => {
       })
 
       setTimeout(() => {
-        refs[targetCollapseIdx]?.cardInfo?.current?.setViewIndex(0)
+        dispatch.setViewIndex(0)
         refs[targetCollapseIdx]?.cardInfo?.current?.updateHeight()
-        // refs[targetCollapseIdx].cardInfo?.current?.swipeableViewsRef
       }, 10)
     }
   }
@@ -123,73 +132,91 @@ const CardGridView = (props) => {
 
   /** RENDER **/
   return (
-    <Grid item container ref={containerRef} xs={12} lg={10} spacing={2} justifyContent='center'>
+    <>
       {
-        sortedData && sortedData.map((card, i) => {
-          const targetCollapseIdx = Math.floor(i / cardsPerRow)
-
-          return (
-            <Fragment key={i}>
-              {
-                card &&
-                <Grid item xs='auto'>
-                  <CardImage packTransformButton
-                    transform3dEnabled={transform3dEnabled}
-                    tiltEnabled={tiltEnabled}
-                    card={card}
-                    width={cardWidth}
-                    height={cardWidth * 1.4}
-                    tiltProps={{
-                      tiltMaxAngleX: 12.5,
-                      tiltMaxAngleY: 12.5,
-                    }}
-                    imageProps={{
-                      width: cardWidth,
-                      height: cardWidth * 1.4,
-                    }}
-                    rootProps={{
-                      className: 'cursor-pointer',
-                      onClick: handleCardClick({ card, key: i }),
-                    }}
-                  />
-                </Grid>
-              }
-              {
-                (((i + 1) % cardsPerRow === 0) || (i === sortedData.length - 1)) &&
-                <Grid item xs={12}>
-                  <Collapse mountOnEnter unmountOnExit
-                    ref={refs[targetCollapseIdx]?.collapse}
-                    timeout="auto"
-                    in={targetCollapseIdx === selectedCard.targetCollapse}
-                  // onEntering={() => scrollIntoView(refs[targetCollapseIdx]?.collapse?.current, { scrollMode: 'if-needed', behavior: 'smooth', block: 'start' })}
-                  // onEntered={() => scrollIntoView(refs[targetCollapseIdx]?.collapse?.current, { scrollMode: 'if-needed', behavior: 'smooth', block: 'end' })}
-                  >
-                    {
-                      selectedCard?.data &&
-                      <CardInfo
-                        refs={refs[targetCollapseIdx]?.cardInfo}
-                        card={selectedCard.data}
-                        rootComponent={Paper}
-                        rootProps={{
-                          elevation: 1,
-                        }}
-                        topArrowProps={{
-                          style: {
-                            borderTopColor: theme.palette.background.default,
-                            left: `calc(${selectedCard?.box?.left + (selectedCard?.box?.width * 0.5) - containerRef?.current?.offsetLeft}px - 2.25rem)`,
-                          },
-                        }}
-                      />
-                    }
-                  </Collapse>
-                </Grid>
-              }
-            </Fragment>
-          )
-        })
+        <Portal container={menuItemRef.current}>
+          <MenuItem onClick={dispatch.toggleTiltEnabled}>
+            <ListItemText
+              primary='Card Tilt'
+              secondary={tiltEnabled ? 'Enabled' : 'Disabled'}
+            />
+          </MenuItem>
+          <MenuItem onClick={dispatch.toggleTransform3dEnabled}>
+            <ListItemText
+              primary='3D Transform'
+              secondary={transform3dEnabled ? 'Enabled' : 'Disabled'}
+            />
+          </MenuItem>
+        </Portal>
       }
-    </Grid>
 
+      <Grid item container ref={containerRef} xs={12} lg={10} spacing={2} justifyContent='center'>
+        {
+          sortedData && sortedData.map((card, i) => {
+            const targetCollapseIdx = Math.floor(i / cardsPerRow)
+
+            return (
+              <Fragment key={i}>
+                {
+                  card &&
+                  <Grid item xs='auto'>
+                    <CardImage packTransformButton
+                      transform3dEnabled={transform3dEnabled}
+                      tiltEnabled={tiltEnabled}
+                      card={card}
+                      width={cardWidth}
+                      height={cardWidth * 1.4}
+                      tiltProps={{
+                        tiltMaxAngleX: 12.5,
+                        tiltMaxAngleY: 12.5,
+                      }}
+                      imageProps={{
+                        width: cardWidth,
+                        height: cardWidth * 1.4,
+                      }}
+                      rootProps={{
+                        className: 'cursor-pointer',
+                        onClick: handleCardClick({ card, key: i }),
+                      }}
+                    />
+                  </Grid>
+                }
+                {
+                  (((i + 1) % cardsPerRow === 0) || (i === sortedData.length - 1)) &&
+                  <Grid item xs={12}>
+                    <Collapse mountOnEnter unmountOnExit
+                      ref={refs[targetCollapseIdx]?.collapse}
+                      timeout="auto"
+                      in={targetCollapseIdx === selectedCard.targetCollapse}
+                    // onEntering={() => scrollIntoView(refs[targetCollapseIdx]?.collapse?.current, { scrollMode: 'if-needed', behavior: 'smooth', block: 'start' })}
+                    // onEntered={() => scrollIntoView(refs[targetCollapseIdx]?.collapse?.current, { scrollMode: 'if-needed', behavior: 'smooth', block: 'end' })}
+                    >
+                      {
+                        selectedCard?.data &&
+                        <CardInfo
+                          refs={refs[targetCollapseIdx]?.cardInfo}
+                          card={selectedCard.data}
+                          rootComponent={Paper}
+                          rootProps={{
+                            elevation: 1,
+                          }}
+                          topArrowProps={{
+                            style: {
+                              borderTopColor: theme.palette.background.default,
+                              left: `calc(${selectedCard?.box?.left + (selectedCard?.box?.width * 0.5) - containerRef?.current?.offsetLeft}px - 2.25rem)`,
+                            },
+                          }}
+                        />
+                      }
+                    </Collapse>
+                  </Grid>
+                }
+              </Fragment>
+            )
+          })
+        }
+      </Grid>
+    </>
   )
 }
 

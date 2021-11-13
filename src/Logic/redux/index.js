@@ -35,6 +35,10 @@ export const {
   setPageNumber,
   setPerPage,
   
+  /** .app.collection.cardInfo **/
+  setViewIndex_CardInfo,
+  setEditEnabled_CardInfo,
+
   /** .app.collection.tableView **/
   setColumns_TableView,
   

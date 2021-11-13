@@ -83,7 +83,7 @@ const FilterProvider = (props) => {
     dispatch.setFilters({
       filters: {
         name: v => v.toLowerCase().includes(cardName.toLowerCase()),
-        oracle_text: v => v?.toLowerCase().includes(oracleText),
+        oracle_text: v => oracleText ? v?.toLowerCase().includes(oracleText) : true,
         type_line: v => v.toLowerCase().includes(typeLine),
         tag: tagArray.length > 0 ? tagArray : true,
         set: selectedSets.length > 0 ? selectedSets : true,
@@ -152,7 +152,7 @@ const FilterProvider = (props) => {
                   />
                 </ListItem>
 
-                <ListItem>
+                <ListItem style={{ paddingRight: 28 }}>
                   <Autocomplete multiple freeSolo //disableClearable autoSelect
                     limitTags={4}
                     label='Tags'

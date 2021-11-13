@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
 import { Fragment, useState, useEffect } from 'react'
-import { Tooltip, Chip, useMediaQuery, Accordion, AccordionDetails, AccordionSummary, InputAdornment, Divider, Typography, Paper, Modal, Backdrop, CircularProgress, Grid, IconButton, Button, Fade, Zoom, FormControlLabel, TextField, Checkbox, MenuItem } from '@material-ui/core'
+import { Tooltip, Chip, useMediaQuery, Accordion, AccordionDetails, AccordionSummary, InputAdornment, Divider, Typography, Paper, Modal, CircularProgress, Grid, IconButton, Button, Fade, Zoom, FormControlLabel, TextField, Checkbox, MenuItem } from '@material-ui/core'
 import { Autocomplete } from '@material-ui/lab'
 import { withStyles } from '@material-ui/styles'
 import { Delete as DeleteIcon, ExpandMore as ExpandMoreIcon } from '@material-ui/icons'
@@ -9,7 +9,7 @@ import { useSnackbar } from 'notistack'
 import { connect } from 'react-redux'
 import lodash from 'lodash'
 
-import { updateCollection, removeCardsFromCollection, addFilters } from '@/Logic/redux'
+import { updateCollection, removeCardsFromCollection, addFilters, setEditEnabled_CardInfo } from '@/Logic/redux'
 import { getCardPrints } from '@/Api'
 import RenderCell from '@/CardRenders'
 import useStyles from './styles'
@@ -18,12 +18,15 @@ import useStyles from './styles'
 /** REDUX **/
 const mapStateToProps = (state) => ({
   tagFilters: state.actions.app.collection.filters.tag || [],
+  editEnabled: state.actions.app.collection.cardInfo.editEnabled,
 })
+
 const mapDispatchToProps = (dispatch) => ({
   dispatch: {
-    updateCollection: (payload) => dispatch(updateCollection(payload)),
-    removeCardsFromCollection: (payload) => dispatch(removeCardsFromCollection(payload)),
-    addFilters: (payload) => dispatch(addFilters(payload)),
+    updateCollection: (card) => dispatch(updateCollection({ cards: [card] })),
+    removeCardFromCollection: (card) => dispatch(removeCardsFromCollection({ cards: [card] })),
+    addFilters: (filters) => dispatch(addFilters({ filters })),
+    setEditEnabled: (enabled) => dispatch(setEditEnabled_CardInfo({ enabled })),
   }
 })
 
@@ -31,20 +34,22 @@ const mapDispatchToProps = (dispatch) => ({
 const clampInt = (value, min, max) => Math.max(Math.min(value, max), min)
 
 
-const EditPanel = (props) => {
+const EditPanel = ({
   /** VARS **/
+  card,
+  updateHeight: _updateHeight,
+  onMenuHover,
+  ...props
+}) => {
   const {
     classes,
     dispatch,
-    card,
-    updateHeight: _updateHeight,
-    onMenuHover,
     tagFilters,
+    editEnabled,
   } = props
   const { enqueueSnackbar } = useSnackbar()
   const smDown = useMediaQuery(theme => theme.breakpoints.down('sm'))
   const updateHeight = () => setTimeout(() => _updateHeight(), 150)
-  const [editEnabled, setEditEnabled] = useState(false)
   const [modalOpen, setModalOpen] = useState(false)
 
   const [newCard, setNewCard] = useState({})
@@ -59,7 +64,7 @@ const EditPanel = (props) => {
     setPrintsLang([])
     onMenuHover(null)
     setModalOpen(false)
-    setEditEnabled(false)
+    dispatch.setEditEnabled(false)
 
     setNewCard({
       id: card.id,
@@ -109,43 +114,41 @@ const EditPanel = (props) => {
   const handleChipClick = (tag) => (e) => {
     if (Array.isArray(tagFilters)) {
       dispatch.addFilters({
-        filters: {
-          tag: tagFilters.includes(tag)
-            ? tagFilters.filter(item => item !== tag)
-            : tagFilters.concat(tag)
-        }
+        tag: tagFilters.includes(tag)
+          ? tagFilters.filter(item => item !== tag)
+          : tagFilters.concat(tag)
       })
     }
     else
       dispatch.addFilters({
-        filters: { tag: [tag] }
+        tag: [tag]
       })
   }
 
   const handleEditButtonClick = async (e) => {
     if (editEnabled) {
       // save changes
-      let clone = Object.assign(lodash.cloneDeep(card), newCard)
+      let cardClone = Object.assign(lodash.cloneDeep(card), newCard)
 
-      dispatch.updateCollection({ cards: [clone] })
+      dispatch.updateCollection(cardClone)
       onMenuHover(null)
       enqueueSnackbar(`Updated ${card.name} [${card.set.toUpperCase()}]`, { variant: 'info' })
     }
 
-    setEditEnabled(editEnabled => !editEnabled)
+    dispatch.setEditEnabled(!editEnabled)
     updateHeight()
   }
 
   const handleCancelButtonClick = (e) => {
     resetNewCard()
     onMenuHover(null)
-    setEditEnabled(false)
+    dispatch.setEditEnabled(false)
     updateHeight()
   }
 
   const handleDeleteButtonClick = (confirm) => (e) => {
     if (confirm) {
-      dispatch.removeCardsFromCollection({ cards: [card] })
+      dispatch.removeCardFromCollection(card)
       enqueueSnackbar(`Deleted ${card.name} [${card.set.toUpperCase()}]`, { variant: 'success' })
     }
     else
@@ -508,7 +511,7 @@ const EditPanel = (props) => {
                             <Grid item key={i}>
                               <Chip
                                 label={tag}
-                                color={Array.isArray(tagFilters) && tagFilters.includes(tag) ? 'secondary' : ''}
+                                color={Array.isArray(tagFilters) && tagFilters.includes(tag) ? 'secondary' : 'default'}
                                 onClick={handleChipClick(tag)}
                                 size='small'
                                 variant='outlined'
@@ -568,36 +571,37 @@ const EditPanel = (props) => {
         }
       </Grid>
 
-      <Grid container component={Modal}
-        spacing={5}
-        justifyContent='center'
-        alignItems='center'
-        closeAfterTransition
+      <Grid container spacing={5} justifyContent='center' alignItems='center'
+        component={Modal} closeAfterTransition
         onClose={e => setModalOpen(false)}
         open={modalOpen}
-        backdropComponent={Backdrop}
         BackdropProps={{ timeout: 500 }}
       >
         <Grid item component={Fade} in={modalOpen}>
           <Paper>
             <Grid container justifyContent='center' alignItems='center' spacing={2}>
               <Grid item xs={12} align='center'>
-                <Typography variant='h6'>
+                <Typography noWrap variant='h5' align='left'>
+                  Confirm Action
+                </Typography>
+                <Typography noWrap variant='body1' align='left'>
                   Are you sure you want to delete this card?
                 </Typography>
-                <Typography variant='h7'>
+                <Typography noWrap variant='body2' align='left' color='error'>
                   This action is irreversible.
                 </Typography>
               </Grid>
-              <Grid item>
-                <Button variant='outlined' onClick={e => setModalOpen(false)}>
-                  HECK NO
-                </Button>
-              </Grid>
-              <Grid item>
-                <Button variant='contained' color='secondary' onClick={handleDeleteButtonClick(true)}>
-                  OH YEH
-                </Button>
+              <Grid item container justifyContent='flex-end' xs={12} spacing={1}>
+                <Grid item>
+                  <Button variant='outlined' onClick={e => setModalOpen(false)}>
+                    Nop
+                  </Button>
+                </Grid>
+                <Grid item>
+                  <Button variant='contained' color='secondary' onClick={handleDeleteButtonClick(true)}>
+                    Yep
+                  </Button>
+                </Grid>
               </Grid>
             </Grid>
           </Paper>

@@ -13,7 +13,7 @@ import {
 
 import { addSelectedCardIds, removeSelectedCardIds, setCurrentOpenCardId } from '@/Logic/redux'
 import RenderCell from '@/CardRenders'
-import CardInfo from '../../CardInfo'
+import { CardInfo, ContextMenu } from '@/Components/Collection/Views'
 import useStyles from './styles'
 
 
@@ -33,24 +33,29 @@ const mapDispatchToProps = (dispatch) => ({
 })
 
 
-const CardRow = (props) => {
+const CardRow = ({
   /** VARS **/
+  columns,
+  key,
+  card,
+  onMouseEnter,
+  contextMenuInitialState = {},
+  ...props
+}) => {
   const {
     classes,
-    columns,
-    key,
-    card,
-    onMouseEnter,
+    dispatch,
     cardsSelectableEnabled: selectable,
     selectedCardIds,
     currentOpenCardId,
-    dispatch,
   } = props
   const theme = useTheme()
   const setRef = useRef()
   const cardInfoRef = useRef()
+  const checkboxRef = useRef()
   const [isOpen, setIsOpen] = useState(false)
   const [showContent, setShowContent] = useState(false)
+  const [contextMenuState, setContextMenuState] = useState(contextMenuInitialState)
 
   const [isMouseOver, setIsMouseOver] = useState(false)
 
@@ -68,6 +73,22 @@ const CardRow = (props) => {
       : dispatch.removeSelectedCardIds({ id: card._id })
   }
 
+  const handleCheckboxCellClick = (e) => {
+    e.stopPropagation()
+
+    !checkboxRef.current.checked
+      ? dispatch.addSelectedCardIds({ id: card._id })
+      : dispatch.removeSelectedCardIds({ id: card._id })
+  }
+
+  const handleContextMenu = (e) => {
+    e.preventDefault()
+    setContextMenuState({
+      mouseX: e.clientX,
+      mouseY: e.clientY,
+    })
+  }
+
   const handleIsOpenToggle = () => {
     if (!isOpen)
       dispatch.setCurrentOpenCardId({ id: card._id })
@@ -75,15 +96,9 @@ const CardRow = (props) => {
       dispatch.setCurrentOpenCardId({ id: null })
   }
 
-  const onCollapseExited = (isAppearing) => {
-    setShowContent(false)
-  }
-
-  const onCollapseEnter = (isAppearing) => {
-    setShowContent(true)
-  }
-
-  const onCollapseEntering = () => {
+  const collapseUpdate = (showContent) => (isAppearing) => {
+    if (showContent != null)
+      setShowContent(showContent)
     cardInfoRef.current?.updateHeight()
   }
 
@@ -91,12 +106,23 @@ const CardRow = (props) => {
   /** RENDER **/
   return (
     <Fragment key={key}>
+      <ContextMenu
+        setState={setContextMenuState}
+        card={card}
+        {...contextMenuState}
+      />
+
       <TableRow
         className={clsx(classes.root, 'cursor-pointer')}
         onClick={handleIsOpenToggle}
         onMouseEnter={onMouseEnter}
+        onContextMenu={handleContextMenu}
         style={{
-          backgroundColor: selectedCardIds.includes(card._id) && theme.palette.action.selected,
+          backgroundColor: (
+            selectedCardIds.includes(card._id)
+              ? theme.palette.action.selected
+              : 'unset'
+          ),
         }}
       // onContextMenu={e => {console.log(card.name);e.preventDefault()}} //TODO: add context menu
       >
@@ -135,29 +161,33 @@ const CardRow = (props) => {
             )
         }
 
-        {/* DROPDOWN ARROW */}
-        <Hidden smDown>
-          <TableCell>
-            <IconButton size='small' onClick={handleIsOpenToggle}>
-              {
-                isOpen
-                  ? <KeyboardArrowUpIcon />
-                  : <KeyboardArrowDownIcon />
-              }
-            </IconButton>
-          </TableCell>
-        </Hidden>
-
-        {/* CHECKBOX */}
+        {/* CHECKBOX / DROPDOWN-ARROW */}
         {
-          selectable &&
-          <TableCell onClick={e => e.stopPropagation()} className={classes.checkbox}>
-            <Checkbox
-              size='small'
-              checked={selectedCardIds.includes(card._id)}
-              onChange={handleSelectChange}
-            />
-          </TableCell>
+          selectable
+            ?
+            <TableCell onClick={handleCheckboxCellClick} className={classes.checkboxCell}>
+              <Checkbox
+                size='small'
+                checked={selectedCardIds.includes(card._id)}
+                onChange={handleSelectChange}
+                className={classes.checkbox}
+                inputProps={{
+                  ref: checkboxRef,
+                }}
+              />
+            </TableCell>
+            :
+            <Hidden smDown>
+              <TableCell>
+                <IconButton size='small' onClick={handleIsOpenToggle}>
+                  {
+                    isOpen
+                      ? <KeyboardArrowUpIcon />
+                      : <KeyboardArrowDownIcon />
+                  }
+                </IconButton>
+              </TableCell>
+            </Hidden>
         }
       </TableRow>
 
@@ -166,9 +196,9 @@ const CardRow = (props) => {
           <Collapse mountOnEnter unmountOnExit
             timeout='auto'
             in={isOpen}
-            onEnter={onCollapseEnter}
-            onExited={onCollapseExited}
-            onEntering={onCollapseEntering}
+            onEnter={collapseUpdate(true)}
+            onExited={collapseUpdate(false)}
+            onEntering={collapseUpdate()}
           >
             <CardInfo
               card={card}

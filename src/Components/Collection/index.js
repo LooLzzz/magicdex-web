@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
-import { useEffect, createRef } from 'react'
+import { useEffect, Fragment, useRef } from 'react'
 import { Grid, ListItemText, MenuItem, ListItem, ListSubheader, Divider, Fab, Tooltip, useMediaQuery } from '@material-ui/core'
 import { Skeleton, ToggleButton, ToggleButtonGroup } from '@material-ui/lab'
 import { withStyles } from '@material-ui/styles'
@@ -17,8 +17,8 @@ import { useHistory, useLocation } from 'react-router-dom'
 import upperFirst from 'lodash/upperFirst'
 
 import {
-  setCurrentTab, setCurrentCollection, setView, toggleCurrency, setColumns_TableView, toggleTiltEnabled_GridView,
-  toggleTransform3dEnabled_GridView, toggleCardsSelectableEnabled, setCurrentOpenCardId, setCardsSelectableEnabled,
+  setCurrentTab, setCurrentCollection, setView, toggleCurrency, setColumns_TableView,
+  toggleCardsSelectableEnabled, setCurrentOpenCardId, setCardsSelectableEnabled,
   setPerPage, setPageNumber,
 } from '@/Logic/redux'
 import { CardPriceDataProvider, FilteredDataProvider } from '@/Providers'
@@ -49,8 +49,6 @@ const mapDispatchToProps = (dispatch) => ({
     setView: (view) => dispatch(setView({ view })),
     setColumns: (columns) => dispatch(setColumns_TableView({ columns })),
     toggleCurrency: () => dispatch(toggleCurrency()),
-    toggleTiltEnabled: () => dispatch(toggleTiltEnabled_GridView()),
-    toggleTransform3dEnabled: () => dispatch(toggleTransform3dEnabled_GridView()),
     setCardsSelectableEnabled: (enabled) => dispatch(setCardsSelectableEnabled({ enabled })),
     toggleCardsSelectableEnabled: () => dispatch(toggleCardsSelectableEnabled()),
     setPageNumber: (pageNumber) => dispatch(setPageNumber({ pageNumber })),
@@ -67,15 +65,14 @@ const Collection = (props) => {
     username,
     collection, // current user's collection
     view, // one of ['table', 'grid', 'compact']
-    transform3dEnabled,
-    tiltEnabled,
     cardsSelectableEnabled,
     // selectedCardIds, // an array which will contain mongodb ids of selected cards (List[card._id]) //TODO: use this somehow l8r
     currency,
   } = props
   const history = useHistory()
   const location = useLocation()
-  const menuRef = createRef()
+  const menuRef = useRef()
+  const menuItemRef = useRef()
   const mdDown = useMediaQuery((theme) => theme.breakpoints.down('md'))
 
 
@@ -176,11 +173,6 @@ const Collection = (props) => {
   /** RENDER **/
   return (
     <>
-      {/* <Prompt
-        when={true}
-        message="Are you sure you want to leave?"
-      /> */}
-
       <div className={classes.root}>
         {
           !collection
@@ -213,6 +205,7 @@ const Collection = (props) => {
                   <Grid item container xs={11}>
                     <FilterFields />
                   </Grid>
+
                   <Grid item>
                     <MenuPopover
                       ref={menuRef}
@@ -243,61 +236,32 @@ const Collection = (props) => {
                       <ListSubheader className={classes.subheader}>
                         {`${upperFirst(view)} View`}
                       </ListSubheader>
-                      {(() => {
-                        switch (view) {
-                          default:
-                          case 'table':
-                            return (
-                              <>
-                                <MenuItem onClick={dispatch.toggleCurrency}>
-                                  <ListItemText
-                                    primary={'Change Currency'}
-                                    secondary={`Viewing ${currency.toUpperCase()}`}
-                                  />
-                                </MenuItem>
-                                <MenuItem onClick={dispatch.toggleCardsSelectableEnabled}>
-                                  {
-                                    cardsSelectableEnabled
-                                      ? 'Disable Edit'
-                                      : 'Enable Edit'
-                                  }
-                                </MenuItem>
-                                {/* <MenuItem>
-                                  Reset Changes
-                                </MenuItem> */}
-                              </>
-                            )
-                          case 'grid':
-                            return (
-                              <>
-                                <MenuItem onClick={dispatch.toggleTiltEnabled}>
-                                  {tiltEnabled ? 'Disable Tilt' : 'Enable Tilt'}
-                                </MenuItem>
-                                <MenuItem onClick={dispatch.toggleTransform3dEnabled}>
-                                  {transform3dEnabled ? 'Disable 3D Transform' : 'Enable 3D Transform'}
-                                </MenuItem>
-                              </>
-                            )
-                          case 'compact':
-                            return (
-                              <>
-                                <MenuItem>
-                                  TBD
-                                </MenuItem>
-                              </>
-                            )
-                        }
-                      })()}
+                      <MenuItem onClick={dispatch.toggleCardsSelectableEnabled}>
+                        <ListItemText
+                          primary={'Selection Mode'}
+                          secondary={cardsSelectableEnabled ? 'On' : 'Off'}
+                        />
+                      </MenuItem>
+                      <MenuItem onClick={dispatch.toggleCurrency}>
+                        <ListItemText
+                          primary={'Change Currency'}
+                          secondary={`Viewing ${currency.toUpperCase()}`}
+                        />
+                      </MenuItem>
+
+                      <span ref={menuItemRef} />  {/* placeholder for the view component to use <Portal> on */}
                     </MenuPopover>
                   </Grid>
                 </Grid>
+
                 <Grid item container wrap='nowrap' justifyContent='center' xs={12}>
                   <CardPriceDataProvider data={collection}>
                     <FilteredDataProvider>
                       {
                         (() => {
                           const props = {
-                            // {data} is passed to children from the `DataProvider`s
+                            menuItemRef,
+                            // {data} is passed to children from the <DataProvider> parents
                           }
                           switch (view) {
                             default:
