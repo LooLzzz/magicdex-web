@@ -202,6 +202,7 @@ const CardTableView = (props) => {
                           sortDirection={sortBy === columnName ? sortOrder : false}
                         >
                           <TableSortLabel
+                            style={{ whiteSpace: 'nowrap' }}
                             active={sortBy === columnName}
                             direction={sortBy === columnName ? sortOrder : 'asc'}
                             onClick={e => handleHeaderClick(e, columnName)}
@@ -250,7 +251,7 @@ const CardTableView = (props) => {
               <TableFooter className={classes.tableFooter}>
                 <TableRow>
                   <TablePagination
-                    rowsPerPageOptions={[5, 25, 50, 100, { label: 'All', value: -1 }]}
+                    rowsPerPageOptions={[10, 25, 50, 100, { label: 'All', value: -1 }]}
                     labelRowsPerPage='Cards per page:'
                     colSpan={9}
                     count={data.length}

@@ -2,6 +2,7 @@
 const useStyles = (theme) => {
   // const bottomBarHeight = '50px'
   // const mainSidesPadding = theme.spacing(10)
+  // console.log({ palette: theme.palette })
 
   return {
     imageContainer: {
@@ -14,6 +15,26 @@ const useStyles = (theme) => {
       position: 'absolute',
       top: '2.5%',
       left: '2.5%',
+    },
+    checkboxContainer: {
+      position: 'absolute',
+      top: '4%',
+      right: '5%',
+      // borderRadius: '20%',
+      // border: `1px solid ${theme.palette.action.hover}`,
+      // backgroundColor: theme.palette.action.active,
+      // margin: 0,
+      // padding: 0,
+      // '&:hover': {
+      //   backgroundColor: theme.palette.action.hover,
+      // },
+    },
+    checkbox: {
+      // padding: 1.5,
+      // margin: 2,
+      // backgroundColor: theme.palette.action.active,
+      // borderRadius: '15%',
+      transform: 'scale(1.5)'
     },
     priceContainer: {
       marginTop: theme.spacing(1),

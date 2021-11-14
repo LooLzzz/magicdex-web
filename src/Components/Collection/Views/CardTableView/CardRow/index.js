@@ -26,9 +26,9 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   dispatch: {
-    addSelectedCardIds: (payload) => dispatch(addSelectedCardIds(payload)),
-    removeSelectedCardIds: (payload) => dispatch(removeSelectedCardIds(payload)),
-    setCurrentOpenCardId: (payload) => dispatch(setCurrentOpenCardId(payload)),
+    addSelectedCardId: (id) => dispatch(addSelectedCardIds({ id })),
+    removeSelectedCardId: (id) => dispatch(removeSelectedCardIds({ id })),
+    setCurrentOpenCardId: (id) => dispatch(setCurrentOpenCardId({ id })),
   }
 })
 
@@ -39,7 +39,6 @@ const CardRow = ({
   key,
   card,
   onMouseEnter,
-  contextMenuInitialState = {},
   ...props
 }) => {
   const {
@@ -55,7 +54,7 @@ const CardRow = ({
   const checkboxRef = useRef()
   const [isOpen, setIsOpen] = useState(false)
   const [showContent, setShowContent] = useState(false)
-  const [contextMenuState, setContextMenuState] = useState(contextMenuInitialState)
+  const [contextMenuState, setContextMenuState] = useState({ clearSelectedCardsOnExit: false })
 
   const [isMouseOver, setIsMouseOver] = useState(false)
 
@@ -65,35 +64,66 @@ const CardRow = ({
     setIsOpen(currentOpenCardId === card._id)
   }, [currentOpenCardId])
 
+  useEffect(() => {
+    if (contextMenuState.mouseY && contextMenuState.mouseX) {
+      //opening
+      if (selectedCardIds.length === 0) {
+        dispatch.addSelectedCardId(card._id)
+        setContextMenuState(state => ({
+          ...state,
+          clearSelectedCardsOnExit: true,
+        }))
+      }
+    }
+    else {
+      //closing
+      if (contextMenuState.clearSelectedCardsOnExit) {
+        dispatch.removeSelectedCardId(card._id)
+        setContextMenuState({
+          clearSelectedCardsOnExit: false,
+        })
+      }
+    }
+  }, [contextMenuState.mouseY, contextMenuState.mouseX])
+
 
   /** HANDLERS **/
   const handleSelectChange = (e) => {
     e.target.checked
-      ? dispatch.addSelectedCardIds({ id: card._id })
-      : dispatch.removeSelectedCardIds({ id: card._id })
+      ? dispatch.addSelectedCardId(card._id)
+      : dispatch.removeSelectedCardId(card._id)
   }
 
   const handleCheckboxCellClick = (e) => {
     e.stopPropagation()
 
     !checkboxRef.current.checked
-      ? dispatch.addSelectedCardIds({ id: card._id })
-      : dispatch.removeSelectedCardIds({ id: card._id })
+      ? dispatch.addSelectedCardId(card._id)
+      : dispatch.removeSelectedCardId(card._id)
+  }
+
+  const handleMiddleMouseClick = (e) => {
+    e.preventDefault()
+    if (e.button === 1) // middle mouse click
+      selectedCardIds.includes(card._id)
+        ? dispatch.removeSelectedCardId(card._id)
+        : dispatch.addSelectedCardId(card._id)
   }
 
   const handleContextMenu = (e) => {
     e.preventDefault()
-    setContextMenuState({
+    setContextMenuState(state => ({
+      ...state,
       mouseX: e.clientX,
       mouseY: e.clientY,
-    })
+    }))
   }
 
   const handleIsOpenToggle = () => {
     if (!isOpen)
-      dispatch.setCurrentOpenCardId({ id: card._id })
+      dispatch.setCurrentOpenCardId(card._id)
     else
-      dispatch.setCurrentOpenCardId({ id: null })
+      dispatch.setCurrentOpenCardId(null)
   }
 
   const collapseUpdate = (showContent) => (isAppearing) => {
@@ -108,7 +138,6 @@ const CardRow = ({
     <Fragment key={key}>
       <ContextMenu
         setState={setContextMenuState}
-        card={card}
         {...contextMenuState}
       />
 
@@ -117,6 +146,7 @@ const CardRow = ({
         onClick={handleIsOpenToggle}
         onMouseEnter={onMouseEnter}
         onContextMenu={handleContextMenu}
+        onMouseDown={handleMiddleMouseClick}
         style={{
           backgroundColor: (
             selectedCardIds.includes(card._id)
@@ -124,7 +154,6 @@ const CardRow = ({
               : 'unset'
           ),
         }}
-      // onContextMenu={e => {console.log(card.name);e.preventDefault()}} //TODO: add context menu
       >
         {
           Object

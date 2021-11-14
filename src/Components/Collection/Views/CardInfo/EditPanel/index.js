@@ -23,8 +23,8 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   dispatch: {
-    updateCollection: (card) => dispatch(updateCollection({ cards: [card] })),
-    removeCardFromCollection: (card) => dispatch(removeCardsFromCollection({ cards: [card] })),
+    updateCollection: (card, callback) => dispatch(updateCollection({ cards: [card], callback })),
+    removeCardFromCollection: (card, callback) => dispatch(removeCardsFromCollection({ cards: [card], callback })),
     addFilters: (filters) => dispatch(addFilters({ filters })),
     setEditEnabled: (enabled) => dispatch(setEditEnabled_CardInfo({ enabled })),
   }
@@ -128,11 +128,20 @@ const EditPanel = ({
   const handleEditButtonClick = async (e) => {
     if (editEnabled) {
       // save changes
-      let cardClone = Object.assign(lodash.cloneDeep(card), newCard)
+      let cardClone = Object.assign(
+        lodash.cloneDeep(card),
+        newCard
+      )
 
-      dispatch.updateCollection(cardClone)
+      dispatch.updateCollection(cardClone, ({ success, res }) => {
+        if (success)
+          enqueueSnackbar(`Updated ${card.name} [${card.set.toUpperCase()}]`, { variant: 'info' })
+        else {
+          enqueueSnackbar(`Error updating ${card.name} [${card.set.toUpperCase()}]`, { variant: 'error' })
+          console.error({ error: res })
+        }
+      })
       onMenuHover(null)
-      enqueueSnackbar(`Updated ${card.name} [${card.set.toUpperCase()}]`, { variant: 'info' })
     }
 
     dispatch.setEditEnabled(!editEnabled)
@@ -148,8 +157,14 @@ const EditPanel = ({
 
   const handleDeleteButtonClick = (confirm) => (e) => {
     if (confirm) {
-      dispatch.removeCardFromCollection(card)
-      enqueueSnackbar(`Deleted ${card.name} [${card.set.toUpperCase()}]`, { variant: 'success' })
+      dispatch.removeCardFromCollection(card, ({ success, res }) => {
+        if (success)
+          enqueueSnackbar(`Deleted ${card.name} [${card.set.toUpperCase()}]`, { variant: 'success' })
+        else {
+          enqueueSnackbar(`Failed to delete ${card.name} [${card.set.toUpperCase()}]`, { variant: 'error' })
+          console.error({ error: res })
+        }
+      })
     }
     else
       setModalOpen(true)
@@ -269,7 +284,7 @@ const EditPanel = ({
                       size='small'
                       align='left'
                       label='Condition'
-                      value={newCard.condition}
+                      value={newCard.condition || ''}
                       onChange={e => handleCardInfoChange('condition', e.target.value)}
                       style={{ marginLeft: 0 }}
                     >
@@ -339,9 +354,9 @@ const EditPanel = ({
                         margin='dense'
                         size='small'
                         align='left'
-                        disabled={printsSet.length === 0}
+                        disabled={printsSet.length <= 1}
                         label='Set'
-                        value={`${newCard.set}:${newCard.collector_number}`}
+                        value={(printsSet || []).length === 0 ? '' : `${newCard.set}:${newCard.collector_number}`}
                         onChange={e => handleCardInfoChange('set', e.target.value)}
                         SelectProps={{
                           onClose: e => onMenuHover({ ...card, ...newCard })
@@ -381,8 +396,8 @@ const EditPanel = ({
                         size='small'
                         align='left'
                         label='Language'
-                        disabled={printsLang.length === 0}
-                        value={newCard.lang}
+                        disabled={printsLang.length <= 1}
+                        value={(printsLang || []).length === 0 ? '' : newCard.lang}
                         style={{ width: '6em' }}
                         onChange={e => handleCardInfoChange('lang', e.target.value)}
                         SelectProps={{
@@ -499,7 +514,7 @@ const EditPanel = ({
                   <Grid item container xs={12} spacing={1}>
                     <Grid item xs={12} component={Typography} variant='h6' align='left'>
                       <Tooltip arrow placement='right'
-                        title={card.tag.length > 0 ? <>Click a tag's chip to search <br /> for more cards with that tag</> : ''}
+                        title={card.tag.length > 0 ? <>Click a tag to search for <br /> more cards with that tag</> : ''}
                       >
                         <span>Tags</span>
                       </Tooltip>

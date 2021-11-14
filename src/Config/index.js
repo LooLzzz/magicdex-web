@@ -4,35 +4,37 @@ axios.defaults.headers.common['access-Control-Allow-Origin'] = '*'
 axios.defaults.headers.common['Access-Control-Allow-Credentials'] = true
 
 
-const API_URL = 'https://magicdex-server.herokuapp.com'
-// const API_URL = 'http://localhost:5000'
+const Config = {
+  MODIFY_DB_ALLOWED: false,
+  // MODIFY_DB_ALLOWED: true,
+  
+  API_URL: 'https://magicdex-server.herokuapp.com',
+  // API_URL: 'http://localhost:5000',
 
-const xs = 0
-const sm = 600
-const md = 900
-const lg = 1200
-const xl = 1536
+  PER_PAGE: 25,
+  CONDITIONS: [
+    'NM',
+    'LP',
+    'MP',
+    'HP',
+    'DAMAGED',
+  ],
 
-const PER_PAGE = 25
+  BREAKPOINTS: {
+    xs: 0,
+    sm: 600,
+    md: 900,
+    lg: 1200,
+    xl: 1536,
+  },
+}
 
-const CONDITIONS = [
-  'NM',
-  'LP',
-  'MP',
-  'HP',
-  'DAMAGED',
-]
+export default Config
 
-
-
-
-export {
+export const {
+  MODIFY_DB_ALLOWED,
   API_URL,
   CONDITIONS,
-  xs,
-  sm,
-  md,
-  lg,
-  xl,
+  BREAKPOINTS,
   PER_PAGE,
-}
+} = Config

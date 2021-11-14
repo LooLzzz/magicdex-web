@@ -36,7 +36,6 @@ const appReducers = {
       state.app.collection.selectedCardIds = _.uniq(selectedCardIds)
     else
       throw new Error(`Parameter ${Object.prototype.toString.call(selectedCardIds)} is not an Array`)
-
   },
 
   addSelectedCardIds: (state, action) => {
@@ -101,7 +100,7 @@ const appReducers = {
   setViewIndex_CardInfo: (state, action) => {
     state.app.collection.cardInfo.viewIndex = action.payload.index
   },
-  
+
   setEditEnabled_CardInfo: (state, action) => {
     state.app.collection.cardInfo.editEnabled = action.payload.enabled
   },

@@ -13,50 +13,51 @@ import {
   toggleTiltEnabled_GridView, toggleTransform3dEnabled_GridView
 } from '@/Logic/redux'
 import { CardImage } from '@/Components'
-import CardInfo from '../CardInfo'
+import { CardInfo, ContextMenu } from '@/Components/Collection/Views'
 import useStyles from './styles'
 
 
 /** REDUX **/
 const mapStateToProps = (state) => ({
+  selectedCardIds: state.actions.app.collection.selectedCardIds,
   tiltEnabled: state.actions.app.collection.gridView.tiltEnabled,
   transform3dEnabled: state.actions.app.collection.gridView.transform3dEnabled,
-  // cardsSelectableEnabled: state.actions.app.collection.cardsSelectableEnabled,
 })
 
 const mapDispatchToProps = (dispatch) => ({
   dispatch: {
     toggleTiltEnabled: () => dispatch(toggleTiltEnabled_GridView()),
     toggleTransform3dEnabled: () => dispatch(toggleTransform3dEnabled_GridView()),
-    addSelectedCardIds: (payload) => dispatch(addSelectedCardIds(payload)),
-    removeSelectedCardIds: (payload) => dispatch(removeSelectedCardIds(payload)),
+    addSelectedCardId: (id) => dispatch(addSelectedCardIds({ id })),
+    removeSelectedCardId: (id) => dispatch(removeSelectedCardIds({ id })),
     setViewIndex: (index) => dispatch(setViewIndex_CardInfo({ index })),
   }
 })
 
 
-// TODO: add context menu support for this component
-
-
-const CardGridView = (props) => {
+const CardGridView = ({
   /** VARS **/
+  data,
+  menuItemRef,
+  cardWidth = 209,
+  ...props
+}) => {
   const {
     // classes,
     dispatch,
-    data,
-    menuItemRef,
     tiltEnabled,
     transform3dEnabled,
-    cardWidth = 209,
+    selectedCardIds,
   } = props
   const theme = useTheme()
 
   const containerRef = useRef()
+  const [refs, setRefs] = useState([])
   const [containerWidth,] = useSize(containerRef)
   const [cardsPerRow, setCardsPerRow] = useState()
-  const [selectedCard, setSelectedCard] = useState({})
-  const [refs, setRefs] = useState([])
 
+  const [contextMenuState, setContextMenuState] = useState({ clearSelectedCardsOnExit: false })
+  const [selectedCard, setSelectedCard] = useState({})
   const [sortedData, setSortedData] = useState([])
 
 
@@ -96,8 +97,29 @@ const CardGridView = (props) => {
         })
       )
     )
-
   }, [containerWidth, cardWidth, data])
+
+  useEffect(() => {
+    if (contextMenuState.mouseY && contextMenuState.mouseX) {
+      //opening
+      if (selectedCardIds.length === 0) {
+        dispatch.addSelectedCardId(contextMenuState.card._id)
+        setContextMenuState(state => ({
+          ...state,
+          clearSelectedCardsOnExit: true,
+        }))
+      }
+    }
+    else {
+      //closing
+      if (contextMenuState.clearSelectedCardsOnExit) {
+        dispatch.removeSelectedCardId(contextMenuState.card._id)
+        setContextMenuState({
+          clearSelectedCardsOnExit: false,
+        })
+      }
+    }
+  }, [contextMenuState.mouseY, contextMenuState.mouseX])
 
 
   /** HANDLERS **/
@@ -111,7 +133,7 @@ const CardGridView = (props) => {
       setSelectedCard({
         ...selectedCard,
         targetCollapse: undefined,
-        box: e.currentTarget.getBoundingClientRect(),
+        box: e.target.getBoundingClientRect(),
       })
     }
     else {
@@ -119,7 +141,7 @@ const CardGridView = (props) => {
       setSelectedCard({
         data: card,
         targetCollapse: targetCollapseIdx,
-        box: e.currentTarget.getBoundingClientRect(),
+        box: e.target.getBoundingClientRect(),
       })
 
       setTimeout(() => {
@@ -129,10 +151,35 @@ const CardGridView = (props) => {
     }
   }
 
+  const handleMiddleMouseClick = (card) => (e) => {
+    e.preventDefault()
+    if (e.button === 1) // middle mouse click
+      selectedCardIds.includes(card._id)
+        ? dispatch.removeSelectedCardId(card._id)
+        : dispatch.addSelectedCardId(card._id)
+  }
+
+  const handleContextMenu = ({ card, key }) => (e) => {
+    e.preventDefault()
+    e.persist()
+    setContextMenuState(state => ({
+      ...state,
+      mouseX: e.clientX,
+      mouseY: e.clientY,
+      card,
+      onEditClick: () => handleCardClick({ card, key })(e),
+    }))
+  }
+
 
   /** RENDER **/
   return (
     <>
+      <ContextMenu
+        setState={setContextMenuState}
+        {...contextMenuState}
+      />
+
       {
         <Portal container={menuItemRef.current}>
           <MenuItem onClick={dispatch.toggleTiltEnabled}>
@@ -160,7 +207,7 @@ const CardGridView = (props) => {
                 {
                   card &&
                   <Grid item xs='auto'>
-                    <CardImage packTransformButton
+                    <CardImage packTransformButton showCheckbox
                       transform3dEnabled={transform3dEnabled}
                       tiltEnabled={tiltEnabled}
                       card={card}
@@ -177,6 +224,9 @@ const CardGridView = (props) => {
                       rootProps={{
                         className: 'cursor-pointer',
                         onClick: handleCardClick({ card, key: i }),
+                        // onClick: (e) => {console.log(e)},
+                        onContextMenu: handleContextMenu({ card, key: i }),
+                        onMouseDown: handleMiddleMouseClick(card),
                       }}
                     />
                   </Grid>

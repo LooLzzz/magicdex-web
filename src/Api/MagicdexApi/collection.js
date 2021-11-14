@@ -1,7 +1,8 @@
-import axios from "axios"
+import axios from 'axios'
+import pick from 'lodash/pick'
 
-import { API_URL } from "@/Config"
-import { authHeadersDecorator, catchErrors, populateCardData } from "./utils"
+import { API_URL } from '@/Config'
+import { getAuthHeaders, catchErrors, populateCardData } from './utils'
 
 
 const ROUTE_URL = `${API_URL}/collections`
@@ -11,8 +12,8 @@ const Collections = {
   /**
    * Retrieve cards from active user's collection.
    */
-  getCards: ({ page, per_page, cards, headers }) => {
-    // const headers = { ...getAuthHeaders() };
+  getCards: (page, per_page, cards) => {
+    const headers = getAuthHeaders()
     const params = { page, per_page, cards }
 
     return axios
@@ -24,8 +25,17 @@ const Collections = {
   /**
    * Insert or update cards from active user's collection.
    */
-  updateCards: ({ cards, headers }) => {
-    // const headers = { ...getAuthHeaders() };
+  updateCards: (cards) => {
+    const headers = getAuthHeaders()
+
+    // keep only relevant data
+    cards = cards
+      .map(card => {
+        card = pick(card, ['_id', 'id', 'amount', 'tag', 'foil', 'condition', 'signed', 'altered', 'misprint'])
+        card.scryfall_id = card.id
+        delete card['id']
+        return card
+      })
 
     return axios
       .post(ROUTE_URL, { cards }, { headers })
@@ -36,8 +46,8 @@ const Collections = {
   /**
    * Delete cards from active user's collection.
    */
-  deleteCards: ({ cards, headers }) => {
-    // const headers = { ...getAuthHeaders() };
+  deleteCards: (cards) => {
+    const headers = getAuthHeaders()
 
     return axios
       .delete(ROUTE_URL, { cards }, { headers })
@@ -49,8 +59,8 @@ const Collections = {
   /**
    * Retrieve all cards from active user's collection.
    */
-  getAllCards: ({ cards, headers }) => {
-    // const headers = { ...getAuthHeaders() };
+  getAllCards: (cards) => {
+    const headers = getAuthHeaders()
     const params = { cards }
 
     return axios
@@ -62,8 +72,8 @@ const Collections = {
   /**
    * Clear active user's collection.
    */
-  deleteAllCards: ({ headers }) => {
-    // const headers = { ...getAuthHeaders() };
+  deleteAllCards: () => {
+    const headers = getAuthHeaders()
 
     return axios
       .delete(`${ROUTE_URL}/all`, { headers })
@@ -74,8 +84,8 @@ const Collections = {
   /**
    * Retrieve a specific card from active user's collection.
    */
-  getCardById: ({ card_id, headers }) => {
-    // const headers = { ...getAuthHeaders() };
+  getCardById: (card_id) => {
+    const headers = getAuthHeaders()
 
     return axios
       .get(`${ROUTE_URL}/${card_id}`, { headers })
@@ -86,8 +96,8 @@ const Collections = {
   /**
    * Update a specific card from active user's collection.
    */
-  updateCardById: ({ card_id, data, headers }) => {
-    // const headers = { ...getAuthHeaders() };
+  updateCardById: (card_id, data) => {
+    const headers = getAuthHeaders()
 
     return axios
       .post(`${ROUTE_URL}/${card_id}`, data, { headers })
@@ -98,8 +108,8 @@ const Collections = {
   /**
    * Delete a specific card from active user's collection.
    */
-  deleteCardById: ({ card_id, headers }) => {
-    // const headers = { ...getAuthHeaders() };
+  deleteCardById: (card_id) => {
+    const headers = getAuthHeaders()
 
     return axios
       .delete(`${ROUTE_URL}/${card_id}`, { headers })
@@ -110,15 +120,15 @@ const Collections = {
 
 
 /** EXPORTS **/
-const decoratedCollections =
-  Object.fromEntries(
-    Object
-      .entries(Collections)
-      .map(([k, v]) => [k, authHeadersDecorator(v)])
-  )
+// const decoratedCollections =
+//   Object.fromEntries(
+//     Object
+//       .entries(Collections)
+//       .map(([k, v]) => [k, authHeadersDecorator(v)])
+//   )
 
-export default decoratedCollections
-// export default Collections;
+// export default decoratedCollections
+export default Collections
 
 export const {
   getCards,
@@ -129,5 +139,5 @@ export const {
   getCardById,
   updateCardById,
   deleteCardById,
-} = decoratedCollections
-// } = Collections
+  // } = decoratedCollections
+} = Collections

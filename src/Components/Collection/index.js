@@ -37,7 +37,6 @@ const mapStateToProps = (state) => ({
   currency: state.actions.app.currency,
   tiltEnabled: state.actions.app.collection.gridView.tiltEnabled,
   transform3dEnabled: state.actions.app.collection.gridView.transform3dEnabled,
-  selectedCardIds: state.actions.app.collection.selectedCardIds,
   cardsSelectableEnabled: state.actions.app.collection.cardsSelectableEnabled,
 })
 
@@ -66,7 +65,6 @@ const Collection = (props) => {
     collection, // current user's collection
     view, // one of ['table', 'grid', 'compact']
     cardsSelectableEnabled,
-    // selectedCardIds, // an array which will contain mongodb ids of selected cards (List[card._id]) //TODO: use this somehow l8r
     currency,
   } = props
   const history = useHistory()

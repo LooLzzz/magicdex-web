@@ -3,13 +3,28 @@
 import { useState, useEffect } from 'react'
 import { Button, Grid, useMediaQuery, Tooltip } from '@material-ui/core'
 import { withStyles } from '@material-ui/styles'
+import { connect } from 'react-redux'
 import Tilt from 'react-parallax-tilt'
-import clsx from 'clsx'
 
+import { addSelectedCardIds, removeSelectedCardIds } from '@/Logic/redux'
 import RenderCell from '@/CardRenders'
 import ImageOverlay from './ImageOverlay'
 import TransformableCard from './TransformableCard'
 import useStyles from './styles'
+
+
+/** REDUX **/
+const mapStateToProps = (state) => ({
+  selectedCardIds: state.actions.app.collection.selectedCardIds,
+  cardsSelectableEnabled: state.actions.app.collection.cardsSelectableEnabled,
+})
+
+const mapDispatchToProps = (dispatch) => ({
+  dispatch: {
+    addSelectedCardId: (id) => dispatch(addSelectedCardIds({ id })),
+    removeSelectedCardId: (id) => dispatch(removeSelectedCardIds({ id })),
+  }
+})
 
 
 /** CUSTOM TOOLTIP **/
@@ -32,21 +47,27 @@ const MyTooltip = withStyles((theme) => ({
 )
 
 
-const CardImage = (props) => {
+const CardImage = ({
   /** VARS **/
+  card,
+  width = 250,
+  height = 350,
+  rootProps,
+  imageProps,
+  buttonProps,
+  tiltProps,
+  tiltEnabled = false,
+  transform3dEnabled = false,
+  packTransformButton = false,
+  showPrice = false,
+  showCheckbox = false,
+  ...props
+}) => {
   const {
     classes,
-    card,
-    width = 250,
-    height = 350,
-    rootProps,
-    imageProps,
-    buttonProps,
-    tiltProps,
-    tiltEnabled = false,
-    showPrice = false,
-    packTransformButton,
-    transform3dEnabled,
+    dispatch,
+    selectedCardIds,
+    cardsSelectableEnabled,
   } = props
   const md = useMediaQuery(theme => theme.breakpoints.down('md'))
   const [flipped, setFlipped] = useState(false)
@@ -65,6 +86,12 @@ const CardImage = (props) => {
 
   const handleTransform = (setValueTo = undefined) => (e) => {
     setFlipped(setValueTo ?? !flipped)
+  }
+
+  const handleCheckboxChange = (card) => (e) => {
+    e.target.checked
+      ? dispatch.addSelectedCardId(card._id)
+      : dispatch.removeSelectedCardId(card._id)
   }
 
 
@@ -141,18 +168,19 @@ const CardImage = (props) => {
                 {...imageProps}
               />
           }
-          <span
-            onClick={packTransformButton && handleTransform()}
-            className={clsx(
-              classes.dfcSymbol,
-              'ms', 'ms-fw', 'ms-cost', 'ms-shadow', 'ms-duo', 'ms-duo-color',
-              { 'ms-dfc-modal-face': !flipped },
-              { 'ms-dfc-modal-back': flipped },
-            )}
-            style={{
-              display: (packTransformButton && (card?.is_transform || card?._isDoublesided)) ? 'unset' : 'none',
-            }}
-          />
+
+          {
+            (selectedCardIds.includes(card?._id) || (showCheckbox && cardsSelectableEnabled)) &&
+            <span className={classes.checkboxContainer} onClick={e => e.stopPropagation()}>
+              <input
+                type='checkbox'
+                checked={selectedCardIds.includes(card._id)}
+                className={classes.checkbox}
+                onChange={handleCheckboxChange(card)}
+              />
+            </span>
+          }
+
         </Tilt>
       </Grid>
 
@@ -232,5 +260,7 @@ const CardImage = (props) => {
 /** EXPORT **/
 export default
   withStyles(useStyles)(
-    CardImage
+    connect(mapStateToProps, mapDispatchToProps)(
+      CardImage
+    )
   )

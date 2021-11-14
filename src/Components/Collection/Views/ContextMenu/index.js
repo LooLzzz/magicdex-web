@@ -27,9 +27,9 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   dispatch: {
-    updateCollection: (cards) => dispatch(updateCollection({ cards })),
-    removeCardsFromCollection: (cards) => dispatch(removeCardsFromCollection({ cards })),
-    addSelectedCardIds: (id) => dispatch(addSelectedCardIds({ id })),
+    updateCollection: (cards, callback) => dispatch(updateCollection({ cards, callback })),
+    removeCardsFromCollection: (cards, callback) => dispatch(removeCardsFromCollection({ cards, callback })),
+    addSelectedCardId: (id) => dispatch(addSelectedCardIds({ id })),
     setSelectedCardIds: (ids) => dispatch(setSelectedCardIds({ selectedCardIds: ids })),
     setCurrentOpenCardId: (id) => dispatch(setCurrentOpenCardId({ id })),
     setViewIndex: (index) => dispatch(setViewIndex_CardInfo({ index })),
@@ -43,7 +43,10 @@ const ContextMenu = ({
   mouseY,
   mouseX,
   setState,
+  clearSelectedCards,
   card,
+  onEditClick,
+  clearSelectedCardsOnExit = false,
   ...props
 }) => {
   const {
@@ -54,29 +57,18 @@ const ContextMenu = ({
     ...rest
   } = props
   const { enqueueSnackbar } = useSnackbar()
-  const [clearSelectedCards, setClearSelectedCards] = useState(false)
   const [modalOpen, setModalOpen] = useState(false)
   const [tagArray, setTagArray] = useState([])
 
 
   /** HANDLERS **/
   const closeMenu = () => {
-    setState({ mouseY: null, mouseX: null })
+    setState(state => ({
+      ...state,
+      mouseY: null,
+      mouseX: null
+    }))
     setModalOpen(false)
-  }
-
-  const onEntering = (node) => {
-    if (selectedCardIds.length === 0) {
-      dispatch.addSelectedCardIds(card._id)
-      setClearSelectedCards(true)
-    }
-  }
-
-  const onExiting = (node) => {
-    if (clearSelectedCards) {
-      dispatch.setSelectedCardIds([])
-      setClearSelectedCards(false)
-    }
   }
 
   const handleTagChange = (value) => {
@@ -104,7 +96,8 @@ const ContextMenu = ({
   const handleMenuItemClick = (id, confirmAction = false) => (e) => {
     switch (id) {
       case 'edit':
-        dispatch.setCurrentOpenCardId(card._id)
+        onEditClick && onEditClick()
+        dispatch.setCurrentOpenCardId(selectedCardIds[0])
         setTimeout(() => {
           dispatch.setEditEnabled(true)
           dispatch.setViewIndex(1)
@@ -114,13 +107,21 @@ const ContextMenu = ({
 
       case 'delete':
         if (confirmAction) {
-          collection
-            .filter(card => selectedCardIds.includes(card._id))
-            .forEach(card => {
-              enqueueSnackbar(`Deleted ${card.name} [${card.set.toUpperCase()}]`, { variant: 'success' })
-            })
-          dispatch.removeCardsFromCollection(selectedCardIds.map(id => ({ _id: id })))
-          closeMenu()
+          const len = selectedCardIds.length
+          if (len > 0) {
+            dispatch.removeCardsFromCollection(
+              selectedCardIds.map(id => ({ _id: id })),
+              ({ success, res }) => {
+                if (success)
+                  enqueueSnackbar(`Deleted ${len} card entries`, { variant: 'success' })
+                else {
+                  enqueueSnackbar(`Failed to delete ${len} card entries`, { variant: 'error' })
+                  console.error({ error: res })
+                }
+                closeMenu()
+              }
+            )
+          }
         }
         else
           setModalOpen('delete')
@@ -128,19 +129,24 @@ const ContextMenu = ({
 
       case 'tag':
         if (confirmAction) {
-          collection
-            .filter(card => selectedCardIds.includes(card._id))
-            .forEach(card => {
-              enqueueSnackbar(`Updated ${card.name} [${card.set.toUpperCase()}]`, { variant: 'info' })
-            })
-
-          dispatch.updateCollection(
-            selectedCardIds.map(id => ({
-              _id: id,
-              tag: tagArray,
-            }))
-          )
-          closeMenu()
+          const len = selectedCardIds.length
+          if (len > 0) {
+            dispatch.updateCollection(
+              selectedCardIds.map(id => ({
+                _id: id,
+                tag: tagArray,
+              })),
+              ({ success, res }) => {
+                if (success)
+                  enqueueSnackbar(`Tagged ${len} card entries`, { variant: 'success' })
+                else {
+                  enqueueSnackbar(`Failed to tag ${len} card entries`, { variant: 'error' })
+                  console.error({ error: res })
+                }
+                closeMenu()
+              }
+            )
+          }
         }
         else {
           setTagArray(_.chain(collection)
@@ -176,10 +182,6 @@ const ContextMenu = ({
         MenuListProps={{
           dense: true,
         }}
-        TransitionProps={{
-          onEntering,
-          onExiting,
-        }}
         {...rest}
         className={clsx(classes.root, props.className)}
       >
@@ -211,10 +213,10 @@ const ContextMenu = ({
       <Grid container spacing={5} justifyContent='center' alignItems='center'
         component={Modal} closeAfterTransition
         onClose={closeMenu}
-        open={modalOpen}
+        open={Boolean(modalOpen)}
         BackdropProps={{ timeout: 500 }}
       >
-        <Grid item xs={8} sm={6} lg={4} component={Fade} in={modalOpen}>
+        <Grid item xs={8} sm={6} lg={4} component={Fade} in={Boolean(modalOpen)}>
           <Paper>
             <Grid container justifyContent='center' alignItems='center' spacing={1} className={classes.modal}>
               {
@@ -227,7 +229,9 @@ const ContextMenu = ({
                             Confirm Action
                           </Typography>
                           <Typography noWrap variant='body1' align='left'>
-                            Are you sure you want to delete the selected cards?
+                            {
+                              `Are you sure you want to delete the selected ${selectedCardIds.length > 1 ? 'cards' : 'card'}?`
+                            }
                           </Typography>
                           <Typography noWrap variant='body2' align='left' color='error'>
                             This action is irreversible.
@@ -253,7 +257,7 @@ const ContextMenu = ({
                           Assign Tags
                         </Grid>
                         <Grid item xs={12} align='left' component={Typography} variant='body2'>
-                          The following tags will be assigned to the selected cards:
+                          {`The following tags will be assigned to the selected ${selectedCardIds.length > 1 ? 'cards' : 'card'}:`}
                         </Grid>
                         <Grid item xs={12} sm={10} md={9} lg={7}>
                           <Autocomplete multiple freeSolo
