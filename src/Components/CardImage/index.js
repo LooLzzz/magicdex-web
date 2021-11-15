@@ -170,7 +170,7 @@ const CardImage = ({
           }
 
           {
-            (selectedCardIds.includes(card?._id) || (showCheckbox && cardsSelectableEnabled)) &&
+            showCheckbox && (selectedCardIds.includes(card?._id) || cardsSelectableEnabled) &&
             <span className={classes.checkboxContainer} onClick={e => e.stopPropagation()}>
               <input
                 type='checkbox'

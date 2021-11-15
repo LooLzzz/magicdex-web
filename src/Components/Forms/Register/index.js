@@ -30,8 +30,15 @@ const mapDispatchToProps = (dispatch) => ({
 })
 
 
-const Register = (props) => {
+const Register = ({
   /** VARS **/
+  ...props
+}) => {
+  const {
+    classes,
+    dispatch,
+    username,
+  } = props
   const history = useHistory()
   const { enqueueSnackbar } = useSnackbar()
   const [isLoading, setIsLoading] = useState(false)
@@ -41,11 +48,6 @@ const Register = (props) => {
   const [passwordRepeatInput, setPasswordRepeatInput] = useState('')
   const passwordInputRef = useRef()
   const formRef = useRef()
-  const {
-    classes,
-    dispatch,
-    username,
-  } = props
 
 
   /** EFFECTS **/

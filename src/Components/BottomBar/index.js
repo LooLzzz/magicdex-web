@@ -4,8 +4,10 @@ import { Grid, Typography } from '@material-ui/core'
 import useStyles from './styles'
 
 
-const BottomBar = (props) => {
+const BottomBar = ({
   /** VARS **/
+  ...props
+}) => {
   const {
     classes,
   } = props

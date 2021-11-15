@@ -4,11 +4,13 @@ import { useState, useEffect } from 'react'
 import { useMediaQuery } from '@material-ui/core'
 
 
-const EllipsisText = (props) => {
+const EllipsisText = ({
   /** VARS **/
+  text,
+  maxLength = undefined,
+  ...props
+}) => {
   const {
-    text,
-    maxLength = undefined,
     ...rest
   } = props
   const [outputText, setOutputText] = useState()

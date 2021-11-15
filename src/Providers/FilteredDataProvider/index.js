@@ -11,12 +11,13 @@ const mapStateToProps = (state) => ({
 
 
 /** COMPONENT **/
-const FilteredDataProvider = (props) => {
+const FilteredDataProvider = ({
   /** VARS **/
+  children,
+  data = [],
+  ...props
+}) => {
   const {
-    classes,
-    children,
-    data = [],
     filters,
     ...rest
   } = props

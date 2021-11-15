@@ -22,8 +22,10 @@ const mapDispatchToProps = (dispatch) => ({
 })
 
 
-const Decks = (props) => {
+const Decks = ({
   /** VARS **/
+  ...props
+}) => {
   const {
     classes,
     dispatch,

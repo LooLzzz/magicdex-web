@@ -22,12 +22,13 @@ const addCardPrice = (card, currency) => {
 }
 
 /** COMPONENT **/
-const CardPriceDataProvider = (props) => {
+const CardPriceDataProvider = ({
   /** VARS **/
+  children,
+  data = [],
+  ...props
+}) => {
   const {
-    classes,
-    children,
-    data = [],
     currency,
     ...rest
   } = props

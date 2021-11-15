@@ -6,19 +6,21 @@ import clsx from 'clsx'
 import useStyles from './styles'
 
 
-const ImageOverlay = (props) => {
+const ImageOverlay = ({
   /** VARS **/
+  name = 'Loading..',
+  rootProps,
+  baseSrc,
+  baseProps,
+  overlaySrc,
+  overlayEnabled,
+  overlayProps,
+  width,
+  height,
+  ...props
+}) => {
   const {
     classes,
-    name = 'Loading..',
-    rootProps,
-    baseSrc,
-    baseProps,
-    overlaySrc,
-    overlayEnabled,
-    overlayProps,
-    width,
-    height,
     ...rest
   } = props
   const [isLoaded, setLoaded] = useState(false)

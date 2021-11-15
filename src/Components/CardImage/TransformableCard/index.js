@@ -6,15 +6,17 @@ import ImageOverlay from '../ImageOverlay'
 import useStyles from './styles'
 
 
-const TransformableCard = (props) => {
+const TransformableCard = ({
   /** VARS **/
+  card,
+  flipped: _flipped,
+  width,
+  height,
+  imageProps,
+  ...props
+}) => {
   const {
     classes,
-    card,
-    flipped: _flipped,
-    width,
-    height,
-    imageProps,
   } = props
   const [flipped, setFlipped] = useState(_flipped)
   const [scaleX, setScaleX] = useState('1')

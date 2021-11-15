@@ -3,27 +3,23 @@ import { Paper, Divider, Typography, Dialog, DialogContent, CircularProgress } f
 import { withStyles } from "@material-ui/styles"
 import { ValidatorForm } from 'react-material-ui-form-validator'
 
-// import { setCurrentTab } from "@/Logic/redux"
 import useStyles from './styles'
 
 
-// function toTitleCase(str) {
-//   return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
-// }
-
-const BaseForm = (props) => {
+const BaseForm = ({
   /** VARS **/
+  validationRules,
+  header,
+  icon,
+  content,
+  actions,
+  onSubmit,
+  onError,
+  formRef,
+  ...props
+}) => {
   const {
     classes,
-    validationRules,
-    // dispatch,
-    header,
-    icon,
-    content,
-    actions,
-    onSubmit,
-    onError,
-    formRef,
     ...rest
   } = props
   const [Header, setHeader] = useState([])

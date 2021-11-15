@@ -27,17 +27,17 @@ const mapDispatchToProps = (dispatch) => ({
 })
 
 
-const App = (props) => {
+const App = ({
   /** VARS **/
-  // const history = useHistory()
-  const snackbarRef = createRef()
+  theme: _theme,
+  ...props
+}) => {
   const {
     dispatch,
-    theme,
-    // accessToken,
   } = props
-  const _theme = Object.assign({}, theme)
-  const classes = makeStyles(useStyles(_theme))()
+  const snackbarRef = createRef()
+  const theme = Object.assign({}, _theme)
+  const classes = makeStyles(useStyles(theme))()
 
   const routes = [
     {
@@ -113,7 +113,7 @@ const App = (props) => {
 
   /** RENDER **/
   return (
-    <ThemeProvider theme={_theme}>
+    <ThemeProvider theme={theme}>
       <CssBaseline />
       <SnackbarProvider
         ref={snackbarRef}

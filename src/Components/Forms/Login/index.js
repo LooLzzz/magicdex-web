@@ -28,8 +28,15 @@ const mapDispatchToProps = (dispatch) => ({
 })
 
 
-const Login = (props) => {
+const Login = ({
   /** VARS **/
+  ...props
+}) => {
+  const {
+    classes,
+    dispatch,
+    username,
+  } = props
   const history = useHistory()
   const { enqueueSnackbar } = useSnackbar()
   const [isLoading, setIsLoading] = useState(false)
@@ -37,11 +44,6 @@ const Login = (props) => {
   const [usernameInput, setUsernameInput] = useState('')
   const [passwordInput, setPasswordInput] = useState('')
   const formRef = useRef()
-  const {
-    classes,
-    dispatch,
-    username,
-  } = props
 
 
   /** EFFECTS **/

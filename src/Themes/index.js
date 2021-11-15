@@ -16,7 +16,7 @@ const sharedOverrides = {
         padding: '2px',
         // marginLeft: '0.25em',
         // backgroundColor: 'rgba(255,255,255,0.1)',
-        borderRadius: '12.5%',
+        borderRadius: '0.5em',
       },
       ".alignLeft": {
         textAlign: "left",

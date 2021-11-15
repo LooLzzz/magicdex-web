@@ -10,8 +10,10 @@ import FilterListIcon from '@material-ui/icons/FilterList'
 import useStyles from './styles'
 
 
-const MenuPopover = forwardRef((props, ref) => {
+const MenuPopover = forwardRef(({
   /** VARS **/
+  ...props
+}, ref) => {
   const [menuAnchor, setMenuAnchor] = useState(null)
   const menuOpen = Boolean(menuAnchor)
   const filterButtonRef = useRef()

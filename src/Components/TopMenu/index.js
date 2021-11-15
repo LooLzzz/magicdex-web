@@ -30,8 +30,10 @@ const mapDispatchToProps = (dispatch) => ({
 })
 
 
-const TopMenu = (props) => {
+const TopMenu = ({
   /** VARS **/
+  ...props
+}) => {
   const {
     classes,
     dispatch,

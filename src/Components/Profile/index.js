@@ -22,8 +22,10 @@ const mapDispatchToProps = (dispatch) => ({
 })
 
 
-const Profile = (props) => {
+const Profile = ({
   /** VARS **/
+  ...props
+}) => {
   const {
     classes,
     dispatch,

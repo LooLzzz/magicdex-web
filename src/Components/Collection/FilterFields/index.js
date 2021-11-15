@@ -27,8 +27,10 @@ const mapDispatchToProps = (dispatch) => ({
 })
 
 
-const FilterProvider = (props) => {
+const FilterProvider = ({
   /** VARS **/
+  ...props
+}) => {
   const {
     dispatch,
     classes,

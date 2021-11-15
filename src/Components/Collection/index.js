@@ -35,8 +35,6 @@ const mapStateToProps = (state) => ({
   collection: state.actions.activeUser.collection,
   view: state.actions.app.collection.view,
   currency: state.actions.app.currency,
-  tiltEnabled: state.actions.app.collection.gridView.tiltEnabled,
-  transform3dEnabled: state.actions.app.collection.gridView.transform3dEnabled,
   cardsSelectableEnabled: state.actions.app.collection.cardsSelectableEnabled,
 })
 
@@ -56,16 +54,18 @@ const mapDispatchToProps = (dispatch) => ({
 })
 
 
-const Collection = (props) => {
+const Collection = ({
   /** VARS **/
+  ...props
+}) => {
   const {
     classes,
     dispatch,
     username,
     collection, // current user's collection
     view, // one of ['table', 'grid', 'compact']
-    cardsSelectableEnabled,
     currency,
+    cardsSelectableEnabled,
   } = props
   const history = useHistory()
   const location = useLocation()

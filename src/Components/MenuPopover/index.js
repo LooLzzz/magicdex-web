@@ -10,14 +10,17 @@ import { makeStyles, useTheme } from '@material-ui/styles'
 import useStyles from './styles'
 
 
-const MenuPopover = forwardRef((props, ref) => {
+const MenuPopover = forwardRef(({
   /** VARS **/
-  const {
-    icon,
-    iconButtonProps,
-    popoverProps,
-    listProps,
-  } = props
+  icon,
+  iconButtonProps,
+  popoverProps,
+  listProps,
+  ...props
+}, ref) => {
+  // const {
+  //   ...rest
+  // } = props
   const classes = makeStyles(useStyles(useTheme()))()
 
   const iconButtonRef = useRef()

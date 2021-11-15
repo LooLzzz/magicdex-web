@@ -36,12 +36,14 @@ const mapDispatchToProps = (dispatch) => ({
 })
 
 
-const CardTableView = (props) => {
+const CardTableView = ({
   /** VARS **/
+  data,
+  ...props
+}) => {
   const {
     classes,
     dispatch,
-    data,
     columns,
     pageNumber,
     perPage,

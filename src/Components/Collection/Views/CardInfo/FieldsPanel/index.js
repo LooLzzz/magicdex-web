@@ -4,10 +4,13 @@ import { Box, Grid, Typography } from '@material-ui/core'
 import RenderCell from '@/CardRenders'
 
 
-const FieldsPanel = (props) => {
+const FieldsPanel = ({
+  /** VARS **/
+  card,
+  renderStyle = 'content',
+  ...props
+}) => {
   const {
-    card,
-    renderStyle = 'content',
     ...rest
   } = props
 
@@ -23,6 +26,8 @@ const FieldsPanel = (props) => {
     card && RenderCell({ card, columnName: 'power_toughness', renderStyle, ...rest }),
   ]
 
+
+  /** RENDER **/
   return (
     <Grid item container justifyContent='space-between' direction='column' style={{ height: '100%' }}>
 
