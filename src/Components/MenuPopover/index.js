@@ -1,27 +1,25 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-
-import { forwardRef, useImperativeHandle, useRef } from 'react'
+import { useImperativeHandle, useRef } from 'react'
 import { ClickAwayListener, IconButton, List, Paper, Popover } from '@material-ui/core'
 import { useState, useEffect } from 'react'
-import { makeStyles, useTheme } from '@material-ui/styles'
-// import { connect } from 'react-redux'
+import { withStyles } from '@material-ui/styles'
 
-// import { setCurrentTab } from '@/Logic/redux'
 import useStyles from './styles'
 
 
-const MenuPopover = forwardRef(({
+const MenuPopover = ({
   /** VARS **/
+  refs,
   icon,
   iconButtonProps,
   popoverProps,
   listProps,
   ...props
-}, ref) => {
-  // const {
-  //   ...rest
-  // } = props
-  const classes = makeStyles(useStyles(useTheme()))()
+}) => {
+  const {
+    classes,
+    children,
+    // ...rest
+  } = props
 
   const iconButtonRef = useRef()
   const [Icon, setIcon] = useState(icon)
@@ -31,7 +29,7 @@ const MenuPopover = forwardRef(({
 
 
   /** EFFECTS **/
-  useImperativeHandle(ref, () => ({
+  useImperativeHandle(refs, () => ({
     openMenu: () => { handleMenuOpen(iconButtonRef) },
     closeMenu: () => { handleMenuClose(null) },
   }))
@@ -70,6 +68,7 @@ const MenuPopover = forwardRef(({
       </IconButton>
 
       <Popover keepMounted
+        ref={refs}
         className={classes.popover}
         open={menuOpen}
         anchorEl={menuAnchor}
@@ -87,14 +86,17 @@ const MenuPopover = forwardRef(({
         <Paper className={classes.paper}>
           <ClickAwayListener onClickAway={handleMenuClose}>
             <List {...listProps}>
-              {props.children}
+              {children}
             </List>
           </ClickAwayListener>
         </Paper>
       </Popover>
     </>
   )
-})
+}
 
 /** EXPORT **/
-export default MenuPopover
+export default
+  withStyles(useStyles)(
+    MenuPopover
+  )

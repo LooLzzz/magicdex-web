@@ -99,7 +99,7 @@ const TopMenu = ({
           </Grid>
 
           <Grid item>
-            <MenuPopover ref={menuRef} icon={() => <MenuIcon />}>
+            <MenuPopover refs={menuRef} icon={() => <MenuIcon />}>
               <ListSubheader>
                 <AccountCircleIcon />
                 {username ?? 'Account'}

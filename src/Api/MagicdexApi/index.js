@@ -10,7 +10,8 @@ import {
   deleteCardById,
 } from "./collection"
 
-export {
+
+const MagicdexApi = {
   login,
   register,
   getCards,
@@ -22,3 +23,5 @@ export {
   updateCardById,
   deleteCardById,
 }
+
+export default MagicdexApi

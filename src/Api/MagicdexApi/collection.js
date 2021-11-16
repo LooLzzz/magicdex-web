@@ -25,7 +25,7 @@ const Collections = {
   /**
    * Insert or update cards from active user's collection.
    */
-  updateCards: (cards) => {
+  updateCards: async (cards) => {
     const headers = getAuthHeaders()
 
     // keep only relevant data
@@ -33,14 +33,28 @@ const Collections = {
       .map(card => {
         card = pick(card, ['_id', 'id', 'amount', 'tag', 'foil', 'condition', 'signed', 'altered', 'misprint'])
         card.scryfall_id = card.id
-        delete card['id']
+        delete card.id
         return card
       })
 
-    return axios
-      .post(ROUTE_URL, { cards }, { headers })
-      .then(response => response)
-      .catch(err => catchErrors(err))
+    try {
+      let response = await axios.post(ROUTE_URL, { cards }, { headers })
+
+      response = await Promise.all(response.data.map(async (item, i) => ({
+        ...item,
+        card: item.card
+          ? {
+            ...await populateCardData(item.card),
+            ...item.card,
+          }
+          : cards[i]
+      })))
+
+      return response
+    }
+    catch (error) {
+      return catchErrors(error)
+    }
   },
 
   /**

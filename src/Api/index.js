@@ -1,7 +1,7 @@
 import Scryfall from 'scryfall-client'
 import filter from 'lodash/filter'
 
-import * as MagicdexApi from "./MagicdexApi"
+import MagicdexApi from "./MagicdexApi"
 import { fetchScryfallCardData } from './MagicdexApi/utils'
 
 

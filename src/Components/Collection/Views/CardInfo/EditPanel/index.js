@@ -9,8 +9,9 @@ import { useSnackbar } from 'notistack'
 import { connect } from 'react-redux'
 import lodash from 'lodash'
 
-import { updateCollection, removeCardsFromCollection, addFilters, setEditEnabled_CardInfo } from '@/Logic/redux'
-import { getCardPrints } from '@/Api'
+import { updateCollection, addFilters, setEditEnabled_CardInfo } from '@/Logic/redux'
+import { getCardPrints, MagicdexApi } from '@/Api'
+import Config from '@/Config'
 import RenderCell from '@/CardRenders'
 import useStyles from './styles'
 
@@ -23,8 +24,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   dispatch: {
-    updateCollection: (card, callback) => dispatch(updateCollection({ cards: [card], callback })),
-    removeCardFromCollection: (card, callback) => dispatch(removeCardsFromCollection({ cards: [card], callback })),
+    updateCollection: (cards) => dispatch(updateCollection({ cards })),
     addFilters: (filters) => dispatch(addFilters({ filters })),
     setEditEnabled: (enabled) => dispatch(setEditEnabled_CardInfo({ enabled })),
   }
@@ -125,7 +125,7 @@ const EditPanel = ({
       })
   }
 
-  const handleEditButtonClick = async (e) => {
+  const handleEditButtonClick = (e) => {
     if (editEnabled) {
       // save changes
       let cardClone = Object.assign(
@@ -133,17 +133,23 @@ const EditPanel = ({
         newCard
       )
 
-      dispatch.updateCollection(cardClone, ({ success, res }) => {
-        if (success)
-          enqueueSnackbar(`Updated ${card.name} [${card.set.toUpperCase()}]`, { variant: 'info' })
-        else {
-          enqueueSnackbar(`Error updating ${card.name} [${card.set.toUpperCase()}]`, { variant: 'error' })
-          console.error({ error: res })
-        }
-      })
-      onMenuHover(null)
+      if (Config.MODIFY_DB_ALLOWED)
+        MagicdexApi.updateCards([cardClone])
+          .then(res => {
+            dispatch.updateCollection(res)
+            enqueueSnackbar(`Updated ${card.name} [${card.set.toUpperCase()}]`, { variant: 'info' })
+          })
+          .catch(error => {
+            enqueueSnackbar(`Error updating ${card.name} [${card.set.toUpperCase()}]`, { variant: 'error' })
+            console.error({ error })
+          })
+      else {
+        dispatch.updateCollection([{ action: 'UPDATED', card: cardClone }])
+        enqueueSnackbar(`Updated ${card.name} [${card.set.toUpperCase()}]`, { variant: 'info' })
+      }
     }
 
+    onMenuHover(null)
     dispatch.setEditEnabled(!editEnabled)
     updateHeight()
   }
@@ -157,14 +163,21 @@ const EditPanel = ({
 
   const handleDeleteButtonClick = (confirm) => (e) => {
     if (confirm) {
-      dispatch.removeCardFromCollection(card, ({ success, res }) => {
-        if (success)
-          enqueueSnackbar(`Deleted ${card.name} [${card.set.toUpperCase()}]`, { variant: 'success' })
-        else {
-          enqueueSnackbar(`Failed to delete ${card.name} [${card.set.toUpperCase()}]`, { variant: 'error' })
-          console.error({ error: res })
-        }
-      })
+      const clonedCard = { _id: card._id, amount: 0 }
+
+      if (Config.MODIFY_DB_ALLOWED)
+        MagicdexApi.updateCards([clonedCard])
+          .then(res => {
+            dispatch.updateCollection(res)
+            enqueueSnackbar(`Deleted ${card.name} [${card.set.toUpperCase()}]`, { variant: 'success' })
+          })
+          .catch(error => {
+            enqueueSnackbar(`Failed to delete ${card.name} [${card.set.toUpperCase()}]`, { variant: 'error' })
+          })
+      else {
+        dispatch.updateCollection(clonedCard.map(card => ({ action: 'UPDATED', card })))
+        enqueueSnackbar(`Deleted ${card.name} [${card.set.toUpperCase()}]`, { variant: 'success' })
+      }
     }
     else
       setModalOpen(true)
@@ -513,7 +526,10 @@ const EditPanel = ({
                 <Grid item container xs justifyContent='flex-start' alignItems='flex-start'>
                   <Grid item container xs={12} spacing={1}>
                     <Grid item xs={12} component={Typography} variant='h6' align='left'>
-                      <Tooltip arrow placement='right'
+                      <Tooltip arrow
+                        placement='right'
+                        enterDelay={300}
+                        style={{ cursor: 'help' }}
                         title={card.tag.length > 0 ? <>Click a tag to search for <br /> more cards with that tag</> : ''}
                       >
                         <span>Tags</span>

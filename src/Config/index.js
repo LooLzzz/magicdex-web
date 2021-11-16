@@ -5,8 +5,8 @@ axios.defaults.headers.common['Access-Control-Allow-Credentials'] = true
 
 
 const Config = {
-  MODIFY_DB_ALLOWED: false,
-  // MODIFY_DB_ALLOWED: true,
+  // MODIFY_DB_ALLOWED: false,
+  MODIFY_DB_ALLOWED: true,
   
   API_URL: 'https://magicdex-server.herokuapp.com',
   // API_URL: 'http://localhost:5000',

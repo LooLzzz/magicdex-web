@@ -13,9 +13,11 @@ import _ from 'lodash'
 import clsx from 'clsx'
 
 import {
-  updateCollection, addSelectedCardIds, setSelectedCardIds, removeCardsFromCollection,
+  updateCollection, addSelectedCardIds, setSelectedCardIds,
   setCurrentOpenCardId, setViewIndex_CardInfo, setEditEnabled_CardInfo
 } from '@/Logic/redux'
+import { MagicdexApi } from '@/Api'
+import Config from '@/Config'
 import useStyles from './styles'
 
 
@@ -27,8 +29,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   dispatch: {
-    updateCollection: (cards, callback) => dispatch(updateCollection({ cards, callback })),
-    removeCardsFromCollection: (cards, callback) => dispatch(removeCardsFromCollection({ cards, callback })),
+    updateCollection: (cards) => dispatch(updateCollection({ cards })),
     addSelectedCardId: (id) => dispatch(addSelectedCardIds({ id })),
     setSelectedCardIds: (ids) => dispatch(setSelectedCardIds({ selectedCardIds: ids })),
     setCurrentOpenCardId: (id) => dispatch(setCurrentOpenCardId({ id })),
@@ -109,19 +110,27 @@ const ContextMenu = ({
         if (confirmAction) {
           const len = selectedCardIds.length
           if (len > 0) {
-            dispatch.removeCardsFromCollection(
-              selectedCardIds.map(id => ({ _id: id })),
-              ({ success, res }) => {
-                if (success)
-                  enqueueSnackbar(`Deleted ${len} card entries`, { variant: 'success' })
-                else {
+            const clonedArr = selectedCardIds.map(_id => ({
+              _id,
+              amount: 0,
+            }))
+
+            if (Config.MODIFY_DB_ALLOWED)
+              MagicdexApi.updateCards(clonedArr)
+                .then(res => {
+                  dispatch.updateCollection(res)
+                  const actions = _.countBy(res, 'action')
+                  actions['DELETED'] && enqueueSnackbar(`Deleted ${actions['DELETED']} card entries`, { variant: 'success' })
+                })
+                .catch(error => {
                   enqueueSnackbar(`Failed to delete ${len} card entries`, { variant: 'error' })
-                  console.error({ error: res })
-                }
-                closeMenu()
-              }
-            )
+                })
+            else {
+              dispatch.updateCollection(clonedArr.map(card => ({ action: 'UPDATED', card })))
+              enqueueSnackbar(`Deleted ${len} card entries`, { variant: 'success' })
+            }
           }
+          closeMenu()
         }
         else
           setModalOpen('delete')
@@ -131,22 +140,28 @@ const ContextMenu = ({
         if (confirmAction) {
           const len = selectedCardIds.length
           if (len > 0) {
-            dispatch.updateCollection(
-              selectedCardIds.map(id => ({
-                _id: id,
-                tag: tagArray,
-              })),
-              ({ success, res }) => {
-                if (success)
-                  enqueueSnackbar(`Tagged ${len} card entries`, { variant: 'success' })
-                else {
+            const clonedArr = selectedCardIds.map(_id => ({
+              _id,
+              tag: tagArray,
+            }))
+
+            if (Config.MODIFY_DB_ALLOWED)
+              MagicdexApi.updateCards(clonedArr)
+                .then(res => {
+                  dispatch.updateCollection(res)
+                  const actions = _.countBy(res, 'action')
+                  actions['DELETED'] && enqueueSnackbar(`Deleted ${actions['DELETED']} card entries`, { variant: 'success' })
+                  actions['UPDATED'] && enqueueSnackbar(`Updated ${actions['CREATED']} card entries`, { variant: 'info' })
+                })
+                .catch(error => {
                   enqueueSnackbar(`Failed to tag ${len} card entries`, { variant: 'error' })
-                  console.error({ error: res })
-                }
-                closeMenu()
-              }
-            )
+                })
+            else {
+              dispatch.updateCollection(clonedArr.map(card => ({ action: 'UPDATED', card })))
+              enqueueSnackbar(`Updated ${len} card entries`, { variant: 'success' })
+            }
           }
+          closeMenu()
         }
         else {
           setTagArray(_.chain(collection)

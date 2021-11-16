@@ -1,12 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
 import { useEffect, Fragment, useRef } from 'react'
-import { Grid, ListItemText, MenuItem, ListItem, ListSubheader, Divider, Fab, Tooltip, useMediaQuery } from '@material-ui/core'
+import { Grid, ListItemText, MenuItem, ListItem, ListSubheader, Divider, useMediaQuery } from '@material-ui/core'
 import { Skeleton, ToggleButton, ToggleButtonGroup } from '@material-ui/lab'
 import { withStyles } from '@material-ui/styles'
 import {
-  Add as AddIcon,
-  CloudUpload as CloudUploadIcon,
   MoreVert as MoreVertIcon,
   ViewList as ViewListIcon,
   ViewModule as ViewModuleIcon,
@@ -26,6 +24,7 @@ import { MenuPopover } from '@/Components'
 import { MagicdexApi } from '@/Api'
 import { CardTableView, CardGridView } from './Views'
 import FilterFields from './FilterFields'
+import MyFabs from './MyFabs'
 import useStyles from './styles'
 
 
@@ -149,24 +148,6 @@ const Collection = ({
     }
   }
 
-  const handleFabClick = fabType => e => {
-    switch (fabType) {
-      case 'add':
-        console.log('fab: add')
-        break
-
-      case 'import-export':
-        console.log('fab: import-export')
-        break
-
-      default:
-        break
-    }
-
-    //TODO: add a new card to the collection & update the localStorage.
-    // user should choose `import from list` or a form to add a new card
-  }
-
 
   /** RENDER **/
   return (
@@ -206,7 +187,7 @@ const Collection = ({
 
                   <Grid item>
                     <MenuPopover
-                      ref={menuRef}
+                      refs={menuRef}
                       icon={<MoreVertIcon />}
                       listProps={{ dense: true }}
                     >
@@ -279,38 +260,7 @@ const Collection = ({
 
               {/* FLOATING ACTION BUTTONS */}
               <div className={classes.fab}>
-                <Grid container spacing={1} direction="column-reverse">
-                  <Grid item>
-                    <Tooltip arrow
-                      placement='left'
-                      title='Add cards'
-                      enterDelay={250}
-                    >
-                      <Fab
-                        size='small'
-                        color='primary'
-                        onClick={handleFabClick('add')}
-                      >
-                        <AddIcon />
-                      </Fab>
-                    </Tooltip>
-                  </Grid>
-                  <Grid item>
-                    <Tooltip arrow
-                      placement='left'
-                      title='Export Cards'
-                      enterDelay={250}
-                    >
-                      <Fab
-                        size='small'
-                        color='primary'
-                        onClick={handleFabClick('import-export')}
-                      >
-                        <CloudUploadIcon />
-                      </Fab>
-                    </Tooltip>
-                  </Grid>
-                </Grid>
+                <MyFabs />
               </div>
             </>
         }

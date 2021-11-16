@@ -66,14 +66,17 @@ const Utils = {
 
   populateCardData: async (cards) => {
     const cardInfo =
-      cards instanceof Array
-        ? cards.map(card => ({ id: card.scryfall_id, set_id: card.set }))
-        : [cards.scryfall_id, cards.set]
+      (Array.isArray(cards) ? cards : [cards])
+        .map(card => {
+          card.id = card.scryfall_id
+          delete card.scryfall_id
+          return card
+        })
 
     const scryfallData = await fetchScryfallCardData(cardInfo)
 
     const populatedCards = await Promise.all(
-      cards.map(async (card, i) => {
+      cardInfo.map(async (card, i) => {
         const { is_transform, is_split, is_flip } = {
           is_transform: arrayContains(scryfallData[i].layout, ['modal', 'transform']),
           is_split: arrayContains(scryfallData[i].layout, ['split', 'fuse']),
@@ -94,7 +97,7 @@ const Utils = {
       })
     )
 
-    return (cards instanceof Array)
+    return Array.isArray(cards)
       ? populatedCards
       : populatedCards[0]
   },

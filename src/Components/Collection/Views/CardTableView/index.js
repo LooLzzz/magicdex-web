@@ -221,7 +221,7 @@ const CardTableView = ({
                       ?
                       // <TableCell className={classes.iconCell} />
                       <TableCell onClick={e => e.stopPropagation()} className={classes.checkbox}>
-                        <Tooltip arrow placement='top' title={selectedCardIds.length >= data.length ? 'Clear selection' : 'Select all'}>
+                        <Tooltip arrow placement='top' title={selectedCardIds.length >= data.length ? 'Clear Selection' : 'Select All'}>
                           <Checkbox
                             size='small'
                             checked={selectedCardIds.length >= data.length}

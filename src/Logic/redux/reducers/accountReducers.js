@@ -1,8 +1,3 @@
-const pick = require('lodash/pick')
-
-const MagicdexApi = require('@/Api/MagicdexApi')
-const Config = require('@/Config')
-
 
 const accountReducers = {
   setActiveUser: (state, action) => {
@@ -37,51 +32,37 @@ const accountReducers = {
   },
 
   updateCollection: (state, action) => {
-    const { cards, callback } = action.payload
+    const { cards } = action.payload
     const { collection } = state.activeUser
 
-    cards.forEach(card => {
-      const idx = collection.findIndex(item => item._id === card._id)
-      if (idx > -1)
-        Object.assign(collection[idx], card)
-      else
-        collection.push(card)
-    })
+    for (const item of cards) {
+      const { _id, action, card } = item
+      let idx = -1
 
-    if (Config.MODIFY_DB_ALLOWED)
-      MagicdexApi.updateCards(cards)
-        .then(res => callback && callback({ success: true, res }))
-        .catch(err => callback && callback({ success: false, res: err }))
-    else
-      callback && callback({ success: true, res: {} })
+      switch (action) {
+        case 'CREATED':
+          collection.push(card)
+          break
 
-    state.activeUser.collection = collection
-    localStorage.setItem('collection', JSON.stringify(collection || []))
-  },
+        case 'UPDATED':
+          idx = collection.findIndex(item => item._id === _id)
+          if (idx !== -1)
+            Object.assign(collection[idx], card)
+          break
 
-  removeCardsFromCollection: (state, action) => {
-    const { cards, callback } = action.payload
-    const { collection } = state.activeUser
-    const { selectedCardIds } = state.app.collection
+        case 'DELETED':
+          idx = collection.findIndex(item => item._id === _id)
+          if (idx !== -1)
+            collection.splice(idx, 1)
+          break
 
-    cards.map(card => {
-      const idx = collection.findIndex(item => item._id === card._id)
-      if (idx !== -1)
-        collection.splice(idx, 1)
-
-      card.amount = 0 // deletion flag for api
-      return pick(card, ['_id', 'amount'])
-    })
-
-    if (Config.MODIFY_DB_ALLOWED)
-      MagicdexApi.updateCards(cards)
-        .then(res => callback && callback({ success: true, res }))
-        .catch(err => callback && callback({ success: false, res: err }))
-    else
-      callback && callback({ success: true, res: {} })
+        case 'NOP':
+        default:
+          break
+      }
+    }
 
     state.activeUser.collection = collection
-    state.app.collection.selectedCardIds = selectedCardIds.filter(id => cards.map(card => card._id).includes(id) === false)
     localStorage.setItem('collection', JSON.stringify(collection || []))
   },
 }

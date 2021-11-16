@@ -9,7 +9,6 @@ export const {
   setActiveUser,
   setCurrentCollection,
   updateCollection,
-  removeCardsFromCollection,
 
   /** .theme **/
   toggleThemeType,
