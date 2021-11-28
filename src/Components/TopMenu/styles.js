@@ -22,6 +22,16 @@ const useStyles = (theme) => {
     iconButton: {
       color: theme.palette.text.secondary,
     },
+    dropdown_tab: {
+      display: 'flex',
+      whiteSpace: 'nowrap',
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      // '&:hover':{
+      //   backgroundColor: 'transparent',
+      // },
+    },
   }
 }
 

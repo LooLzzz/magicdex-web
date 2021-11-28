@@ -1,4 +1,5 @@
 import Scryfall from "scryfall-client"
+import pick from 'lodash/pick'
 import zipObjectDeep from "lodash/zipObjectDeep"
 import intersectionWith from 'lodash/intersectionWith'
 
@@ -101,6 +102,22 @@ const Utils = {
       ? populatedCards
       : populatedCards[0]
   },
+
+  pickCardFields: (cards, fields = ['_id', 'id', 'amount', 'tag', 'foil', 'condition', 'signed', 'altered', 'misprint']) => {
+    const _pick = (card) => {
+      const c = pick(card, fields)
+      c.scryfall_id = c.id
+      delete c.id
+      return c
+    }
+
+    if (Array.isArray(cards))
+      return cards
+        .map(_pick)
+
+    // else
+    return _pick(cards)
+  }
 }
 
 export default Utils
@@ -112,4 +129,5 @@ export const {
   fetchScryfallCardData,
   arrayContains,
   populateCardData,
+  pickCardFields,
 } = Utils

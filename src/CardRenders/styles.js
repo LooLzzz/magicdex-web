@@ -27,6 +27,8 @@ const useStyles = (theme) => {
       padding: '3px 8px 3px 8px',
       borderRadius: 12,
       boxShadow: theme.shadows[1],
+      fontFamily: '"Red Hat Mono", Consolas, monospace',
+      fontSize: '0.93em',
     },
     widthLimit: {
       maxWidth: '22 em',
