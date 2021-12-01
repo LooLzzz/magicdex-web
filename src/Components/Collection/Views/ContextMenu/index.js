@@ -339,7 +339,7 @@ const ContextMenu = ({
             </Grid>
           </Paper>
         </Grid>
-      </Grid >
+      </Grid>
     </>
   )
 }

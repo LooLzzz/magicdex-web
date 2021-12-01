@@ -22,7 +22,7 @@ import {
 import { CardPriceDataProvider, FilteredDataProvider } from '@/Providers'
 import { MenuPopover } from '@/Components'
 import { MagicdexApi } from '@/Api'
-import { CardTableView, CardGridView } from './Views'
+import { CardTableView, CardGridView, CardInfo } from './Views'
 import FilterFields from './FilterFields'
 import MyFabs from './MyFabs'
 import Import from './.Import'
@@ -280,6 +280,7 @@ export default
   )
 
 export {
+  CardInfo,
   Import,
   Export,
 }

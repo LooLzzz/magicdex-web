@@ -9,12 +9,14 @@ const useStyles = (theme) => {
       justifyContent: "center",
       alignItems: "center",
       flexDirection: "column",
-      
+
       // minHeight: '80vh',
     },
     header: {
-      alignSelf: "flex-end",
+      // alignSelf: "flex-end",
       textTransform: "uppercase",
+      fontWeight: "bold",
+      width: '100%',
     },
     icon: {
       fontSize: iconSize,
@@ -39,15 +41,18 @@ const useStyles = (theme) => {
     bottom: {
       position: "relative",
       bottom: "2em",
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-      flexDirection: "column",
+      width: '100%',
+      // display: "flex",
+      // justifyContent: "center",
+      // alignItems: "center",
+      // flexDirection: "column",
     },
     content: {
+      width: '100%',
       paddingBottom: theme.spacing(2),
     },
     actions: {
+      width: '100%',
       alignSelf: "flex-end",
     },
   }

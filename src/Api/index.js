@@ -7,7 +7,7 @@ import { fetchScryfallCardData } from './MagicdexApi/utils'
 
 /**
  * get card print information from scryfall.
- * @param {object} card
+ * @param {object} card - should include {'oracle_id', 'set', 'collector_number'}
  * @param {string} type - search type, one of ['set', 'lang'], default 'set'
  */
 const getCardPrints = async (card, type = 'set') => {
@@ -16,23 +16,33 @@ const getCardPrints = async (card, type = 'set') => {
 
   switch (type) {
     case 'lang':
-      res = await Scryfall.search(`oracleid:${oracle_id}+set:${set}+lang:any+-is:digital`, {
-        unique: 'prints',
-        include_multilingual: true,
-        include_extras: true,
-      })
-      res = filter(res, { collector_number })
+      try {
+        res = await Scryfall.search(`oracleid:${oracle_id}+set:${set}+lang:any`, {
+          unique: 'prints',
+          include_multilingual: true,
+          include_extras: true,
+        })
+        res = filter(res, { collector_number })
+      }
+      catch (err) {
+        console.error({ error: err })
+      }
       break
 
     default:
     case 'set':
-      res = await Scryfall.search(`oracleid:${oracle_id}+-is:digital`, {
-        unique: 'prints',
-        order: 'released',
-        dir: 'desc',
-        include_variations: true,
-        include_extras: true,
-      })
+      try {
+        res = await Scryfall.search(`oracleid:${oracle_id}`, {
+          unique: 'prints',
+          order: 'released',
+          dir: 'desc',
+          include_variations: true,
+          include_extras: true,
+        })
+      }
+      catch (err) {
+        console.err({ error: err })
+      }
       break
   }
 

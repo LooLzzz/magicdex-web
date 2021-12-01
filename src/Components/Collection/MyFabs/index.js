@@ -15,9 +15,6 @@ const MyFabs = ({
 
   /** HANDLERS **/
   const handleFabClick = (id) => (e) => {
-    // TODO: add a new card to the collection & update the localStorage.
-    // user should choose `import from list` or a form to add a new card
-
     switch (id) {
       case 'import':
         history.push('/collection/import')
