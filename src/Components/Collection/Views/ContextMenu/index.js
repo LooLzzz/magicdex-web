@@ -151,7 +151,7 @@ const ContextMenu = ({
                   dispatch.updateCollection(res)
                   const actions = _.countBy(res, 'action')
                   actions['DELETED'] && enqueueSnackbar(`Deleted ${actions['DELETED']} card entries`, { variant: 'success' })
-                  actions['UPDATED'] && enqueueSnackbar(`Updated ${actions['CREATED']} card entries`, { variant: 'info' })
+                  actions['UPDATED'] && enqueueSnackbar(`Updated ${actions['UPDATED']} card entries`, { variant: 'info' })
                 })
                 .catch(error => {
                   enqueueSnackbar(`Failed to tag ${len} card entries`, { variant: 'error' })
@@ -339,7 +339,7 @@ const ContextMenu = ({
             </Grid>
           </Paper>
         </Grid>
-      </Grid >
+      </Grid>
     </>
   )
 }

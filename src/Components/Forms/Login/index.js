@@ -155,7 +155,7 @@ const Login = ({
           </>
         )}
         actions={() => (
-          <Grid container spacing={1}>
+          <Grid container justifyContent='flex-end' spacing={1}>
             <Grid item>
               <Button
                 size="medium"

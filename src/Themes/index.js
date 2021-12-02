@@ -16,6 +16,8 @@ const sharedOverrides = {
         padding: '2px',
         // marginLeft: '0.25em',
         // backgroundColor: 'rgba(255,255,255,0.1)',
+        fontFamily: '"Red Hat Mono", Consolas, monospace',
+        // fontSize: '0.93em',
         borderRadius: '0.5em',
       },
       ".alignLeft": {

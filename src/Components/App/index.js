@@ -10,6 +10,7 @@ import { SnackbarProvider } from 'notistack'
 // import { useHistory } from 'react-router-dom'
 
 import { Collection, TopMenu, BottomBar, Login, Register, Home, Decks, Profile } from "@/Components"
+import { Import, Export } from "@/Components/Collection"
 import { MagicdexApi } from "@/Api"
 import { setActiveUser } from "@/Logic/redux"
 import useStyles from "./styles"
@@ -53,6 +54,22 @@ const App = ({
       props: {
         path: '/collection',
         component: Collection,
+        exact: true,
+      }
+    },
+    {
+      component: Route,
+      props: {
+        path: '/collection/import',
+        component: Import,
+        exact: true,
+      }
+    },
+    {
+      component: Route,
+      props: {
+        path: '/collection/export',
+        component: Export,
         exact: true,
       }
     },

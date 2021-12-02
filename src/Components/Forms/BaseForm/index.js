@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Paper, Divider, Typography, Dialog, DialogContent, CircularProgress } from '@material-ui/core'
+import { Paper, Divider, Grid, Typography, Dialog, DialogContent, CircularProgress } from '@material-ui/core'
 import { withStyles } from "@material-ui/styles"
 import { ValidatorForm } from 'react-material-ui-form-validator'
 
@@ -8,14 +8,19 @@ import useStyles from './styles'
 
 const BaseForm = ({
   /** VARS **/
-  validationRules,
+  validationRules = {},
   header,
   icon,
   content,
   actions,
-  onSubmit,
-  onError,
+  headerProps = {},
+  iconProps = {},
+  contentProps = {},
+  actionsProps = {},
+  onSubmit = () => { },
+  onError = () => { },
   formRef,
+  disableBackdrop = false,
   ...props
 }) => {
   const {
@@ -31,7 +36,7 @@ const BaseForm = ({
 
   /** EFFECTS **/
   useEffect(() => {
-    const rules = validationRules ? validationRules : {}
+    const rules = validationRules
 
     Object.entries(rules).forEach(item => {
       const [key, value] = item
@@ -65,30 +70,34 @@ const BaseForm = ({
         className={classes.root} elevation={8}
         onSubmit={handleSubmit} onError={onError} {...rest}
       >
-        <Typography variant='h4' className={classes.header}>
-          <b>{Header}</b>
+        <Typography variant='h4' align='right' className={classes.header} {...headerProps}>
+          {Header}
         </Typography>
 
-        <div className={classes.icon}>
+        <div className={classes.icon} {...iconProps}>
           {Icon}
         </div>
         <Divider className={classes.divider1} />
 
-        <div className={classes.bottom}>
-          <div className={classes.content}>
+        <Grid container direction='column' justifyContent='center' alignItems='center' className={classes.bottom}>
+          <Grid item xs={12} className={classes.content} {...contentProps}>
             {Content}
-          </div>
-          <div className={classes.actions}>
+          </Grid>
+          <Grid item xs={12} className={classes.actions} {...actionsProps}>
             {Actions}
-          </div>
-        </div>
+          </Grid>
+        </Grid>
+
       </Paper>
 
-      <Dialog open={isLoading}>
-        <DialogContent>
-          <CircularProgress />
-        </DialogContent>
-      </Dialog>
+      {
+        !disableBackdrop &&
+        <Dialog open={isLoading}>
+          <DialogContent>
+            <CircularProgress />
+          </DialogContent>
+        </Dialog>
+      }
     </>
   )
 }

@@ -1,8 +1,7 @@
 import axios from 'axios'
-import pick from 'lodash/pick'
 
 import { API_URL } from '@/Config'
-import { getAuthHeaders, catchErrors, populateCardData } from './utils'
+import { getAuthHeaders, catchErrors, populateCardData, pickCardFields } from './utils'
 
 
 const ROUTE_URL = `${API_URL}/collections`
@@ -29,13 +28,7 @@ const Collections = {
     const headers = getAuthHeaders()
 
     // keep only relevant data
-    cards = cards
-      .map(card => {
-        card = pick(card, ['_id', 'id', 'amount', 'tag', 'foil', 'condition', 'signed', 'altered', 'misprint'])
-        card.scryfall_id = card.id
-        delete card.id
-        return card
-      })
+    cards = pickCardFields(cards)
 
     try {
       let response = await axios.post(ROUTE_URL, { cards }, { headers })
@@ -53,7 +46,7 @@ const Collections = {
       return response
     }
     catch (error) {
-      return catchErrors(error)
+      catchErrors(error)
     }
   },
 

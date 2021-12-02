@@ -1,54 +1,27 @@
-/* eslint-disable no-lone-blocks */
-
-// import { useState, useEffect } from 'react'
 import { Grid, Tooltip, Fab } from '@material-ui/core'
-import { withStyles } from '@material-ui/styles'
 import {
   Add as AddIcon,
-  CloudUpload as CloudUploadIcon,
+  CloudDownload as CloudDownloadIcon,
 } from '@material-ui/icons'
-import { connect } from 'react-redux'
-
-import useStyles from './styles'
-
-
-/** REDUX **/
-const mapStateToProps = (state) => ({
-
-})
-
-const mapDispatchToProps = (dispatch) => ({
-  dispatch: {
-
-  }
-})
+import { useHistory } from 'react-router-dom'
 
 
 const MyFabs = ({
   /** VARS **/
   ...props
 }) => {
-  // const {
-  //   classes,
-  //   dispatch,
-  // } = props
-
-
-  /** EFFECTS **/
-  { }
+  const history = useHistory()
 
 
   /** HANDLERS **/
   const handleFabClick = (id) => (e) => {
-    console.log({ 'handleFabClick()': { id, event: e } })
-    // TODO: add a new card to the collection & update the localStorage.
-    // user should choose `import from list` or a form to add a new card
-
     switch (id) {
       case 'import':
+        history.push('/collection/import')
         break
 
       case 'export':
+        history.push('/collection/export')
         break
 
       default:
@@ -76,6 +49,7 @@ const MyFabs = ({
           </Fab>
         </Tooltip>
       </Grid>
+
       <Grid item>
         <Tooltip arrow
           placement='left'
@@ -88,7 +62,7 @@ const MyFabs = ({
             color='primary'
             onClick={handleFabClick('export')}
           >
-            <CloudUploadIcon />
+            <CloudDownloadIcon />
           </Fab>
         </Tooltip>
       </Grid>
@@ -97,9 +71,4 @@ const MyFabs = ({
 }
 
 /** EXPORT **/
-export default
-  withStyles(useStyles)(
-    connect(mapStateToProps, mapDispatchToProps)(
-      MyFabs
-    )
-  )
+export default MyFabs

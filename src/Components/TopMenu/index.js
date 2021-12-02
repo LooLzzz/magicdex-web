@@ -1,10 +1,11 @@
-import { createRef } from "react"
+import { useRef } from "react"
 import { AppBar, Tabs, Tab, Grid, MenuItem, Divider, ListSubheader, ListItem, ListItemText, ListItemSecondaryAction, Switch } from "@material-ui/core"
 import { withStyles } from "@material-ui/styles"
 import {
   Menu as MenuIcon,
   AccountCircle as AccountCircleIcon,
   Settings as SettingsIcon,
+  // ArrowDropDown as ArrowDropDownIcon,
 } from '@material-ui/icons'
 import { connect } from "react-redux"
 import { useHistory } from 'react-router-dom'
@@ -43,7 +44,7 @@ const TopMenu = ({
   } = props
   const history = useHistory()
   const { enqueueSnackbar } = useSnackbar()
-  const menuRef = createRef()
+  const menuRef = useRef()
 
 
   /** HANDLERS **/

@@ -22,11 +22,17 @@ const useStyles = (theme) => {
       fontStyle: 'italic',
       fontFamily: 'Georgia, fangsong, Times New Roman',
       whiteSpace: 'pre-wrap',
+      '&[lang="ph"]': {
+        fontFamily: 'PhyrexianHorizontal',
+        lineBreak: 'anywhere',
+      }
     },
     condition: {
       padding: '3px 8px 3px 8px',
       borderRadius: 12,
       boxShadow: theme.shadows[1],
+      fontFamily: '"Red Hat Mono", Consolas, monospace',
+      fontSize: '0.93em',
     },
     widthLimit: {
       maxWidth: '22 em',
