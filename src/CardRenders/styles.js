@@ -22,6 +22,10 @@ const useStyles = (theme) => {
       fontStyle: 'italic',
       fontFamily: 'Georgia, fangsong, Times New Roman',
       whiteSpace: 'pre-wrap',
+      '&[lang="ph"]': {
+        fontFamily: 'PhyrexianHorizontal',
+        lineBreak: 'anywhere',
+      }
     },
     condition: {
       padding: '3px 8px 3px 8px',

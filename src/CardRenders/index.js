@@ -1,6 +1,7 @@
 import { Fragment, memo } from 'react'
 import { useTheme, useMediaQuery, Chip, Hidden, Typography } from '@material-ui/core'
 import { withStyles } from '@material-ui/styles'
+import clsx from 'clsx'
 import _ from 'lodash'
 
 // import { EllipsisText } from '@/Components'
@@ -385,12 +386,13 @@ const renders = {
 
   RenderFlavorText: withStyles(useStyles)(memo(
     ({ classes, card, cardFace }) => {
+      const { lang } = card
       const { flavor_text } = cardFace !== undefined ? card.card_faces[cardFace] : card
       let align = _.words(flavor_text).length > 2 ? 'left' : 'center'
 
       return (
         flavor_text
-          ? <div align={align} className={classes.flavorText}>
+          ? <div align={align} lang={lang} className={clsx(classes.flavorText)}>
             {flavor_text}
           </div>
           : ''

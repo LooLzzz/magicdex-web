@@ -46,7 +46,7 @@ const Collections = {
       return response
     }
     catch (error) {
-      return catchErrors(error)
+      catchErrors(error)
     }
   },
 

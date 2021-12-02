@@ -32,7 +32,7 @@ const Utils = {
     else
       console.error("Something happened in setting up the request that triggered an error", error.message)
 
-    return error
+    throw error
   },
 
   fetchScryfallCardData: async (cardInfo) => {
@@ -106,8 +106,12 @@ const Utils = {
   pickCardFields: (cards, fields = ['_id', 'id', 'amount', 'tag', 'foil', 'condition', 'signed', 'altered', 'misprint']) => {
     const _pick = (card) => {
       const c = pick(card, fields)
-      c.scryfall_id = c.id
-      delete c.id
+      
+      if (c.hasOwnProperty('id')) {
+        c.scryfall_id = c.id
+        delete c.id
+      }
+      
       return c
     }
 

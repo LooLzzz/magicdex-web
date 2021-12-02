@@ -10,24 +10,28 @@ import {
 } from '@material-ui/icons'
 import { useHistory } from 'react-router-dom'
 import { connect } from 'react-redux'
+import { useSnackbar } from 'notistack'
 import SwipeableViews from 'react-swipeable-views'
 
-import { setCurrentTab, setCurrentCollection } from '@/Logic/redux'
+import Config from '@/Config'
+import { setCurrentTab, setCurrentCollection, updateCollection } from '@/Logic/redux'
+import { MagicdexApi } from '@/Api'
 import { BaseForm } from '@/Components'
 import ImportWizard from './ImportWizard'
+import BulkImport from './BulkImport'
 import useStyles from './styles'
 
 
 /** REDUX **/
 const mapStateToProps = (state) => ({
   username: state.actions.activeUser.username,
-  collection: state.actions.activeUser.collection,
 })
 
 const mapDispatchToProps = (dispatch) => ({
   dispatch: {
     setCurrentTab: (tab) => dispatch(setCurrentTab({ tab })),
     setCurrentCollection: (collection) => dispatch(setCurrentCollection({ collection })),
+    updateCollection: (cards) => dispatch(updateCollection({ cards })),
   }
 })
 
@@ -40,15 +44,44 @@ const Import = ({
     classes,
     dispatch,
     username,
-    collection,
   } = props
+  const { enqueueSnackbar } = useSnackbar()
   const history = useHistory()
-  const viewRef = useRef()
-  const wizardRef = useRef()
+
+  const refs = {
+    viewRef: useRef(),
+    wizardRef: useRef(),
+    bulkRef: useRef(),
+  }
 
   const [currentViewIndex, _setCurrentViewIndex] = useState(1)
   const [wizardBackdrop, setWizardBackdrop] = useState(false)
-  const [cardListText, setCardListText] = useState('')
+
+  const updateHeight = () => setTimeout(refs.viewRef.current?.updateHeight, 10)
+
+
+  /** FUNCTIONS **/
+  const updateCollection = async (newCards) => {
+    if (Config.MODIFY_DB_ALLOWED) {
+      try {
+        const res = await MagicdexApi.updateCards(newCards)
+        const actions = _.countBy(res, 'action')
+
+        dispatch.updateCollection(res.map(item => item.card))
+
+        actions['CREATED'] && enqueueSnackbar(`Created ${actions['CREATED']} card entries`, { variant: 'success' })
+        actions['UPDATED'] && enqueueSnackbar(`Updated ${actions['UPDATED']} card entries`, { variant: 'info' })
+      }
+      catch (error) {
+        enqueueSnackbar(`Error updating cards`, { variant: 'error' })
+        console.error({ error })
+      }
+    }
+    else {
+      dispatch.updateCollection([{ action: 'UPDATED', cards: newCards }])
+      enqueueSnackbar(`Updated ${newCards.length} card entries`, { variant: 'info' })
+    }
+  }
 
 
   /** EFFECTS **/
@@ -66,7 +99,7 @@ const Import = ({
   /** HANDLERS **/
   const setCurrentViewIndex = (index) => {
     _setCurrentViewIndex(index)
-    setTimeout(() => viewRef.current?.updateHeight(), 10)
+    updateHeight()
   }
 
   const handleImportTypeClick = (source) => (e) => {
@@ -86,45 +119,39 @@ const Import = ({
   }
 
   const handleSubmit = (source) => async (e, resolve, reject) => {
+    let formRef = null
+
     switch (source) {
       case 'bulk':
-        try {
-          // TODO: add bulk import logic
-          await new Promise(r => setTimeout(r, 500))
-          setCurrentViewIndex(1)
-          setCardListText('')
-        }
-        catch (e) {
-          reject()
-        }
-        finally {
-          resolve()
-          break
-        }
+        formRef = refs.bulkRef.current
+        break
 
       case 'wizard':
-        try {
-          const newCards = await wizardRef.current?.handleSubmit(e) // will reject if invalid
-          setWizardBackdrop(true)
-
-          // TODO: remove setTimeout and implement a loading state
-          await new Promise(r => setTimeout(r, 500))
-
-          setCurrentViewIndex(1)
-          wizardRef.current?.reset()
-        }
-        catch {
-          reject()
-        }
-        finally {
-          setWizardBackdrop(false)
-          resolve()
-          break
-        }
+        formRef = refs.wizardRef.current
+        break
 
       default:
-        reject()
         break
+    }
+
+    try {
+      const newCards = (await formRef.handleSubmit(e))
+        .map(card => ({
+          ...card,
+          amount: `+${card.amount}`,
+        }))
+      setWizardBackdrop(true)
+
+      await updateCollection(newCards)
+      setCurrentViewIndex(1)
+      formRef.reset()
+    }
+    catch (err) {
+      reject()
+    }
+    finally {
+      setWizardBackdrop(false)
+      resolve()
     }
   }
 
@@ -134,7 +161,7 @@ const Import = ({
     <Grid container className={classes.root}>
       <Grid item xs={12} component={Paper}>
         <SwipeableViews animateHeight ignoreNativeScroll
-          ref={viewRef}
+          ref={refs.viewRef}
           index={currentViewIndex}
           slideStyle={{
             overflow: 'hidden',
@@ -159,35 +186,7 @@ const Import = ({
               )}
 
               content={() => (
-                <Grid container justifyContent='center' alignItems='center'>
-                  <Grid item xs={12}>
-                    <TextField multiline fullWidth
-                      color='secondary'
-                      rows={20}
-                      variant='filled'
-                      label='Card List'
-                      value={cardListText}
-                      onChange={e => setCardListText(e.target.value)}
-                      placeholder={[
-                        "Paste your collection here, the supported format is:",
-                        "\tx2 cardname [setid] [#collectorNumber] [@lang] [isFoil]",
-                        "",
-                        "Fuzzy named search is supported.",
-                        "",
-                        "------------------------",
-                        "",
-                        "2 fireball [m12] [f]",
-                        "atraxa [@fr]",
-                        "3x Garruk's Gorehorn [#306]",
-                        "1x Garruk's Gorehorn [#108]",
-                        "...",
-                      ].join('\n')}
-                      InputLabelProps={{
-                        shrink: true,
-                      }}
-                    />
-                  </Grid>
-                </Grid>
+                <BulkImport refs={refs.bulkRef} updateHeight={updateHeight} />
               )}
               contentProps={{
                 style: {
@@ -214,6 +213,7 @@ const Import = ({
             />
           </Grid>
 
+
           {/** VIEW 1 - CHOOSE IMPORT TYPE **/}
           <Grid container justifyContent='center' alignItems='center' className={`MuiPaper-rounded ${classes.view1Container}`}>
             <Grid item container xs component={Button} style={{ height: '100%', borderRadius: 0 }} onClick={handleImportTypeClick('bulk')}>
@@ -235,6 +235,7 @@ const Import = ({
             </Grid>
           </Grid>
 
+
           {/** VIEW 2 - IMPORT WIZARD **/}
           <Grid container justifyContent='center' alignItems='center' spacing={2} className={classes.view2Container}>
             <BaseForm
@@ -250,7 +251,6 @@ const Import = ({
                 </>
               }
               headerProps={{ align: 'left' }}
-
               icon={() => (
                 <Box marginBottom={2}>
                   🧙‍♂️
@@ -258,7 +258,7 @@ const Import = ({
               )}
 
               content={() => (
-                <ImportWizard refs={wizardRef} updateHeight={viewRef.current?.updateHeight} />
+                <ImportWizard refs={refs.wizardRef} updateHeight={updateHeight} />
               )}
               contentProps={{
                 style: {
@@ -270,7 +270,7 @@ const Import = ({
                 <Box paddingTop={2} marginLeft={1.5} marginRight={1.5}>
                   <Grid container justifyContent='flex-end' alignItems='center' spacing={1}>
                     <Grid item xs align='left'>
-                      <Button variant='contained' color='secondary' onClick={wizardRef.current?.reset}>
+                      <Button variant='contained' color='secondary' onClick={refs.wizardRef.current?.reset}>
                         Reset
                       </Button>
                     </Grid>
@@ -293,7 +293,6 @@ const Import = ({
         </SwipeableViews>
       </Grid>
     </Grid>
-
   )
 }
 

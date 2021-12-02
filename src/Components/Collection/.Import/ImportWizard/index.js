@@ -5,34 +5,22 @@ import { Grid, Paper, Fade, Modal, Typography, TextField, MenuItem, FormControlL
 import { Add as AddIcon } from '@material-ui/icons'
 import { Autocomplete } from '@material-ui/lab'
 import { withStyles } from '@material-ui/styles'
-import { connect } from 'react-redux'
 import Scryfall from 'scryfall-client'
+import cloneDeep from 'lodash/cloneDeep'
+import pick from 'lodash/pick'
 
 import { getCardPrints } from '@/Api'
 import useStyles from './styles'
 
 
-/** REDUX **/
-const mapStateToProps = (state) => ({
-
-})
-
-const mapDispatchToProps = (dispatch) => ({
-  dispatch: {
-
-  }
-})
-
-
 const ImportWizard = ({
   /** VARS **/
   refs: ref,
-  updateHeight: _updateHeight = () => { },
+  updateHeight = () => { },
   ...props
 }) => {
   const {
     classes,
-    // dispatch,
   } = props
   const refs = {
     cardName: {
@@ -41,8 +29,6 @@ const ImportWizard = ({
       listbox: useRef(),
     },
   }
-
-  const updateHeight = () => setTimeout(_updateHeight, 10)
 
   const [card, setCard] = useState({})
   const [newCards, setNewCards] = useState([])
@@ -159,7 +145,7 @@ const ImportWizard = ({
     const cardName = refs.cardName.input.current?.value.trim() || ''
 
     if (cardName && cardName === card.name && card.set && card.lang) {
-      setNewCards(cards => [...cards, card])
+      setNewCards(cards => [...cards, cloneDeep(card)])
       resetCard()
       updateHeight()
     }
@@ -357,10 +343,10 @@ const ImportWizard = ({
                   align='left'
                   disabled={!card.name || printsSet?.length <= 1}
                   label='Set'
-                  value={((!card.name && []) || printsSet || []).length === 0 ? '' : `${card?.set}:${card?.collector_number}`}
+                  value={((!card.name && []) || printsSet || []).length === 0 ? '' : JSON.stringify(pick(card, ['id', 'set', 'collector_number']))}
                   onChange={e => {
-                    const [set, collector_number] = e.target.value.split(':')
-                    handleCardInfoChange({ set, collector_number })
+                    const value = JSON.parse(e.target.value)
+                    handleCardInfoChange(value)
                   }}
                   SelectProps={{
                     onClose: e => onMenuHover(card)
@@ -380,8 +366,8 @@ const ImportWizard = ({
                     (printsSet || [])
                       .map(item =>
                         <MenuItem
-                          key={`${item.set}:${item.collector_number}`}
-                          value={`${item.set}:${item.collector_number}`}
+                          key={item.id}
+                          value={JSON.stringify(pick(item, ['id', 'set', 'collector_number']))}
                           onMouseEnter={e => onMenuHover({ ...item, foil: card?.foil })}
                           onMouseLeave={e => onMenuHover(card)}
                         >
@@ -609,7 +595,5 @@ const ImportWizard = ({
 /** EXPORT **/
 export default
   withStyles(useStyles)(
-    connect(mapStateToProps, mapDispatchToProps)(
-      ImportWizard
-    )
+    ImportWizard
   )
