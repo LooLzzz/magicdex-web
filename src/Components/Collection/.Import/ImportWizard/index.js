@@ -61,6 +61,10 @@ const ImportWizard = ({
 
   /** EFFECTS **/
   useEffect(() => {
+    updateHeight() // update height on each render
+  })
+
+  useEffect(() => {
     if (!card.name) {
       resetCard()
       return
@@ -138,7 +142,6 @@ const ImportWizard = ({
   const handleReset = () => {
     setNewCards([])
     resetCard()
-    updateHeight()
   }
 
   const handleAddToNewCards = () => {
@@ -147,7 +150,6 @@ const ImportWizard = ({
     if (cardName && cardName === card.name && card.set && card.lang) {
       setNewCards(cards => [...cards, cloneDeep(card)])
       resetCard()
-      updateHeight()
     }
   }
 

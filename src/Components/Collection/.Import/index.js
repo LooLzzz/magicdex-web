@@ -147,7 +147,7 @@ const Import = ({
       formRef.reset()
     }
     catch (err) {
-      reject()
+      reject(err)
     }
     finally {
       setWizardBackdrop(false)
@@ -195,8 +195,13 @@ const Import = ({
               }}
 
               actions={() => (
-                <Box paddingTop={2}>
+                <Box paddingTop={2} marginLeft={1.5} marginRight={1.5}>
                   <Grid container justifyContent='flex-end' alignItems='center' spacing={1}>
+                    <Grid item xs align='left'>
+                      <Button variant='contained' color='secondary' onClick={refs.bulkRef.current?.reset}>
+                        Reset
+                      </Button>
+                    </Grid>
                     <Grid item>
                       <Button variant='outlined' onClick={() => setCurrentViewIndex(1)}>
                         Back
