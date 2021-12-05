@@ -1,7 +1,6 @@
-import { useState, useEffect, useImperativeHandle } from 'react'
+import { useState, useEffect, useRef, useImperativeHandle } from 'react'
 import { Grid, TextField, Typography } from '@material-ui/core'
 import { withStyles } from '@material-ui/styles'
-import { useSnackbar } from 'notistack'
 import compact from 'lodash/compact'
 import upperFirst from 'lodash/upperFirst'
 import Scryfall from 'scryfall-client'
@@ -19,7 +18,7 @@ const BulkImport = ({
   const {
     classes,
   } = props
-  const { enqueueSnackbar } = useSnackbar()
+  const inputRef = useRef()
 
   const [cardListText, setCardListText] = useState('')
   const [errorMessages, setErrorMessages] = useState([])
@@ -29,6 +28,7 @@ const BulkImport = ({
   useImperativeHandle(ref, () => ({
     handleSubmit,
     reset: handleReset,
+    focus: handleFocus,
   }))
 
   const bulkToCards = async (text) => {
@@ -103,7 +103,6 @@ const BulkImport = ({
     cards = await Promise.all(
       cards.map(async (card) => {
         let data = {}
-        let flag = true
 
         try {
           try {
@@ -116,7 +115,7 @@ const BulkImport = ({
           const setPrints = await getCardPrints(data, 'set')
 
           if (card.set) {
-            flag = true
+            let flag = true
             for (const item of setPrints) {
               if (item.set.toLowerCase() === card.set.toLowerCase()) {
                 delete item.foil
@@ -133,7 +132,7 @@ const BulkImport = ({
           }
 
           if (card.collector_number) {
-            flag = true
+            let flag = true
             for (const item of setPrints) {
               if (item.collector_number === card.collector_number) {
                 delete item.foil
@@ -152,7 +151,7 @@ const BulkImport = ({
           if (card.lang) {
             const setLangs = await getCardPrints(data, 'lang')
             for (const item of setLangs) {
-              if (item.lang === card.lang) {
+              if (item.lang.toLowerCase() === card.lang.toLowerCase()) {
                 delete item.foil
                 data = {
                   ...data,
@@ -204,16 +203,20 @@ const BulkImport = ({
   /** HANDLERS **/
   const handleSubmit = async (e) => {
     if (cardListText.trim() === '')
-      return Promise.reject(new Error('No cards to import'))
+      throw new Error('No cards to import')
 
     const { cards, errors } = await bulkToCards(cardListText)
 
     if (errors.length > 0) {
       setErrorMessages(errors)
-      return Promise.reject(new Error(errors))
+      throw new Error(errors)
     }
 
-    return Promise.resolve(cards)
+    return cards
+  }
+
+  const handleFocus = () => {
+    inputRef.current?.focus()
   }
 
   const handleReset = () => {
@@ -247,6 +250,7 @@ const BulkImport = ({
 
       <Grid item xs={12}>
         <TextField multiline fullWidth
+          inputRef={inputRef}
           color='secondary'
           rows={20}
           variant='filled'

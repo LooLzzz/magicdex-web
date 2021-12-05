@@ -39,11 +39,12 @@ const Login = ({
   } = props
   const history = useHistory()
   const { enqueueSnackbar } = useSnackbar()
+  const formRef = useRef()
+
   const [isLoading, setIsLoading] = useState(false)
   const [errorMessages, setErrorMessages] = useState([])
   const [usernameInput, setUsernameInput] = useState('')
   const [passwordInput, setPasswordInput] = useState('')
-  const formRef = useRef()
 
 
   /** EFFECTS **/
@@ -59,40 +60,41 @@ const Login = ({
 
 
   /** HANDLERS **/
-  const handleSubmit = (e, resolve, reject) => {
+  const handleSubmit = async (e) => {
+    let res = null
+    setErrorMessages([])
     setIsLoading(true)
     setPasswordInput('')
-    setErrorMessages([])
 
-    MagicdexApi
-      .login({ username: usernameInput, password: passwordInput })
-      .then(res => {
-        dispatch.setActiveUser(res)
-        enqueueSnackbar('Login successful', { variant: 'success' })
-        resolve(res)
-      })
-      .catch(err => {
-        const msg = err.response.data.msg ?? err.response.data.message
-        let msgs = (msg instanceof Array) ? msg : [msg]
+    try {
+      const user = await MagicdexApi.login({ username: usernameInput, password: passwordInput })
 
-        // console.log(msgs)
-        msgs = msgs.map(msg =>
-          msg.toLowerCase() === 'username and password combination not found'
-            ? 'Bad credentials'
-            : msg
-        )
+      dispatch.setActiveUser(user)
+      enqueueSnackbar('Login successful', { variant: 'success' })
+      res = Promise.resolve(user)
+    }
+    catch (err) {
+      const msg = err.response.data.msg || err.response.data.message
+      let msgs = (msg instanceof Array) ? msg : [msg]
 
-        setErrorMessages(msgs)
-        enqueueSnackbar('Login failed', { variant: 'error' })
-        reject(err)
-      })
-      .finally(() => {
-        setIsLoading(false)
-      })
+      msgs = msgs.map(msg =>
+        msg.toLowerCase().includes('combination not found')
+          ? 'Bad credentials'
+          : msg
+      )
+
+      err.message = msgs
+      res = Promise.reject(err)
+    }
+    finally {
+      setIsLoading(false)
+      return res
+    }
   }
 
-  const handleError = (e) => {
-    setErrorMessages([])
+  const handleError = (err) => {
+    setErrorMessages(err.message)
+    enqueueSnackbar('Login failed', { variant: 'error' })
   }
 
   const handleClear = (e) => {

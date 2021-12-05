@@ -7,7 +7,7 @@ const useStyles = (theme) => {
       marginBottom: theme.spacing(2),
       // width: '40vw',
       // flexDirection: "column",
-      justifyContent: "center",
+      justifyContent: 'center',
       alignItems: 'center',
       display: 'flex',
       flexGrow: 1,

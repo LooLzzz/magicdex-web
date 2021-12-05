@@ -63,34 +63,36 @@ const Register = ({
 
 
   /** HANDLERS **/
-  const handleSubmit = (e, resolve, reject) => {
+  const handleSubmit = async (e) => {
+    let res = null
     setErrorMessages([])
+    setIsLoading(true)
     setPasswordInput('')
     setPasswordRepeatInput('')
-    setIsLoading(true)
 
-    MagicdexApi
-      .register({ username: usernameInput, password: passwordInput })
-      .then(res => {
-        dispatch.setActiveUser(res)
-        enqueueSnackbar('Successfully registered', { variant: 'success' })
-        resolve(res)
-      })
-      .catch(err => {
-        const { msg } = err.response.data
-        const msgs = (msg instanceof Array) ? msg : [msg]
+    try {
+      const user = await MagicdexApi.register({ username: usernameInput, password: passwordInput })
 
-        setErrorMessages(msgs)
-        enqueueSnackbar('Error registering', { variant: 'error' })
-        reject(err)
-      })
-      .finally(() => {
-        setIsLoading(false)
-      })
+      dispatch.setActiveUser(user)
+      enqueueSnackbar('Successfully registered', { variant: 'success' })
+      res = Promise.resolve(user)
+    }
+    catch (err) {
+      const msg = err.response.data.msg || err.response.data.message
+      const msgs = (msg instanceof Array) ? msg : [msg]
+      
+      err.message = msgs
+      res = Promise.reject(err)
+    }
+    finally {
+      setIsLoading(false)
+      return res
+    }
   }
 
-  const handleError = (e) => {
-    setErrorMessages([])
+  const handleError = (err) => {
+    setErrorMessages(err.message)
+    enqueueSnackbar('Error registering', { variant: 'error' })
   }
 
   const handleClear = (e) => {
@@ -169,11 +171,13 @@ const Register = ({
             />
             <Grid container direction='column'>
               {
-                Object.values(errorMessages).map((value, i) => (
-                  <Grid item key={i} className={classes.errorMessages}>
-                    {value[0].toUpperCase() + value.slice(1)} {/* capitalize first letter */}
-                  </Grid>
-                ))
+                Object
+                  .values(errorMessages)
+                  .map((value, i) => (
+                    <Grid item key={i} className={classes.errorMessages}>
+                      {_.upperFirst(value)}
+                    </Grid>
+                  ))
               }
             </Grid>
           </>

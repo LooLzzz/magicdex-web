@@ -17,10 +17,10 @@ const BaseForm = ({
   iconProps = {},
   contentProps = {},
   actionsProps = {},
-  onSubmit = () => { },
-  onError = () => { },
   formRef,
   disableBackdrop = false,
+  onSubmit = async (e) => Promise.resolve(),
+  onError = (err) => { console.error(err) },
   ...props
 }) => {
   const {
@@ -54,12 +54,18 @@ const BaseForm = ({
 
 
   /** HANDLERS **/
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     setIsLoading(true)
 
-    new Promise((resolve, reject) => onSubmit(e, resolve, reject))
-      .catch((err) => onError(err))
-      .finally(() => setIsLoading(false))
+    try {
+      await onSubmit(e)
+    }
+    catch (err) {
+      onError(err)
+    }
+    finally {
+      setIsLoading(false)
+    }
   }
 
 

@@ -5,8 +5,16 @@ import intersectionWith from 'lodash/intersectionWith'
 
 const addLayoutKeywords = (card) => {
   const arrayContains = (array, values, type = 'some') => {
-    array = array instanceof Array ? array : [array]
-    values = values instanceof Array ? values : [values]
+    array = array
+      ? array instanceof Array
+        ? array
+        : [array]
+      : []
+    values = values
+      ? values instanceof Array
+        ? values
+        : [values]
+      : []
 
     const intersection = intersectionWith(array, values,
       (a, b) => a.includes(b)
@@ -21,11 +29,12 @@ const addLayoutKeywords = (card) => {
     }
   }
 
-  return Object.assign(card, {
+  return {
+    ...card,
     is_transform: arrayContains(card.layout, ['modal', 'transform']),
     is_split: arrayContains(card.layout, ['split', 'fuse']),
     is_flip: arrayContains(card.layout, ['flip']),
-  })
+  }
 }
 
 export {

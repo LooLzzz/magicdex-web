@@ -10,6 +10,9 @@ import { setCurrentTab } from '@/Logic/redux'
 import useStyles from './styles'
 
 
+// TODO: complete `Decks` component
+
+
 /** REDUX **/
 const mapStateToProps = (state) => ({
   username: state.actions.activeUser.username,

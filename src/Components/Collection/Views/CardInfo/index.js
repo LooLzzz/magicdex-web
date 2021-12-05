@@ -85,7 +85,7 @@ const CardInfo = ({
     dispatch.setViewIndex(value)
   }
 
-  const onMenuHover = hoverItem => {
+  const onMenuHover = (hoverItem) => {
     if (hoverItem) {
       // hoverItem.foil = card.foil
       hoverItem = addCardPrice(hoverItem, card.currency)

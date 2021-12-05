@@ -9,17 +9,18 @@ const mapStateToProps = (state) => ({
 
 
 /** UTILS **/
-const addCardPrice = (card, currency) => {
+const addCardPrice = (card, currency = 'usd') => {
   const { prices, foil, amount } = card
   const price = Number(foil ? prices?.[`${currency}_foil`] : prices?.[currency])
 
   return {
     ...card,
     currency,
-    price: price,
+    price,
     total_price: price * amount,
   }
 }
+
 
 /** COMPONENT **/
 const CardPriceDataProvider = ({

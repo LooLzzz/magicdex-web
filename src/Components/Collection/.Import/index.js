@@ -100,6 +100,20 @@ const Import = ({
   const setCurrentViewIndex = (index) => {
     _setCurrentViewIndex(index)
     updateHeight()
+    
+    switch (index) {
+      case 0:
+        setTimeout(refs.bulkRef.current?.focus, 350)
+        break
+
+      default:
+      case 1:
+        break
+
+      case 2:
+        setTimeout(refs.wizardRef.current?.focus, 350)
+        break
+    }
   }
 
   const handleImportTypeClick = (source) => (e) => {
@@ -118,8 +132,9 @@ const Import = ({
     }
   }
 
-  const handleSubmit = (source) => async (e, resolve, reject) => {
+  const handleSubmit = (source) => async (e) => {
     let formRef = null
+    let res = []
 
     switch (source) {
       case 'bulk':
@@ -145,13 +160,15 @@ const Import = ({
       await updateCollection(newCards)
       setCurrentViewIndex(1)
       formRef.reset()
+
+      res = Promise.resolve(newCards)
     }
     catch (err) {
-      reject(err)
+      res = Promise.reject(err)
     }
     finally {
       setWizardBackdrop(false)
-      resolve()
+      return res
     }
   }
 

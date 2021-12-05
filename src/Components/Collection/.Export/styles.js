@@ -6,24 +6,13 @@ const useStyles = (theme) => {
       minHeight: `calc(100vh - 2*${topBottomPadding}px)`,
       // width: '40vw',
       // flexDirection: "column",
-      justifyContent: "center",
+      justifyContent: 'center',
       alignItems: 'center',
       display: 'flex',
       flexGrow: 1,
     },
-    hoverHighlight: {
-      cursor: 'pointer',
-      '&:hover': {
-        backgroundColor: theme.palette.action.hover,
-      },
-    },
-    view1Container: {
+    paper: {
       height: '350px',
-    },
-    view2Container: {
-      padding: [2, 2, 0, 2]
-        .map(v => `${theme.spacing(v)}px`)
-        .join(' '),
     },
   }
 }

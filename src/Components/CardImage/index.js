@@ -139,7 +139,7 @@ const CardImage = ({
                   overlayEnabled={card?.foil}
                   baseProps={{ alt: card?.name }}
                   baseSrc={
-                    card
+                    card && card.hasOwnProperty('image_uris')
                       ? card.card_faces[flipped ? 1 : 0].image_uris?.png ?? card.card_faces[flipped ? 1 : 0].image_uris?.large ?? card.card_faces[flipped ? 1 : 0].image_uris?.normal
                       : '/cardback.png'
                   }
@@ -156,7 +156,7 @@ const CardImage = ({
                 overlayEnabled={card?.foil}
                 baseProps={{ alt: card?.name }}
                 baseSrc={
-                  card
+                  card && card.hasOwnProperty('image_uris')
                     ? card.image_uris?.png ?? card.image_uris?.large ?? card.image_uris?.normal
                     : '/cardback.png'
                 }
