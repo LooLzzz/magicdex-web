@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/magicdex-web/static/css/main.dd8d9974.chunk.css",
-    "main.js": "/magicdex-web/static/js/main.7f4266e2.chunk.js",
-    "main.js.map": "/magicdex-web/static/js/main.7f4266e2.chunk.js.map",
+    "main.js": "/magicdex-web/static/js/main.b7dbf901.chunk.js",
+    "main.js.map": "/magicdex-web/static/js/main.b7dbf901.chunk.js.map",
     "runtime-main.js": "/magicdex-web/static/js/runtime-main.60a6af4b.js",
     "runtime-main.js.map": "/magicdex-web/static/js/runtime-main.60a6af4b.js.map",
     "static/css/2.d4000ece.chunk.css": "/magicdex-web/static/css/2.d4000ece.chunk.css",
@@ -19,6 +19,6 @@
     "static/css/2.d4000ece.chunk.css",
     "static/js/2.ca3f681f.chunk.js",
     "static/css/main.dd8d9974.chunk.css",
-    "static/js/main.7f4266e2.chunk.js"
+    "static/js/main.b7dbf901.chunk.js"
   ]
 }
