@@ -7,7 +7,8 @@ const Config = {
   // MODIFY_DB_ALLOWED: false,
   MODIFY_DB_ALLOWED: true,
 
-  API_URL: 'https://magicdex-server.herokuapp.com',
+  API_URL: process.env.API_URL || 'http://localhost:5000',
+  // API_URL: 'https://magicdex-server.herokuapp.com',
   // API_URL: 'http://localhost:5000',
 
   PER_PAGE: 25,
